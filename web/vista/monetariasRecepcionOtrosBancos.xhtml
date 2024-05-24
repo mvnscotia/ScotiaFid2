@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Sistema_Fiduciario</title>
+        <meta http-equiv = "Conten-Type"                        content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv = "Conten-Type-Options"                content         = "nosniff"/>
+        <meta http-equiv = "expires"                            content         = "43200"/> 
+        <meta http-equiv = "X-XSS-Protection"                   content         = "1"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Store"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Cache"/>
+        <link rel ="stylesheet" type = "text/css" href  = "../vista/recursos/css/cssGral.css"/>
+        <script type = "text/javascript" src = "../vista/recursos/js/validador.js"/>
+    </h:head>
+           <script type="text/javascript">  
+            function convertirImporte(campo) {
+                const numStr = campo.value.replaceAll('$','');
+                const num = Number(numStr.replaceAll(',',''));
+
+                if (!isNaN(num)) {
+                    const importeFormateado = num.toLocaleString('es-MX', 
+                    { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+                    campo.value = importeFormateado;
+                }
+            }           
+  </script>
+    <h:body>
+        <h:form id="frmMonetariasLiquidacionOtrosBancos">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "5000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel header="Instrucciones de Fideicomisos - Monetarias Rec. Otras Inst. Bancarias" id="panelLiquidaciones">
+
+                <p:panelGrid id = "panelContrato" 
+                             style = "margin-left: auto;
+                             margin-right: auto;" 
+                             styleClass = "bordePanel">
+                    <p:row>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtFideicomiso" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.fideicomiso}"
+                                         style="text-align: center"/>
+                        </p:column>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtSubFiso" 
+                                         disabled="true"  
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.subFideicomiso}"
+                                         style="text-align: center"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "Folio de la Instrucción:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtFolInstr" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.folioInstruccion}"
+                                         style="text-align: center"/>
+                        </p:column>                        <p:column colspan="2">
+                            <h:inputText id = "txtContrato" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.contrato}"
+                                         style="text-align: center"/>
+                        </p:column>     
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Destino Recepción:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu id="selectDestino" value="#{mbMonetariasRecepcionOtrosBancos.destinoRecepcionSelected}">
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value="#{mbMonetariasRecepcionOtrosBancos.listDestinoRecepcion}" 
+                                               var="clave"  
+                                               itemLabel="#{clave.claveDescripcion}" 
+                                               itemValue="#{clave.claveNumero}" />
+                            </h:selectOneMenu>
+                        </p:column>
+
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Importe:"/>
+                        </p:column>
+                        <p:column colspan="4">
+                            <p:inputText id = "txtImporte" 
+                                        autocomplete    = "off"
+                                        maxlength       = "16"
+                                        style           = "text-align:center;"
+                                        value="#{mbMonetariasRecepcionOtrosBancos.importeTxt}"
+                                        onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                        onblur          = "convertirImporte(this);">
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Forma de Recepción:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu id="selectForma" value="#{mbMonetariasRecepcionOtrosBancos.formaRecepcionSelect}">
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value="#{mbMonetariasRecepcionOtrosBancos.listFormaRecepcion}" 
+                                               var="clave"  
+                                               itemLabel="#{clave.claveDescripcion}" 
+                                               itemValue="#{clave.claveNumero}" />
+                            </h:selectOneMenu>
+                        </p:column>
+
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Cuenta de Cheques:"/>
+                        </p:column>
+                        <p:column colspan="4">
+                            <h:inputText id = "txtCuenta"
+                                         disabled="true"
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.informacionCuenta.cuenta}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Fecha:"/>
+                        </p:column>
+                        <p:column style="text-align: center;">
+                            <h:inputText id = "txtFecha" 
+                                         disabled="true"
+                                         value = "#{mbMonetariasRecepcionOtrosBancos.fechaRecepcionSistema.fechaActDia} / #{mbMonetariasRecepcionOtrosBancos.fechaRecepcionSistema.fechaActMes} / #{mbMonetariasRecepcionOtrosBancos.fechaRecepcionSistema.fechaActAño}" 
+                                         style="text-align: center;"/>(dd/mm/aaaa)
+                        </p:column>
+
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Moneda:" style="margin-bottom: 15px"/>
+                        </p:column>
+                        <p:column colspan="4">
+                            <h:inputText id = "txtMoneda"
+                                         disabled="true"
+                                         value="#{mbMonetariasRecepcionOtrosBancos.informacionCuenta.moneda}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value = "Tipo de Persona:"/>
+                        </p:column> 
+                        <p:column>
+                            <h:selectOneMenu style = "width: 100%;"
+                                             value="#{mbMonetariasRecepcionOtrosBancos.tipoPersonaSelected}">
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value = "#{mbMonetariasRecepcionOtrosBancos.listTipoPersona}" 
+                                               var="clave" 
+                                               itemLabel="#{clave.claveDescripcion}" 
+                                               itemValue="#{clave.claveDescripcion}"/>        
+                                <p:ajax  listener = "#{mbMonetariasRecepcionOtrosBancos.nombreChangeListener}" 
+                                         update = "selectNombre"/>
+                            </h:selectOneMenu>
+
+                        </p:column>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value = "Nombre:"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <h:selectOneMenu style = "width: 100%;"
+                                             id="selectNombre"
+                                             value="#{mbMonetariasRecepcionOtrosBancos.nombrePersonaSelected}">
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value = "#{mbMonetariasRecepcionOtrosBancos.listNombre}" 
+                                               var="nombre" 
+                                               itemValue="#{nombre.beneficiarioNumero}"
+                                               itemLabel="#{nombre.beneficiarioNombre}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+
+
+                <br/>
+                <p:remoteCommand name="show" action="alert('de')" />
+                <p:dataTable id="radioLo" scrollable="false" scrollHeight="350" 
+                             var="cuenta" rowKey="#{cuenta.cuenta}" 
+                             rows="10"  paginator="true" 
+                             paginatorPosition="bottom" 
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+                             emptyMessage="Sin registros"
+                             selectionMode="single"
+                             value="#{mbMonetariasRecepcionOtrosBancos.listInformacionCuentas}"
+                             selection="#{mbMonetariasRecepcionOtrosBancos.informacionCuenta}">
+                    <p:ajax event="rowSelect" listener="#{mbMonetariasRecepcionOtrosBancos.onRowSelect}" update=":frmMonetariasLiquidacionOtrosBancos:txtCuenta,:frmMonetariasLiquidacionOtrosBancos:txtMoneda"/>
+                    <p:column headerText="Banco" styleClass="centeredColumnContent" width="200"><h:outputText value="#{cuenta.banco}"/></p:column>
+                    <p:column headerText="Plaza" styleClass="centeredColumnContent" width="50"><h:outputText value="#{cuenta.plaza}"/></p:column>
+                    <p:column headerText="Cuenta" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.cuenta}"/></p:column>
+                    <p:column headerText="Clabe" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.clabe}"/></p:column>
+                    <p:column headerText="Sucursal" styleClass="centeredColumnContent" width="50"><h:outputText value="#{cuenta.sucursal}"/></p:column>
+                    <p:column headerText="Saldo" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.saldo}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
+                    <p:column headerText="Moneda" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.moneda}"/></p:column>
+                </p:dataTable>
+                <br/>
+                <p:row>
+                    <p:column>
+                        <center>
+                            <p:commandButton id="btnAsignar" 
+                                             class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-check" value="Aceptar"
+                                             style= "margin-right: 15px;"
+                                             actionListener="#{mbMonetariasRecepcionOtrosBancos.guardaRecepcionMonetariaOtrosBancos}"
+                                             update=":frmMonetariasLiquidacionOtrosBancos:panelContrato"/>
+                            <p:commandButton class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-close"
+                                             style= "margin-right: 15px;"
+                                             action="#{mbMonetariasRecepcionOtrosBancos.onMonetariasRecepcionOtrosBancos_Terminar()}" 
+                                             value="Cancelar"  />
+                        </center>
+                    </p:column>
+                </p:row>
+            </p:panel>
+            <h:outputText value="&lt;br/&gt;" escape="false" />
+           
+            <p:dialog id="dlgSPExito" header="Detalle del resguardo"  widgetVar="dlgSPExito" width="40%" modal="true" resizable="false">  
+                <br/>
+                <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                    <p:row>
+                        <p:column style = "font-weight: bold;">
+                            <h:outputLabel value = "Depósito aplicado correctamente, el número de folio es: #{mbMonetariasRecepcionOtrosBancos.folioContable}. Fecha y hora de la  aplicación es: #{mbMonetariasRecepcionOtrosBancos.fechaAplicacion}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6">
+                            <p:commandButton value = "Aceptar"  
+                                             action="#{mbMonetariasRecepcionOtrosBancos.onMonetariasRecepcionOtrosBancos_Terminar()}"
+                                             icon = "ui-icon-check" style="margin-left: 50%"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>  
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                height          : auto;
+                                                                width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

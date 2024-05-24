@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv = "Conten-Type"                        content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv = "Conten-Type-Options"                content         = "nosniff"/>
+        <meta http-equiv = "expires"                            content         = "43200"/> 
+        <meta http-equiv = "X-XSS-Protection"                   content         = "1"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Store"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Cache"/>
+        <link rel        = "stylesheet"                         type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <script                                                 type            = "text/javascript"
+                                                                src             = "../vista/recursos/js/validador.js">
+        </script>   
+	<script type="text/javascript">
+            function convertirImporte(campo) {
+                const numStr = campo.value.replaceAll('$','');
+                const num = Number(numStr.replaceAll(',',''));
+
+                if (!isNaN(num)) {
+                    const importeFormateado = num.toLocaleString('es-MX', 
+                    { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+                    campo.value = importeFormateado;
+                }
+            }           
+
+	    PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+	   </script>        
+        
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmMonetariasLiq">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Instrucciones de Fideicomisos - Monetarias de Liquidación">
+                <br/>
+                <br/>
+                
+                <p:panelGrid                                    id              = "panelCriteriosMon"
+                                                                styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsNumContrato}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                size            = "12"
+                                                                disabled        = "true" 
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Fideicomiso:')"
+                                                                style           = "text-align: center;"/>
+                        </p:column>
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsSubContrato}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "3"
+                                                                size            = "5"
+                                                                disabled        = "true"
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Sub Cto')"
+                                                                style           = "text-align: center;"/>
+                        </p:column>
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Folio de la Instrucción:"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <h:inputText                        value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsNumFolioInst}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "3"
+                                                                size            = "5"
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Folio Inst')"
+                                                                disabled        = "true"
+                                                                style           = "text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                
+                <br/>
+                <br/>
+                <center>
+                <h:panelGrid columns="2">
+                    <p:panel id="panelTerceros" header="Instrucciones para Terceros" >
+                        <p:dataTable                                    id              = "dtMonLiqInsTercero"
+                                                                        emptyMessage    = "Sin Registros"
+                                                                        value           = "#{mbMonetariasLiquidacion.listMonLiqInstrucTerceros}"
+                                                                        var             = "monLiqInsTercero"
+                                                                        paginator       = "true"
+                                                                        paginatorPosition = "bottom"
+                                                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                                                        currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords} registros"
+                                                                        rows            = "10"
+                                                                        scrollable      ="true"
+                                                                        scrollHeight    ="100"
+                                                                        resizableColumns="true"
+                                                                        liveResize      ="true"
+                                                                        scrollWidth     ="500px">
+>
+                            <p:column                                   headerText      = "Núm."
+                                                                        style           = "width: 25px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxNumTercero}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Importe"
+                                                                        style           = "width: 100px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxImpFijoPago}">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"
+                                                               pattern          = "$####,###,###,###,##0.00" />
+                                    </h:outputLabel>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Periodo"
+                                                                        style           = "width: 50px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxCvePerioPago}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Día"
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxDiaIniPagEx}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Mes"
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxMesIniPagEx}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Año"
+                                                                        style           = "width: 40px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxAnoIniPagEx}"/>
+                                    
+                                </center>
+                            </p:column>                    
+                            <p:column                                   headerText      = "Tercero"
+                                                                        style           = "width: 150px">
+                                <h:outputLabel                          value           = "#{monLiqInsTercero.monLiqTerNomTercero}"/>
+                            </p:column>
+                            <p:column                                   headerText      = "Cuenta de cheques"
+                                                                        style           = "width: 120px;">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxCtaCheques}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Nom. Moneda"
+                                                                        style           = "width: 90px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqMonNomMoneda}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Status"
+                                                                        style           = "width: 40px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqPtxCveStParpate}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Form Liq."
+                                                                        style           = "width: 150px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsTercero.monLiqMlFormaLiq}"/>
+                                </center>
+                            </p:column>
+
+                            <p:column                                   headerText      = "Cuenta"
+                                                                        style           = "width: 150px">
+                                <h:outputLabel                          value           = "#{monLiqInsTercero.monLiqMlNumCta}"/>
+                            </p:column>
+
+                            <p:column                                   headerText      = "Folio Inst."
+                                                                        style           = "width: 150px">
+                                <h:outputLabel                          value           = "#{monLiqInsTercero.monLiqFolioInst}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    
+                    <p:panel id="panelInstrucFide" header="Instrucciones para Fideicomisarios" >
+                        <p:dataTable                                    id              = "dtMonLiqInsFide"
+                                                                        emptyMessage    = "Sin Registros"
+                                                                        value           = "#{mbMonetariasLiquidacion.listMonLiqInstrucFidecomisos}"
+                                                                        var             = "monLiqInsFide"
+                                                                        paginator       = "true"
+                                                                        paginatorPosition = "bottom"
+                                                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                                                        currentPageReportTemplate="{startRecord} - {endRecord} de {totalRecords} registros"
+                                                                        rows            = "10"
+                                                                        resizableColumns="true"
+                                                                        liveResize      ="true"
+                                                                        scrollable      ="true"
+                                                                        scrollHeight    ="100" 
+                                                                        scrollWidth     ="500px">
+                            
+                            <p:column                                   headerText      = "Núm." 
+                                                                        style           = "width: 25px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxBeneficiario}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Fideicomisarios" 
+                                                                        style           = "width: 250px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqBenNomBenef}" />
+                                </center>
+                            </p:column>                            
+                            <p:column                                   headerText      = "Importe" 
+                                                                        style           = "width: 100px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxImpFijoPago}" >
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"
+                                                               pattern          = "$####,###,###,###,##0.00" />
+                                    </h:outputLabel>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Periodo" 
+                                                                        style           = "width: 150px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxCvePerPago}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Día"
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxDiaIniPago}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Mes"
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxMesIniPago}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Año"
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxAnoIniPago}"/>
+                                </center>
+                            </p:column>                    
+                            <p:column                                   headerText      = "Mda."
+                                                                        style           = "width: 20px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqMlNumMoneda}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Form Liq."
+                                                                        style           = "width: 100px">
+                                 <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqMlFormaLiq}"/>
+                                </center>                                 
+                            </p:column>   
+                            <p:column                                   headerText      = "Cuenta"
+                                                                        style           = "width: 150px">
+                                 <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqMlNumCta}"/>
+                                </center>                                 
+                            </p:column>                            
+                            <p:column                                   headerText      = "Cta. Cheques"
+                                                                        style           = "width: 150px">
+                                <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxCtaCheques}"/>
+                                </center>
+                            </p:column>
+                            <p:column                                   headerText      = "Moneda"
+                                                                        style           = "width: 100px">
+                                
+                                 <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqMonNomMoneda}"/>
+                                </center>                               
+                            </p:column>
+                            <p:column                                   headerText      = "Status"
+                                                                        style           = "width: 150px">
+                                 <center>
+                                    <h:outputLabel                      value           = "#{monLiqInsFide.monLiqPbxCveStParpabe}"/>
+                                </center>                                    
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    
+                </h:panelGrid>
+                
+                <p:panelGrid                                    id              = "panelCriterios2"
+                                                                styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder">
+                            <h:outputLabel                      value           = "Cifras de Control"/>
+                        </p:column>
+                        
+                        <p:column                               style           = "width: 10%">
+                        </p:column>                         
+                       
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Movimientos:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "0"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "3"
+                                                                size            = "5"
+                                                                disabled        = "true" 
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Sub Cto')"
+                                                                style           = "text-align: center;"/>
+                        </p:column>
+                        
+                        <p:column                               style           = "width: 10%">
+
+                        </p:column>                        
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Valor:"/>
+                        </p:column>
+                        
+                        <p:column>
+                            <h:inputText                        value           = "0.00"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "3"
+                                                                size            = "36"
+                                                                disabled        = "true" 
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Folio Inst')"
+                                                                style           = "text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                </center>
+                <br/>
+                <br/>
+                
+                <p:panelGrid                                    id              = "pnlTipoPersonaYDetalleDeCuenta"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Tipo de Persona:"/>
+                        </p:column>                         
+                        <p:column                               colspan         = "5">
+                            <h:selectOneMenu                    id              = "cboInstrucFideAltaAutorizaPanel3"
+                                                                value           = "#{mbMonetariasLiquidacion.tipoPersonaSelected}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItem                   itemLabel       = "FIDEICOMISARIO"
+                                                                itemValue       = "FIDEICOMISARIO"/>
+                                <f:selectItem                   itemLabel       = "TERCERO"
+                                                                itemValue       = "TERCERO"/>
+                                <p:ajax                         listener        = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Cargar_Beneficiario_O_Tercero}" 
+                                                                update          = "selectNombre,
+                                                                                   cboMonetariasLiqCuenta,
+                                                                                   txtMonLiqNombreBanco,
+                                                                                   txtMonLiqNumSucursal,
+                                                                                   txtMonLiqMoneda"/>                                
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>  
+                    
+                    
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Conceptos de:"/>
+                        </p:column>                         
+                        <p:column                               colspan         = "5">
+                           
+                            <p:selectOneMenu                    id              ="selectConcepto"
+                                                                style           = "width: 100%;"
+                                                                value           = "#{mbMonetariasLiquidacion.conceptoSelected}"
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           ="#{mbMonetariasLiquidacion.conceptos}" 
+                                                                var             ="clave"  
+                                                                itemLabel       ="#{clave.claveDescripcion}" 
+                                                                itemValue       ="#{clave.claveNumero}" />
+                                
+                            </p:selectOneMenu>
+
+                        </p:column>
+                    </p:row>   
+                    
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Nombre:"/>
+                        </p:column>                         
+                        <p:column                               colspan         = "5">
+                            <h:selectOneMenu                    style           = "width: 100%;"
+                                                                id              ="selectNombre"
+                                                                value           ="#{mbMonetariasLiquidacion.nombrePersonaSelected}">
+                                <f:selectItem                   itemLabel       = "..." 
+                                                                itemValue =      ""/>
+                                <f:selectItems                  value           = "#{mbMonetariasLiquidacion.listNombre}" 
+                                                                var             ="nombre" 
+                                                                itemValue       ="#{nombre.beneficiarioNumero}"
+                                                                itemLabel       ="#{nombre.beneficiarioNombre}"/>
+                                <p:ajax                         listener        = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_CargarCuentas}" 
+                                                                update          = "cboMonetariasLiqCuenta,
+                                                                                   txtMonLiqNombreBanco,
+                                                                                   txtMonLiqNumSucursal,
+                                                                                   txtMonLiqMoneda"/>                                
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Cuenta:"/>
+                        </p:column>                         
+                        <p:column                               colspan         = "5">
+                            <h:selectOneMenu                    id              = "cboMonetariasLiqCuenta"
+                                                                value           = "#{mbMonetariasLiquidacion.cuentaSelected}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbMonetariasLiquidacion.listInformacionCuentas}" 
+                                                                var             ="cuenta" 
+                                                                itemValue       ="#{cuenta.cuenta}"
+                                                                itemLabel       ="#{cuenta.cuentaDes}"/>
+                                <p:ajax                         listener        = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_CargarDetalleDeCuentas}" 
+                                                                update          = "txtMonLiqNumSucursal,
+                                                                                   txtMonLiqNombreBanco,
+                                                                                   txtMonLiqMoneda"/>                                
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>    
+                    
+                    
+                    <p:row>                        
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Número de Sucursal:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtMonLiqNumSucursal"
+                                                                disabled        = "true"
+                                                                value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsAdcSucursal}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "3"
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Contrato')"
+                                                                style           = "text-align: center;">
+                                                                
+                            </h:inputText>
+                        </p:column>
+                        
+                        <p:column>
+                            <h:inputText                        id              = "txtMonLiqNombreBanco"
+                                                                disabled        = "true"
+                                                                value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsCveDescClave}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                onblur          = "onValidaEntradaNumerica(this, 'Contrato')"
+                                                                style           = "text-align: center;">
+                                                                
+                            </h:inputText>
+                        </p:column>                        
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Moneda:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtMonLiqMoneda"
+                                                                value           = "#{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsMonNomMoneda}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                disabled        = "true"
+                                                                style           = "text-align:center;">
+                            </h:inputText>
+                        </p:column>
+                        
+                        <p:column                               style           ="text-align: right;">
+                            <p:commandButton                    icon            ="ui-icon-notice" 
+                                                                value           ="Param. Liquid." 
+                                                                actionListener  ="#{mbMonetariasLiquidacion.onMonetariasLiquidacion_CargarParametrosLiquidacion}"
+                                                                update          =":frmMonetariasLiq:dlgFormaLiquidar,
+                                                                                  :frmMonetariasLiq:txtDlgNombre "/> 
+                        </p:column>                     
+                        
+                    </p:row>
+                    
+                    
+                    
+                    <p:row>
+
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Importe:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText                        id              = "txtMonLiqIporte"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                value           = "#{mbMonetariasLiquidacion.importeTxt}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "16"
+                                                                style           = "text-align:center;"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                onblur          = "convertirImporte(this)">
+                            </p:inputText>
+                        </p:column>
+                        
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Fecha a Liquidar(dd/mm/aaaa):"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         value           = "#{beanGenericoFecha.genericoFecha00}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>   
+                        
+                        <p:column>
+                            <center>
+                                <p:commandButton                id              ="cmdMonLiqArchivo"
+                                                                icon            ="ui-icon-gear" 
+                                                                value           ="Archivo" 
+                                                                actionListener  ="#{mbMonetariasLiquidacion.onMonetariasLiquidacion_CargarArchivo}"
+                                                                update          =":frmMonetariasLiq:dlgFormaLiquidar,
+                                                                                  :frmMonetariasLiq:txtDlgNombre "/> 
+                            </center>
+                        </p:column>
+                        
+                                                      
+                        
+                        
+                        
+                    </p:row>                    
+                </p:panelGrid>
+                
+                <br/>
+                
+                <center>
+                    <div                                        style           = "background-color: #F2F5F9; height: 45px;">
+                        <p:commandButton                        id              = "cmdInstrucFideAltaGuardar"
+                                                                icon            = "ui-icon-check"
+                                                                value           = "Aceptar"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_GuardarLiquidacion}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                update          = ":frmMonetariasLiq:cmdInstrucFideAltaGuardar,
+                                                                                   :frmMonetariasLiq:cmdInstrucFideAltaModificar,
+                                                                                   :frmMonetariasLiq:panelCriteriosMon,
+                                                                                   :frmMonetariasLiq:dtMonLiqInsFide"/>                      ´
+                        
+                        <p:commandButton                        id              = "cmdInstrucFideAltaModificar"
+                                                                icon            = "ui-icon-close"
+                                                                value           = "Cancelar"
+                                                                style           = "margin-top: 10px; margin-right: 15px;"
+                                                                action          = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Terminar()}"/> 
+                        
+                    </div>
+                </center>                
+
+            </p:panel>
+            
+
+
+            
+            <p:dialog                                           id              = "dlgMonLiqCargaMasiva"
+                                                                closable        = "true"
+                                                                header          = "Sistema Fiduciario.- Carga de Movimientos en lote"
+                                                                modal           = "true"
+                                                                position        = "320, 100"
+                                                                resizable       = "false"
+                                                                widgetVar       = "dlgMonLiqCargaMasiva">
+                <br/>
+                <p:panelGrid                                    styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column>
+
+                            <h:outputLabel                  value           = "Para aplicar movimientos en lote es necesario seleccionar:"/>
+                            <br/>
+                            <h:outputLabel                  value           = "Tipo de persona"/>
+                            <br/>
+                            <h:outputLabel                  value           = "Fecha"/>
+                            <br/>
+                            <h:outputLabel                  value           = "Conceptos de Pago"/>
+                            <br/>
+                            <h:outputLabel                  value           = "Cuenta de cheques origen"/>
+                            <br/>
+                            <h:outputLabel                  value           = "El importe es la cifra de control"/>
+                            <br/>
+                            <br/>
+                            <h:outputLabel                  value           = "EL NOMBRE DE SU ARCHIVO DEBE SER:"/>
+                            <br/>
+                            <h:outputLabel                  value           = "LIQDDMMYYYYSSS, DONDE:"/>
+                            <br/>
+                            <h:outputLabel                  value           = "LIQ = PREFIJO"/>
+                            <br/>
+                            <h:outputLabel                  value           = "DDMMYYYY = FECHA CONTABLE"/>
+                            <br/>
+                            <h:outputLabel                  value           = "Y SSS = NUMERO SECUENCIAL"/>
+                            <br/>
+                            <br/>
+                            <h:outputLabel                  value           = "------------------------------------------------------"/>
+                            <br/>
+                            <h:outputLabel                  value           = "¿Esta seguro que desea continuar?"/>                            
+                            <br/>
+                            <h:outputLabel                  value           = "------------------------------------------------------"/>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <center>
+                                <p:fileUpload                     fileUploadListener= "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_ArchivoTransfiere}"
+                                                                  invalidSizeMessage= "Error, el tamaño máximo del archivo debe de ser de 1024Kb ( 1MB )"
+                                                                  invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt)"
+                                                                    showButtons     = "false"
+                                                                    allowTypes      = "/(\.|\/)(txt)$/"
+                                                                    mode            = "advanced"
+                                                                    sizeLimit       = "10000024"
+                                                                    label           = "SI"
+                                                                    uploadLabel     = "Transferir archivo"
+                                                                    style           = "margin-left: auto; margin-right: auto;"
+                                                                    id              = "fileUploadArchivoConfirmar"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+            </p:dialog>
+            
+            
+                <p:dialog header="Forma de liquidar" id="dlgFormaLiquidar" widgetVar="dlgFormaLiquidar" draggable="false" resizable="false" modal="true" closable="true" width="70%" height="400">
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row>
+                            <p:column style="background-color: #F2F5F9; text-align: right">
+                                <h:outputLabel value = "Nombre:"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <h:inputText id="txtDlgNombre" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.nombreSeleccionado.beneficiarioNombre}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column/>
+                            <p:column>
+                                <h:selectOneMenu id="selPeriodicidad" 
+                                                 value="#{mbMonetariasLiquidacion.tipoPagoSelected}">
+                                    <f:selectItems value="#{mbMonetariasLiquidacion.listTipoPago}" 
+                                                   var="clave"  
+                                                   itemLabel="#{clave.claveDescripcion}" 
+                                                   itemValue="#{clave.claveNumero}" />
+                                    <p:ajax  listener = "#{mbMonetariasLiquidacion.changeCuentaParametroLiquidacion}" 
+                                             update = "panelGridOption1, panelGridOption2,panelGridOption3"/>
+                                </h:selectOneMenu>
+                            </p:column>                        
+                            <p:column style = "background-color: #F2F5F9;">
+                                <h:outputLabel value = "Moneda:" />
+                            </p:column>
+                            <p:column>
+                                <h:selectOneMenu id="selPeriodicidad2" 
+                                                 value="#{mbMonetariasLiquidacion.monedaSelected}">
+                                    <f:selectItems value = "#{mbMonetariasLiquidacion.listMonedas}" 
+                                                   var="moneda" 
+                                                   itemLabel="#{moneda.monedaNombre}" 
+                                                   itemValue="#{moneda.monedaNumero}"/>
+                                </h:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2"/>
+                            <p:column style = "background-color: #F2F5F9;">
+                                <h:outputLabel value = "Cuentas de orden:"/>
+                            </p:column>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="checkCuentaOrden" 
+                                                         value="#{mbMonetariasLiquidacion.cuentaOrden}">
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid id="panelGridOption1"
+                                 styleClass = "bordePanel"
+                                 style="margin-left: 10%; margin-right: auto;
+                                 display: #{mbMonetariasLiquidacion.showAndHideOption1};">
+                        <p:row>      
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Banco:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgBanco" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CVE_DESC_CLAVE}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "No. de plaza:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgNoPlaza" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_NUM_PLAZA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Sucursal:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgSucursal" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_NUM_SUCURSAL}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Tipo de cuenta:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgTipoCuenta" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_CVE_TIPO_CTA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Cuenta:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgCuenta" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_NUM_CUENTA}" 
+                                            styleClass="inputForm">
+                                         <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Clabe:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgClabe" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_CLABE}" 
+                                             styleClass="inputForm">
+                                         <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Moneda:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgMoneda" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion.CBA_MONEDA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid styleClass = "bordePanel"
+                                 id="panelGridOption2"
+                                 style="margin-left:  7.5%; display: #{mbMonetariasLiquidacion.showAndHideOption2};">
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Dirección:" />
+                            </p:column>
+                            <p:column style="width: 82%;">
+                                <h:inputText id="txtDlgdireccion" 
+                                             value="#{mbMonetariasLiquidacion.direccionParametroLiquidacion}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Código Swift o ABA:" />
+                            </p:column>
+                            <p:column style="width: 82%;">
+                                <h:inputText id="txtDlgCodigoSwift" 
+                                             value="#{mbMonetariasLiquidacion.codigoSwift}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid styleClass = "bordePanel"
+                                 id="panelGridOption3"
+                                 style="margin-left:  7%; display: #{mbMonetariasLiquidacion.showAndHideOption1};">
+
+                        <p:row>
+                            <p:column>
+                                <p:dataTable id="tableInformacionCuentas" scrollable="false" scrollHeight="350" 
+                                             var="cuenta" rowKey="#{cuenta.CBA_NUM_CUENTA}" 
+                                             rows="10"  paginator="true" 
+                                             paginatorPosition="bottom" 
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+                                             emptyMessage="Sin registros"
+                                             selectionMode="single"
+                                             value="#{mbMonetariasLiquidacion.listInformacionCuentaParametroLiquidacion}"
+                                             selection="#{mbMonetariasLiquidacion.informacionCuentaParametroLiquidacion}">
+                                    <p:ajax event="rowSelect" 
+                                            listener="#{mbMonetariasLiquidacion.onRowSelectParametrosLiquidacion}" 
+                                            update=":frmMonetariasLiq:txtDlgBanco,
+                                                    :frmMonetariasLiq:txtDlgNoPlaza,
+                                                    :frmMonetariasLiq:txtDlgSucursal,
+                                                    :frmMonetariasLiq:txtDlgTipoCuenta,
+                                                    :frmMonetariasLiq:txtDlgCuenta,
+                                                    :frmMonetariasLiq:txtDlgMoneda,
+                                                    :frmMonetariasLiq:txtDlgClabe"/>
+
+                                    <p:column headerText="Tipo" styleClass="centeredColumnContent" width="100">
+                                        <h:outputText value="#{cuenta.CBA_CVE_TIPO_CTA}"/>
+                                    </p:column>
+                                    <p:column headerText="Sec." styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_NUM_SEC_CTA}"/>
+                                    </p:column>
+                                    <p:column headerText="Banco" styleClass="centeredColumnContent" width="120">
+                                        <h:outputText value="#{cuenta.CVE_DESC_CLAVE}"/>
+                                    </p:column>
+                                    <p:column headerText="Plaza" styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_NUM_PLAZA}"/>
+                                    </p:column>
+                                    <p:column headerText="Sucursal" styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_NUM_SUCURSAL}"/>
+                                    </p:column>
+                                    <p:column headerText="Cuenta" styleClass="centeredColumnContent" width="100">
+                                        <h:outputText value="#{cuenta.CBA_NUM_CUENTA}">
+                                        <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Moneda" styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_MONEDA}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid styleClass = "bordePanel" 
+                                 style="margin-left: auto; margin-right: auto; text-align: center;">
+                        <p:row>
+                            <p:column colspan="4" style="text-align: center;">
+                                <strong> 
+                                    <h:outputLabel style="background-color: yellow; color: red;" 
+                                                   value = "Cualquier cambio en éstos parámetros solo es válido si la liquidación es el mismo día." />
+                                </strong>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <f:facet name="footer">
+                        <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+                            <p:commandButton id="btnAsignarde" 
+                                             class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-check" 
+                                             value="Agregar"  
+                                             actionListener="#{mbMonetariasLiquidacion.agregarParametrosLiquidacion()}"/>
+                            <p:commandButton value="Cancelar" 
+                                             icon="ui-icon-cancel" 
+                                             actionListener="#{mbMonetariasLiquidacion.cierraParametrosLiquidacion}" />
+                        </h:panelGrid>  
+                    </f:facet>
+
+                </p:dialog>
+            
+            
+            
+            
+            
+            <p:dialog id="dlgSPExito" header="Detalle del resguardo"  widgetVar="dlgSPExito" width="40%" closable="false" modal="true">  
+                    <br/>
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row> 
+                            <p:column style = "font-weight: bold;">
+                                <p:outputLabel value="Liquidación del Fideicomiso #{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsNumContrato}, para el #{mbMonetariasLiquidacion.tipoPersonaSelected} #{mbMonetariasLiquidacion.nombreSeleccionado.beneficiarioNombre} por #{mbMonetariasLiquidacion.importeTxt} [#{mbMonetariasLiquidacion.tipoPersonaSelected}]." />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style = "font-weight: bold;">
+                                <h:outputLabel value = "TRANSACCIÓN REQUIERE AUTORIZACIÓN."/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6">
+                                <p:commandButton value = "Aceptar"  
+                                                 action="#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Terminar()}"
+                                                 icon = "ui-icon-check" style="margin-left: 50%"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>             
+            
+            <p:dialog id="dlgSPExito2" header="Detalle del resguardo"  widgetVar="dlgSPExito2" width="40%" closable="false" modal="true">  
+                    <br/>
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row> 
+                            <p:column style = "font-weight: bold;">
+                                <p:outputLabel value="Liquidación masiva del Fideicomiso #{mbMonetariasLiquidacion.formMonetariasLiq.monetariasLiqInsNumContrato} por #{mbMonetariasLiquidacion.importeTxt} [#{mbMonetariasLiquidacion.tipoPersonaSelected}]." />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style = "font-weight: bold;">
+                                <h:outputLabel value = "TRANSACCIÓN REQUIERE AUTORIZACIÓN."/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                       
+                        <p:column colspan="6">
+                                <p:commandButton value = "Aceptar"  
+                                                 action="#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Terminar()}"
+                                                 icon = "ui-icon-check" style="margin-left: 50%"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>             
+            
+             <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                hideEffect      = "explode"
+                                                                modal           = "true"
+                                                                position        = "450, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion}"
+                                                                update          = ":frmMonetariasLiq:panelCriteriosMon"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                position        = "450, 40"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+            <p:dialog                                           id              = "dlgPopUpConfirma"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                hideEffect      = "explode"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpConfirma"> 
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "Los datos son iguales a un registro previo, ¿Desea realmente generar otra referencia?"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <p:column>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Aplica_Operacion()}"
+                                                                update          = "@this"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton                        value           = "Cancelar"
+                                                                style           = "margin-right: 15px;"
+                                                                icon            = "ui-icon-cancel"
+                                                                actionListener  = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Terminar()}"
+                                                                update          = "@this"/>
+                    </p:column>
+                </center>
+                <br/>
+            </p:dialog>
+            <p:dialog                                          id              = "dlgPopUpListaError"
+                                                               closable        = "false"
+                                                               closeOnEscape   = "true"
+                                                               header          = "Sistema Fiduciario.- Errores Carga Masiva"
+                                                               hideEffect      = "explode"
+                                                               modal           = "true"
+                                                               position        = "50, 100"
+                                                               resizable       = "false"
+                                                               style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                               widgetVar       = "dlgPopUpListaError">
+
+                <p:row>
+                    <p:column                               colspan         = "5">
+                        <p:selectOneListbox                 id              = "lstErrores"
+                                                            style           = "height: 150px; width: 650px; ">
+                            <f:selectItems                  value           = "#{mbMonetariasLiquidacion.listaErr}"/>
+                        </p:selectOneListbox>
+                    </p:column>
+                </p:row>
+                <br/>
+                <br/>
+                <center>
+                    <p:row> 
+                        <p:column>
+                            <p:commandButton                            value           = "Aceptar"
+                                                                        icon            = "ui-icon-check"
+                                                                        style           = "margin-right: 15px;"
+                                                                        actionListener  = "#{mbMonetariasLiquidacion.onMonetariasLiquidacion_Cierra_dlgPopUpListaError()}"
+                                                                        update          = "@this"/>
+                        </p:column>
+                    </p:row>
+                    <br/>
+                    <br/>
+                </center>
+
+
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+    

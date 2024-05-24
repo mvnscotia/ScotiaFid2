@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Sistema_Fiduciario</title>
+        <meta http-equiv = "Conten-Type"                        content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv = "Conten-Type-Options"                content         = "nosniff"/>
+        <meta http-equiv = "expires"                            content         = "43200"/> 
+        <meta http-equiv = "X-XSS-Protection"                   content         = "1"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Store"/>
+        <meta http-equiv = "Cache-control"                      content         = "No-Cache"/>
+        <link rel ="stylesheet" type = "text/css" href  = "../vista/recursos/css/cssGral.css"/>
+        <script type = "text/javascript" src = "../vista/recursos/js/validador.js"/>
+    </h:head>
+    <script type="text/javascript">
+        function convertirImporte(campo) {
+            const numStr = campo.value.replaceAll('$','');
+            const num = Number(numStr.replaceAll(',',''));
+
+            if (!isNaN(num)) {
+                const importeFormateado = num.toLocaleString('es-MX', 
+                { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+                campo.value = importeFormateado;
+            }
+        }           
+    </script>
+    <h:body>
+        <h:form id="frmMonetariasLiquidacionOtrosBancos">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "5000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel header="Instrucciones de Fideicomisos - Monetarias Liq. Otras Inst. Bancarias" id="panelLiquidaciones">
+
+                <p:panelGrid id = "panelContrato" 
+                             style = "margin-left: auto;
+                             margin-right: auto;" 
+                             styleClass = "bordePanel">
+                    <p:row>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtFideicomiso" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.fideicomiso}"
+                                         style="text-align: center"/>
+                        </p:column>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtSubFiso" 
+                                         disabled="true"  
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.subFideicomiso}"
+                                         style="text-align: center"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style = "background-color: #F2F5F9;">
+                            <h:outputLabel value = "Folio de la Instrucción:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtFolInstr" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.folioInstruccion}"
+                                         style="text-align: center"/>
+                        </p:column>                        
+                        <p:column colspan="4">
+                            <h:inputText id = "txtContrato" 
+                                         disabled="true" 
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.contrato}"
+                                         style="text-align: center"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Fecha:"/>
+                        </p:column>
+                        <p:column style="text-align: center;">
+                            <h:inputText id = "txtFecha" 
+                                         disabled="true"
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.fechaRecepcionSistema.fechaActDia} / #{mbMonetariasLiquidacionOtrosBancos.fechaRecepcionSistema.fechaActMes} / #{mbMonetariasLiquidacionOtrosBancos.fechaRecepcionSistema.fechaActAño}" 
+                                         style="text-align: center;"/>(dd/mm/yyyy)
+                        </p:column>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Importe:"/>
+                        </p:column>
+                        <p:column colspan="4">
+                            <p:inputText id = "txtImporte"
+                                            disabled        = "false"
+                                            autocomplete    = "off"
+                                            maxlength       = "16"
+                                            value="#{mbMonetariasLiquidacionOtrosBancos.importeTxt}"
+                                            style           = "text-align:center;"
+                                            onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                            onblur          = "convertirImporte(this)">
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>     
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Cuenta de Cheques:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText id = "txtCuenta"
+                                         disabled="true"
+                                         value = "#{mbMonetariasLiquidacionOtrosBancos.informacionCuenta.cuenta}"/>
+                        </p:column>   
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value  = "Moneda:" style="margin-bottom: 15px"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <h:inputText id = "txtMoneda"
+                                         disabled="true"
+                                         value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuenta.moneda}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel  value = "Concepto:"/>
+                        </p:column>
+                        <p:column colspan = "4">
+                            <p:selectOneMenu id="selectConcepto" value="#{mbMonetariasLiquidacionOtrosBancos.conceptoSelected}"
+                                             filter          = "true"
+                                             filterMatchMode = "contains"
+                                             style           = "width: 100%;"> 
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value="#{mbMonetariasLiquidacionOtrosBancos.conceptos}" 
+                                               var="clave"  
+                                               itemLabel="#{clave.claveDescripcion}" 
+                                               itemValue="#{clave.claveNumero}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column style="text-align: right;">
+                            <p:commandButton icon="ui-icon-notice" 
+                                             value="Param. Liquid." 
+                                             update=":frmMonetariasLiquidacionOtrosBancos:dlgFormaLiquidar,frmMonetariasLiquidacionOtrosBancos:txtDlgNombre" 
+                                             actionListener="#{mbMonetariasLiquidacionOtrosBancos.obtenParametrosLiquidacion}"/> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value = "Tipo de Persona:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu style = "width: 100%;"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.tipoPersonaSelected}">
+                                <f:selectItem itemLabel = "--Seleccionar--" 
+                                              itemValue = ""/>
+                                <f:selectItem itemLabel = "FIDEICOMISARIO" 
+                                              itemValue = "FIDEICOMISARIO"/>
+                                <f:selectItem itemLabel = "TERCERO" 
+                                              itemValue = "TERCERO"/>
+                                <p:ajax  listener = "#{mbMonetariasLiquidacionOtrosBancos.nombreChangeListener}" 
+                                         update = "selectNombre"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column style="text-align: right;">
+                            <h:outputLabel value = "Nombre:"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <h:selectOneMenu style = "width: 100%;"
+                                             id="selectNombre"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.nombrePersonaSelected}">
+                                <f:selectItem itemLabel = "--Seleccionar--" itemValue = ""/>
+                                <f:selectItems value = "#{mbMonetariasLiquidacionOtrosBancos.listNombre}" 
+                                               var="nombre" 
+                                               itemValue="#{nombre.beneficiarioNumero}"
+                                               itemLabel="#{nombre.beneficiarioNombre}"/>
+                                <p:ajax  listener = "#{mbMonetariasLiquidacionOtrosBancos.nombrePersonaChangeListener}" 
+                                         update = "@this" event="change"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+
+
+                <br/>
+                
+                <p:remoteCommand name="show" action="alert('de')" />
+                <p:dataTable id="radioLo" scrollable="false" scrollHeight="350" 
+                             var="cuenta" rowKey="#{cuenta.cuenta}" 
+                             rows="10"  paginator="true" 
+                             paginatorPosition="bottom" 
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+                             emptyMessage="Sin registros"
+                             selectionMode="single"
+                             value="#{mbMonetariasLiquidacionOtrosBancos.listInformacionCuentas}"
+                             selection="#{mbMonetariasLiquidacionOtrosBancos.informacionCuenta}">
+                    <p:ajax event="rowSelect" listener="#{mbMonetariasLiquidacionOtrosBancos.onRowSelect}" update=":frmMonetariasLiquidacionOtrosBancos:txtCuenta,:frmMonetariasLiquidacionOtrosBancos:txtMoneda"/>
+                    <p:column headerText="Banco" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.banco}"/></p:column>
+                    <p:column headerText="Plaza" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.plaza}"/></p:column>
+                    <p:column headerText="Cuenta" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.cuenta}"/></p:column>
+                    <p:column headerText="Clabe" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.clabe}"/></p:column>
+                    <p:column headerText="Sucursal" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.sucursal}"/></p:column>
+                    <p:column headerText="Saldo" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.saldo}"> <f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
+                    <p:column headerText="Moneda" styleClass="centeredColumnContent" width="100"><h:outputText value="#{cuenta.moneda}"/></p:column>
+                </p:dataTable>
+
+               
+                <p:dialog header="Forma de liquidar" id="dlgFormaLiquidar" widgetVar="dlgFormaLiquidar" draggable="false" resizable="false" modal="true" closable="true" width="70%" height="400">
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row>
+                            <p:column style="background-color: #F2F5F9; text-align: right">
+                                <h:outputLabel value = "Nombre:"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <h:inputText id="txtDlgNombre" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.nombreSeleccionado.beneficiarioNombre}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column/>
+                            <p:column>
+                                <h:selectOneMenu id="selPeriodicidad" 
+                                                 value="#{mbMonetariasLiquidacionOtrosBancos.tipoPagoSelected}">
+                                    <f:selectItems value="#{mbMonetariasLiquidacionOtrosBancos.listTipoPago}" 
+                                                   var="clave"  
+                                                   itemLabel="#{clave.claveDescripcion}" 
+                                                   itemValue="#{clave.claveNumero}" />
+                                    <p:ajax  listener = "#{mbMonetariasLiquidacionOtrosBancos.changeCuentaParametroLiquidacion}" 
+                                             update = "panelGridOption1, panelGridOption2,panelGridOption3"/>
+                                </h:selectOneMenu>
+                            </p:column>                        
+                            <p:column style = "background-color: #F2F5F9;">
+                                <h:outputLabel value = "Moneda:" />
+                            </p:column>
+                            <p:column>
+                                <h:selectOneMenu id="selPeriodicidad2" 
+                                                 value="#{mbMonetariasLiquidacionOtrosBancos.monedaSelected}">
+                                    <f:selectItems value = "#{mbMonetariasLiquidacionOtrosBancos.listMonedas}" 
+                                                   var="moneda" 
+                                                   itemLabel="#{moneda.monedaNombre}" 
+                                                   itemValue="#{moneda.monedaNumero}"/>
+                                </h:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2"/>
+                            <p:column style = "background-color: #F2F5F9;">
+                                <h:outputLabel value = "Cuentas de orden:"/>
+                            </p:column>
+                            <p:column>
+                                <h:selectBooleanCheckbox id="checkCuentaOrden" 
+                                                         value="#{mbMonetariasLiquidacionOtrosBancos.cuentaOrden}">
+                                </h:selectBooleanCheckbox>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid id="panelGridOption1"
+                                 styleClass = "bordePanel"
+                                 style="margin-left: 10%; margin-right: auto;
+                                 display: #{mbMonetariasLiquidacionOtrosBancos.showAndHideOption1};">
+                        <p:row>      
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Banco:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgBanco" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CVE_DESC_CLAVE}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "No. de plaza:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgNoPlaza" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_NUM_PLAZA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Sucursal:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgSucursal" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_NUM_SUCURSAL}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Tipo de cuenta:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgTipoCuenta" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_CVE_TIPO_CTA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Cuenta:" />
+                                
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgCuenta" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_NUM_CUENTA}" 
+                                             styleClass="inputForm">
+                                         <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Clabe:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgClabe" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_CLABE}" 
+                                             styleClass="inputForm">
+                                         <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Moneda:" />
+                            </p:column>
+                            <p:column style="width: 85%;">
+                                <h:inputText id="txtDlgMoneda" 
+                                             disabled="true"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion.CBA_MONEDA}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid styleClass = "bordePanel"
+                                 id="panelGridOption2"
+                                 style="margin-left:  7.5%; display: #{mbMonetariasLiquidacionOtrosBancos.showAndHideOption2};">
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Dirección:" />
+                            </p:column>
+                            <p:column style="width: 82%;">
+                                <h:inputText id="txtDlgdireccion" 
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.direccionParametroLiquidacion}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>                   
+                            <p:column style="text-align: right">
+                                <h:outputLabel value = "Código Swift o ABA:" />
+                            </p:column>
+                            <p:column style="width: 82%;">
+                                <h:inputText id="txtDlgCodigoSwift" 
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.codigoSwift}" 
+                                             styleClass="inputForm"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid styleClass = "bordePanel"
+                                 id="panelGridOption3"
+                                 style="margin-left:  7%; display: #{mbMonetariasLiquidacionOtrosBancos.showAndHideOption1};">
+
+                        <p:row>
+                            <p:column>
+                                <p:dataTable id="tableInformacionCuentas" scrollable="false" scrollHeight="350" 
+                                             var="cuenta" rowKey="#{cuenta.CBA_NUM_CUENTA}" 
+                                             rows="10"  paginator="true" 
+                                             paginatorPosition="bottom" 
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+                                             emptyMessage="Sin registros"
+                                             selectionMode="single"
+                                             value="#{mbMonetariasLiquidacionOtrosBancos.listInformacionCuentaParametroLiquidacion}"
+                                             selection="#{mbMonetariasLiquidacionOtrosBancos.informacionCuentaParametroLiquidacion}">
+                                    <p:ajax event="rowSelect" 
+                                            listener="#{mbMonetariasLiquidacionOtrosBancos.onRowSelectParametrosLiquidacion}" 
+                                            update=":frmMonetariasLiquidacionOtrosBancos:txtDlgBanco,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgNoPlaza,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgSucursal,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgTipoCuenta,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgCuenta,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgMoneda,
+                                            :frmMonetariasLiquidacionOtrosBancos:txtDlgClabe"/>
+
+                                    <p:column headerText="Tipo" styleClass="centeredColumnContent" width="100">
+                                        <h:outputText value="#{cuenta.CBA_CVE_TIPO_CTA}"/>
+                                    </p:column>
+                                    <p:column headerText="Sec." styleClass="centeredColumnContent" width="40">
+                                        <h:outputText value="#{cuenta.CBA_NUM_SEC_CTA}"/>
+                                    </p:column>
+                                    <p:column headerText="Banco" styleClass="centeredColumnContent" width="150">
+                                        <h:outputText value="#{cuenta.CVE_DESC_CLAVE}"/>
+                                    </p:column>
+                                    <p:column headerText="Plaza" styleClass="centeredColumnContent" width="50">
+                                        <h:outputText value="#{cuenta.CBA_NUM_PLAZA}"/>
+                                    </p:column>
+                                    <p:column headerText="Sucursal" styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_NUM_SUCURSAL}"/>
+                                    </p:column>
+                                    <p:column headerText="Cuenta" styleClass="centeredColumnContent" width="100">
+                                        <h:outputText value="#{cuenta.CBA_NUM_CUENTA}" > 
+                                         <f:convertNumber       maxFractionDigits= "0"
+                                                               minFractionDigits= "0"
+                                                               pattern          = "#########################"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Moneda" styleClass="centeredColumnContent" width="60">
+                                        <h:outputText value="#{cuenta.CBA_MONEDA}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:panelGrid styleClass = "bordePanel" 
+                                 style="margin-left: auto; margin-right: auto; text-align: center;">
+                        <p:row>
+                            <p:column colspan="4" style="text-align: center;">
+                                <strong> 
+                                    <h:outputLabel style="background-color: yellow; color: red;" 
+                                                   value = "Cualquier cambio en éstos parámetros solo es válido si la liquidación es el mismo día." />
+                                </strong>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <f:facet name="footer">
+                        <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+                            <p:commandButton id="btnAsignarde" 
+                                             class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-check" 
+                                             value="Agregar"  
+                                             style= "margin-right: 15px;"
+                                             actionListener="#{mbMonetariasLiquidacionOtrosBancos.agregarParametrosLiquidacion()}" />
+                            <p:commandButton value="Cancelar" 
+                                             icon="ui-icon-cancel" 
+                                             style= "margin-right: 15px;"
+                                             actionListener="#{mbMonetariasLiquidacionOtrosBancos.cierraParametrosLiquidacion}" />
+                        </h:panelGrid>  
+                    </f:facet>
+
+                </p:dialog>
+                <br/>
+                
+                <p:dialog id="dlgSPExito" 
+                          header="Detalle del resguardo"  
+                          widgetVar="dlgSPExito" 
+                          width="40%" 
+                          closable="false" 
+                          closeOnEscape="false"
+                          modal="true"
+                          resizable="false">  
+                    <br/>
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row>
+                            <p:column style = "font-weight: bold;">
+                                <p:outputLabel value="Liquidación del Fideicomiso #{mbMonetariasLiquidacionOtrosBancos.fideicomiso}, para el FIDEICOMISARIO #{mbMonetariasLiquidacionOtrosBancos.nombreSeleccionado.beneficiarioNombre}. por #{mbMonetariasLiquidacionOtrosBancos.importeTxt}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column style = "font-weight: bold;">
+                                <h:outputLabel value = "TRANSACCIÓN REQUIERE AUTORIZACIÓN."/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="6" style="text-align: center;">
+                                <p:commandButton value = "Aceptar"  
+                                                 action="#{mbMonetariasLiquidacionOtrosBancos.onMonetariasLiquidacionOtrosBancos_Terminar()}"
+                                                 icon = "ui-icon-check" style="margin: 0 auto"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>  
+                <br/>
+                <p:row>
+                    <p:column>
+                        <center>
+                            <p:commandButton id="btnAsignar" 
+                                             class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-check" value="Aceptar"
+                                             style= "margin-right: 15px;"
+                                             actionListener="#{mbMonetariasLiquidacionOtrosBancos.guardaLiquidacionOperadaOtrosBancos}"/>
+                            <p:commandButton class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                             icon="ui-icon-close" 
+                                             style= "margin-right: 15px;"
+                                             value="Cancelar" 
+                                             action="#{mbMonetariasLiquidacionOtrosBancos.onMonetariasLiquidacionOtrosBancos_Terminar()}"/>
+
+
+                        </center>
+                    </p:column>
+                </p:row>
+            </p:panel>
+            <h:outputText value="&lt;br/&gt;" escape="false" />
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                height          : auto;
+                                                                width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

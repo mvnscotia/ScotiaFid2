@@ -1,0 +1,1456 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <style                                                  type            = "text/css"
+                                                                media           = "screen">
+            
+        </style>
+        	<script type="text/javascript">  
+function convertirImporte(campo) {
+                const numStr = campo.value.replaceAll('$','');
+                const num = Number(numStr.replaceAll(',',''));
+
+                if (!isNaN(num)) {
+                    const importeFormateado = num.toLocaleString('es-MX', 
+                    { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+                    campo.value = importeFormateado;
+                }
+            }           
+           
+            function convertirDecimal(campo) {
+                const numStr = campo.value;
+                const num = Number(numStr.replaceAll(',',''));
+
+                if (!isNaN(num)) {
+                    const importeFormateado = num.toLocaleString('es-MX', 
+                    { style: 'decimal', currency: 'MXN', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    campo.value = importeFormateado;
+                }
+            }           
+           
+	    PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+	   </script>        
+
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmBienFideIndiv">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            
+            <p:growl                                            id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Individualización de Inmuebles">
+                <br/>
+                <center>
+                    <p:commandButton                            icon            = "ui-icon-document"
+                                                                value           = "Nueva Unidad"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadNuevo}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideUnidad"/>
+                </center>
+                <br/>
+                <p:dataTable                                    id              = "dtInmueble"
+                                                                emptyMessage    = "Sin Registros"
+                                                                value           = "#{mbContabilidad.consultaBienFide}"
+                                                                var             = "bienFideIndiv"
+                                                                 resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                               selection       = "#{mbContabilidad.seleccionaBienFide}"
+                                                                selectionMode   = "single"
+                                                                rowKey          = "#{bienFideIndiv.bienFideContratoNum} #{bienFideIndiv.bienFideContratoNumSub} #{bienFideIndiv.bienFideTipo} #{bienFideIndiv.bienFideId}"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom"
+                                                                rows            = "10"
+                                                                lazy            = "true"
+                                                                scrollable      ="true">
+                    <p:ajax                                     event           = "rowSelect"
+                                                                listener        = "#{mbContabilidad.onContabilidadBienFideIndiv_ConsultaSeleccionaBien}"
+                                                                update          = ":frmBienFideIndiv:dtUnidad,
+                                                                                   :frmBienFideIndiv:dlgBienFideUnidad"/>
+                    <f:facet                                    name            = "header">
+                        <h:outputLabel                          value           = "Inmuebles fideicomitidos o en garantía"/>
+                    </f:facet>
+                    <p:column                                   headerText      = "Fideicomiso"
+                                                                style           = "width: 8%">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideContratoNum}"
+                                                                title           = "#{bienFideIndiv.bienFideContratoNum}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SubFiso"
+                                                                style           = "width: 4%">
+                        <center>
+                            <h:outputLabel                      value           = "#{bienFideIndiv.bienFideContratoNumSub}"
+                                                                title           = "#{bienFideIndiv.bienFideContratoNumSub}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Clase de Bien"
+                                                                style           = "width: 9%">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideTipo}"
+                                                                title           = "#{bienFideIndiv.bienFideTipo}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Núm. Bien"
+                                                                style           = "width: 6%">
+                        <center>
+                            <h:outputLabel                      value           = "#{bienFideIndiv.bienFideId}"
+                                                                title           = "#{bienFideIndiv.bienFideId}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Descripción"
+                                                                style           = "width: 30%;">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideDescripcion}"
+                                                                title           = "#{bienFideIndiv.bienFideDescripcion}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideMonedaNom}"
+                                                                title           = "#{bienFideIndiv.bienFideMonedaNom}"/>                                            
+                    </p:column>
+                    <p:column                                   headerText      = "Importe"
+                                                                style           = "width: 10%">
+                        <h:inputText                            value           = "#{bienFideIndiv.bienFideImporte}"
+                                                                title           = "#{bienFideIndiv.bienFideImporte}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Imp. Ult. Val."
+                                                                style           = "width: 10%">
+                        <h:inputText                            value           = "#{bienFideIndiv.bienFideImporteUltVal}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Fec. Val."
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideFechaValUltStr}">
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{bienFideIndiv.bienFideStatus}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <br/>
+                <p:dataTable                                    id              = "dtUnidad"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "100"
+                                                                value           = "#{mbContabilidad.consultaBienFideU}"
+                                                                var             = "u"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                selection       = "#{mbContabilidad.seleccionaBienFideU}"
+                                                                selectionMode   = "single"
+                                                                rowKey          = "#{u.bienFideId}#{u.bienFideUnidadSec}"                                                                
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom"
+                                                                rows            = "10"
+                                                                lazy            = "true">
+                    <p:ajax                                     event           = "rowSelect"
+                                                                listener        = "#{mbContabilidad.onContabilidadBienFideIndiv_ConsultaSeleccionaUnidad}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideUnidad"/>
+                    <f:facet                                    name            = "header">
+                        <h:outputLabel                          value           = "Unidades"/>
+                    </f:facet>
+                    <p:column                                   headerText      = "Bien Id."
+                                                                style           = "width: 4%">
+                        <center>
+                            <h:outputLabel                      value           = "#{u.bienFideId}"
+                                                                title           = "#{u.bienFideId}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Unidad"
+                                                                style           = "width: 4%">
+                        <center>
+                            <h:outputLabel                      value           = "#{u.bienFideUnidadSec}"
+                                                                title           = "#{u.bienFideUnidadSec}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Fec. Contrato"
+                                                                style           = "width: 8%;">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadFechaCto}"
+                                                                title           = "#{u.bienFideUnidadFechaCto}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Tipo"
+                                                                style           = "width: 10%">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadTipo}"
+                                                                title           = "#{u.bienFideUnidadTipo}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Nombre"
+                                                                style           = "width: 22%">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadNombre}"
+                                                                title           = "#{u.bienFideUnidadNombre}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Domicilio"
+                                                                style           = "width: 24%">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadDomicilio}"
+                                                                title           = "#{u.bienFideUnidadDomicilio}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Valor"
+                                                                style           = "width: 9%">
+                        <h:inputText                            value           = "#{u.bienFideUnidadValor}"
+                                                                title           = "#{u.bienFideUnidadValor}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Moneda"
+                                                                style           = "width: 4%">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadMonedaNum}"
+                                                                title           = "#{u.bienFideUnidadMonedaNum}"/> 
+                    </p:column>
+                    <p:column                                   headerText      = "Superficie m2"
+                                                                style           = "width: 8%">
+                        <h:inputText                            value           = "#{u.bienFideUnidadSuperficie}"
+                                                                title           = "#{u.bienFideUnidadSuperficie}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                            <f:convertNumber                      pattern        = "####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{u.bienFideUnidadStatus}"
+                                                                title           = "#{u.bienFideUnidadStatus}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <br/>
+                <p:panelGrid                                    id              = "panelCriterio"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "8"
+                                                                styleClass      = "degradadoOrigenCentro"
+                                                                style           = "color: #ffffff; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Criterios de búsqueda"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX1}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                size            = "12"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX2}"
+                                                                maxlength       = "5"
+                                                                size            = "6"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Plaza:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioPlaza}"
+                                                                maxlength       = "6"
+                                                                size            = "5"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-search"
+                                                                title           = "Ejecuta una búsqueda de información en base a criterios especificados"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ConsultaEjecuta}"
+                                                                update          = ":frmBienFideIndiv:dtInmueble,
+                                                                                   :frmBienFideIndiv:panelCriterio,
+                                                                                   :frmBienFideIndiv:dtUnidad"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-refresh"
+                                                                title           = "Limpia Campos"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ConsultaLimpia}"
+                                                                update          = ":frmBienFideIndiv:dtInmueble,
+                                                                                   :frmBienFideIndiv:dtUnidad,
+                                                                                   :frmBienFideIndiv:panelCriterio"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+            
+            <p:dialog                                           id              = "dlgBienFideIndivUni" 
+                                                                closable        = "true" 
+                                                                header          = "Sistema Fiduciario.- Individualización de unidades" 
+                                                                modal           = "true" 
+                                                                hideEffect      = "explode"
+                                                                position        = "100, 20" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgBienFideIndivUni">
+                <br/>
+                <p:accordionPanel                               id              = "accordeon"
+                                                                activeIndex     = "0"
+                                                                widgetVar       = "aPanel"
+                                                                multiple        = "true">
+                    <p:tab                                      title           = ".:: Inmueble">
+                        <p:panelGrid                            id              = "panelIndivInm"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                            <p:row>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Id.:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivSec}"
+                                                                readonly        = "true"
+                                                                maxlength       = "4"
+                                                                size            = "6"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                                </p:column>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Depto/Lote/Local:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivDeptoNum}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                maxlength       = "10"
+                                                                autocomplete    = "off"/>
+                                </p:column>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Tipo:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu            value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivTipo}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                        <f:selectItem           itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                        <f:selectItems          value           = "#{mbContabilidad.listaIndivInmblTipo}"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Ubicación:"/>
+                                </p:column>
+                                <p:column                       colspan         = "3">
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivUbicacion}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "50"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Superficie m2:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivSuperficieM2}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                style           = "text-align: right;"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                
+                                                                onblur          = "convertirDecimal(this)">
+                            </h:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Medidas:"/>
+                                </p:column>
+                                <p:column                       colspan         = "5">
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivMedidas}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "250"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Indiviso:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivIndiviso}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autocomplete    = "off"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                maxlength       = "10">
+                            </h:inputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Niveles:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivNiveles}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                maxlength       = "3"
+                                                                autocomplete    = "off">
+                            </h:inputText>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Precio:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                id              = "txtPrecio"
+                                                                value           = "#{beanContabilidadBienFideUnidadIndiv.txtBienFideUnidadIndivPrecio}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                style           = "text-align: right;"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                onblur          = "convertirImporte(this)">
+                            </h:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Fecha últ. avalúo:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanGenericoFecha.genericoFecha01}"
+                                                                disabled        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: left;"
+                                                                maxlength       = "10"
+                                                                size            = "8">
+                                        <f:convertDateTime      pattern         = "dd/MM/yyyy"
+                                                                timeZone        ="America/Mexico_City"/>
+                                    </h:inputText>
+                                </p:column>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Valor últ. avalúo :"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivUltAvaluoValor}"
+                                                                disabled        = "true"
+                                                                autocomplete    = "off"
+                                                                style           = "background-color: #ffffcc; text-align: right;"
+                                                                maxlength       = "20"
+                                                                size            = "15">
+                                        <f:convertNumber       maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                        <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                    </h:inputText>
+                                </p:column>
+                                <p:column                       style           = "background-color: #F2F5F9;">
+                                    <h:outputLabel              value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivMonedaNom}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc;"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    
+                                </p:column>
+                                <p:column>
+                                    
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Status Inmueble:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu            value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivStatusInmueble}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                        <f:selectItem           itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                        <f:selectItems          value           = "#{mbContabilidad.listaIndivUnidad}"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Status Reg.:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu            value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivStatus}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                        <f:selectItem           itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                        <f:selectItems          value           = "#{mbContabilidad.listaStatusUnidadesIndv}"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <div                                    style           = "background-color: #F2F5F9; visibility: #{beanGenericoVisible.genericoVisible00}">
+                            <br/>
+                            <center>
+                                <p:commandButton                id              = "cmdUniIndivInmModif"
+                                                                icon            = "ui-icon-pencil"
+                                                                value           = "Modificar"
+                                                                style           = "margin-right: 15px;"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivModifica}"
+                                                                update          = ":frmBienFideIndiv:accordeon:panelIndivInm,
+                                                                                   :frmBienFideIndiv:accordeon:cmdUniIndivInmModif,
+                                                                                   :frmBienFideIndiv:accordeon:cmdUniIndivInmAplica,
+                                                                                   :frmBienFideIndiv:accordeon:cmdUniIndivInmElimina"/>
+                                <p:commandButton                id              = "cmdUniIndivInmAplica"
+                                                                icon            = "ui-icon-circle-check"
+                                                                value           = "Aplicar"
+                                                                style           = "margin-right: 15px;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivAplica}"
+                                                                update          = ":frmBienFideIndiv:dtUnidadIndiv,
+                                                                                   :frmBienFideIndiv:accordeon:panelIndivInm"/>
+                                <p:commandButton                id              = "cmdUniIndivInmElimina"
+                                                                icon            = "ui-icon-trash"
+                                                                value           = "Eliminar"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivElimina}"
+                                                                update          = ":frmBienFideIndiv:dlgPopUpGral"/>
+                                <p:menuButton                   id              = "cmdUniIndivInmMasivos"
+                                                                value           = "Masivos"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                    <p:menuitem                 value           = "Cambio de Status"
+                                                                icon            = "ui-icon-radio-on"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoDespliegaVentana}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideIndivCargaMasiva">
+                                        <f:param                name            = "paramOrigenCarga"
+                                                                value           = "01"/>
+                                    </p:menuitem>
+                                    <p:menuitem                 value           = "Individualización"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado05}"
+                                                                icon            = "ui-icon-radio-on"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoDespliegaVentana}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideIndivCargaMasiva">
+                                        <f:param                name            = "paramOrigenCarga"
+                                                                value           = "02"/>
+                                    </p:menuitem>
+                                    <p:menuitem                 value           = "Liquidación"
+                                                                icon            = "ui-icon-radio-on"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoDespliegaVentana}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideIndivCargaMasiva">
+                                        <f:param                name            = "paramOrigenCarga"
+                                                                value           = "03"/>
+                                    </p:menuitem>
+                                </p:menuButton>
+                            </center>
+                            <br/>
+                        </div>
+                    </p:tab>
+                    <p:tab                                      title           = ".:: Liquidación"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado02}">
+                        <p:panelGrid                            style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Superficie m2:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivSuperficieM2}"
+                                                                disabled        = "true"
+                                                                style           = "text-align: right;"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Valor de Extinción:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadIndiv.bienFideUnidadIndivUltAvaluoValor}"
+                                                                disabled        = "true"
+                                                                style           = "text-align: right;"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20">
+                                    <f:convertNumber            maxFractionDigits= "2"
+                                                                minIntegerDigits = "2"/>
+                                    <f:convertNumber            pattern        = "$####,###,###,###,##0.00" />
+                                    </h:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Fecha solicitud:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Fecha Instrucción:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Fecha firma:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "Fecha tras. dom.:"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:calendar                 value           = "#{beanGenericoFecha.genericoFecha02}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                disabledWeekends= "true"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar                 value           = "#{beanGenericoFecha.genericoFecha03}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                disabledWeekends= "true"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar                 value           = "#{beanGenericoFecha.genericoFecha04}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                disabledWeekends= "true"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar                 value           = "#{beanGenericoFecha.genericoFecha05}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                disabledWeekends= "true"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Escritura:"/>
+                                </p:column>
+                                <p:column>
+                                    
+                                </p:column>
+                                <p:column>
+                                    
+                                </p:column>
+                                <p:column>
+                                    
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "4">
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqEscritura}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                maxlength       = "50"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "4">
+                                    <h:outputLabel              value           = "Notario:"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "4">
+                                    <p:selectOneMenu            value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqNotarioNom}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                style           = "width: 100%;"
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains">
+                                        <f:selectItem           itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                        <f:selectItems          value           = "#{mbContabilidad.listaNotarios}"/>
+                                        <p:ajax                 listener        = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivLiquidaSeleccionaNotario}"
+                                                                update          = ":frmBienFideIndiv:accordeon:txtUnidadLiqNotarioLoc,
+                                                                                   :frmBienFideIndiv:accordeon:txtUnidadLiqNotarioNum"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "3">
+                                    <h:outputLabel              value           = "Localidad:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel              value           = "No.:"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "3">
+                                    <h:inputText                id              = "txtUnidadLiqNotarioLoc"
+                                                                value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqNotarioLoc}"
+                                                                style           = "background-color: #ffffcc;"
+                                                                readonly        = "true"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                id              = "txtUnidadLiqNotarioNum"
+                                                                value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqNotarioNum}"
+                                                                style           = "background-color: #ffffcc; text-align: center;"
+                                                                maxlength       = "4"
+                                                                size            = "6"
+                                                                readonly        = "true"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "3">
+                                    <h:outputLabel              value           = "Adquiriente:"/>
+                                </p:column>
+                                <p:column>
+
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column                       colspan         = "4">
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqAquiere}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                maxlength       = "50"/> 
+                                </p:column>
+                                <p:column>
+
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel              value           = "Status:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:inputText                value           = "#{beanContabilidadBienFideUnidadLiq.bienFideUnidadLiqStatus}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc;"
+                                                                maxlength       = "15"/> 
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <div                                    style           = "background-color: #F2F5F9; visibility: #{beanGenericoVisible.genericoVisible00}">
+                            <br/>
+                            <center>
+                                <p:commandButton                icon            = "ui-icon-pin-w"
+                                                                value           = "Liquidar"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado02}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivLiquida}"
+                                                                update          = ":frmBienFideIndiv:dlgPopUpGral"/>
+                            </center>
+                            <br/>
+                        </div>
+                    </p:tab>
+                </p:accordionPanel>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgBienFideUnidad" 
+                                                                closable        = "true" 
+                                                                header          = "Sistema Fiduciario.- Unidades" 
+                                                                modal           = "true" 
+                                                                hideEffect      = "explode"
+                                                                position        = "50, 80"
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgBienFideUnidad">
+                <br/>
+                <p:panelGrid                                    style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Tipo Bien"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Núm. Bien"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Núm. Unidad"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideContratoNum}"
+                                                                maxlength       = "10"
+                                                                readonly        = "true"
+                                                                size            = "12"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideContratoNumSub}"
+                                                                maxlength       = "2"
+                                                                readonly        = "true"
+                                                                size            = "4"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideTipo}"
+                                                                maxlength       = "15"
+                                                                readonly        = "true"
+                                                                size            = "17"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideId}"
+                                                                maxlength       = "15"
+                                                                readonly        = "true"
+                                                                size            = "17"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadSec}"
+                                                                maxlength       = "15"
+                                                                readonly        = "true"
+                                                                size            = "17"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:scrollPanel                                  mode            = "native"
+                                                                style           = "height: 500px; width: 1000px; ">
+                <br/>
+                <p:panelGrid                                    id              = "panelCapturaUnidad"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "6"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Información de la unidad"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Núm. Unidad:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadSec}"
+                                                                maxlength       = "4"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 35%;"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Nombre Unidad:"/>
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadNombre}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                maxlength       = "200"
+                                                                size            = "75"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Domicilio"/>                                        
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6">
+                            <p:inputTextarea                    value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadDomicilio}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                style           = "width: 100%;"
+                                                                rows            = "3"
+                                                                maxlength       = "250"
+                                                                autoResize      = "false"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Tipo:"/> 
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadTipo}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaIndivInmblTipoUnidad}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Escritura Inicial:"/> 
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadEscrituraIni}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                maxlength       = "10"
+                                                                size            = "10"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha Contrato:"/> 
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         value           = "#{beanGenericoFecha.genericoFecha00}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                disabledWeekends= "true"
+                                                                maxlength       = "20"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Notario:"/>
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            <p:selectOneMenu                    
+                                                                id              = "listaNotario"
+                                                                value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadNotarioLista}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"   
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains"
+                                                                style           = "text-align: left; width: 100%;">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.notarios.entrySet()}" 
+                                                                var             = "notario" itemValue="#{notario.value}" itemLabel="#{notario.key}"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadExtraeNotario}"
+                                                                update          = "txtBienFideUnidadNotarioLocalidad, txtBienFideUnidadNotarioNum"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Localidad:"/>
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            <h:inputText                        id              = "txtBienFideUnidadNotarioLocalidad"
+                                                                value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadNotarioLocalidad}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc;"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "No.:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtBienFideUnidadNotarioNum"
+                                                                value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadNotarioNumOFicial}"
+                                                                maxlength       = "4"
+                                                                readonly        = "true"
+                                                                size            = "7"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Valor Unidad:"/>
+                        </p:column>
+                        <p:column>  
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.txtBienFideUnidadValor}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                style           = "text-align: right;"
+                                                                onblur          = "convertirImporte(this)">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Moneda:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadMonedaNom}"
+                                                                style           = "background-color: #ffffcc;"
+                                                                readonly        = "true"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Superficie m2:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.txtBienFideUnidadSuperficie}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                maxlength       = "20"
+                                                                size            = "15"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                onblur          = "convertirDecimal(this)">
+                            </h:inputText>
+                                                                   
+                         
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Observaciones"/>                                        
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6">
+                            <p:inputTextarea                    value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadObservacion}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                autoResize      = "false"
+                                                                counter         = "lblRestante00"
+                                                                counterTemplate = "{0} caracteres disponibles"
+                                                                style           = "width: 100%;"
+                                                                maxlength       = "200"
+                                                                rows            = "3"/>
+                            <br/>
+                            <h:outputLabel                      id              = "lblRestante00"
+                                                                style           = "font-size: xx-small; color: #000000;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Status:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadStatus}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaStatusUnidades}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column                                colspan         = "2">
+                            <h:outputLabel                      value           = "Acumulado registro contable:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadBienFideUnidad.bienFideUnidadAcumRegContable}"
+                                                                maxlength       = "4"
+                                                                readonly        = "true"
+                                                                size            = "15"
+                                                                style           = "background-color: #ffffcc; text-align: right;">
+                                <f:convertNumber               maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                            </h:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Departamentos / Lotes /  Locales Disponibles y Comprometidas"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "6">
+                            <p:dataTable                        id              = "dtUnidadIndiv"
+                                                                emptyMessage    = "Sin Registros"
+                                                                value           = "#{mbContabilidad.consultaBienFideUI}"
+                                                                var             = "ui"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                selection       = "#{mbContabilidad.seleccionaBienFideUI}"
+                                                                selectionMode   = "single"
+                                                                rowKey          = "#{ui.bienFideUnidadIndivSec}"                                                                
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom"
+                                                                rows            = "5"
+                                                                lazy            = "true"
+                                                                scrollable      ="true">
+                                <p:ajax                         event           = "rowSelect"
+                                                                listener        = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadIndivSelecciona}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideIndivUni,:frmBienFideIndiv:listaNotario"/>
+                                <p:column                       headerText      = "Sec."
+                                                                style           = "width: 3%;">
+                                    <center>
+                                        <h:outputLabel          value           = "#{ui.bienFideUnidadIndivSec}"/>
+                                    </center>
+                                </p:column>
+                                <p:column                       headerText      = "Depto/Lote/Local"
+                                                                style           = "width: 13%;">
+                                    <h:outputLabel              value           = "#{ui.bienFideUnidadIndivDeptoNum}"/>
+                                </p:column>
+                                <p:column                       headerText      = "Ubicación"
+                                                                style           = "width: 11%;">
+                                    <center>
+                                        <h:outputLabel          value           = "#{ui.bienFideUnidadIndivUbicacion}"/>
+                                    </center>
+                                </p:column>
+                                <p:column                       headerText      = "Tipo"
+                                                                style           = "width: 10%;">
+                                    <h:outputLabel              value           = "#{ui.bienFideUnidadIndivTipo}"/>
+                                </p:column>
+                                <p:column                       headerText      = "Superficie"
+                                                                style           = "width: 8%;">
+                                    <h:outputLabel              value           = "#{ui.bienFideUnidadIndivSuperficieM2}"/>
+                                </p:column>
+                                <p:column                       headerText      = "Registro Contable"
+                                                                style           = "width: 13%;">
+                                    <h:inputText                value           = "#{ui.bienFideUnidadIndivPrecio}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                                        <f:convertNumber       maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                                        <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                    </h:inputText>
+                                </p:column>
+                                <p:column                       headerText      = "Moneda"
+                                                                style           = "width: 5%;">
+                                    <h:outputLabel              value           = "#{ui.bienFideUnidadIndivMonedaNum  }"/>
+                                </p:column>
+                                <p:column                       headerText      = "Ult. Val."
+                                                                style           = "width: 10%;">
+                                    <h:inputText                value           = "#{ui.bienFideUnidadIndivUltAvaluoValor}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;">
+                                        <f:convertNumber       maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                                        <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                    </h:inputText>
+                                </p:column>
+                                <p:column                       headerText      = "Status Inmueble"
+                                                                style           = "width: 18%;">
+                                    <h:outputLabel              value           = "#{ui.bienFideUnidadIndivStatusInmueble}"/>
+                                </p:column>
+                                <p:column                       headerText      = "Contabilizado"
+                                                                style           = "width: 9%;">
+                                    <center>
+                                        <h:outputLabel          value           = "#{ui.bienFideUnidadIndivCveLiq}"/>
+                                    </center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <div                                            style           = "background-color: #F2F5F9;">
+                    <br/>
+                    <center>
+                        <p:commandButton                        id              = "cmdUniModifica"
+                                                                icon            = "ui-icon-pencil"
+                                                                value           = "Modificar"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadRegistroModifica}"
+                                                                update          = ":frmBienFideIndiv:cmdUniModifica, 
+                                                                                   :frmBienFideIndiv:cmdUniAplica,
+                                                                                   :frmBienFideIndiv:cmdUniElimina,
+                                                                                   :frmBienFideIndiv:cmdUniIdiv,
+                                                                                   :frmBienFideIndiv:panelCapturaUnidad"
+                                                                style           = "margin-right: 15px;"/>
+                        <p:commandButton                        id              = "cmdUniAplica"
+                                                                icon            = "ui-icon-circle-check"
+                                                                value           = "Aplicar"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadRegistroAplica}"
+                                                                update          = ":frmBienFideIndiv:dtInmueble,
+                                                                                   :frmBienFideIndiv:dtUnidad,
+                                                                                   :frmBienFideIndiv:panelCapturaUnidad,
+                                                                                   :frmBienFideIndiv:dlgBienFideIndivUni"/>
+                        <p:commandButton                        id              = "cmdUniElimina"
+                                                                icon            = "ui-icon-trash"
+                                                                value           = "Eliminar"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadRegistroELimina}"
+                                                                update          = ":frmBienFideIndiv:dlgPopUpGral"
+                                                                style           = "margin-right: 15px;"/>
+                        <p:commandButton                        id              = "cmdUniIdiv"
+                                                                icon            = "ui-icon-pin-s"
+                                                                value           = "Individualizar"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_UnidadRegistroIndividualiza}"
+                                                                update          = ":frmBienFideIndiv:dlgBienFideIndivUni"/>
+                        <p:commandButton                        id              = "cmdUniMasivo"
+                                                                icon            = "ui-icon-script"
+                                                                value           = "Unidades Masivo"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoDespliegaVentana}"
+                                                                update          = "dlgBienFideIndivCargaMasiva">
+                            <f:param                            name            = "paramOrigenCarga"
+                                                                value           = "00"/>
+                        </p:commandButton>
+                    </center>
+                    <br/>
+                </div>
+                </p:scrollPanel>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgBienFideIndivCargaMasiva"
+                                                                closable        = "true"
+                                                                header          = "Sistema Fiduciario.- Carga Masiva"
+                                                                modal           = "true"
+                                                                position        = "100, 100"
+                                                                resizable       = "false"
+                                                                widgetVar       = "dlgBienFideIndivCargaMasiva">
+                <br/>
+                <center>
+                    <p:outputLabel value="#{beanGenericoTitulo.genericoTitulo00}"  style = "color: #004276; font-size: medium; font-weight: bolder"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanGenericoTitulo.genericoTitulo01}"
+                                                                style           = "color: #004276; font-size: xx-small; font-weight: bolder"/> 
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanGenericoTitulo.genericoTitulo02}"
+                                                                style           = "color: #004276; font-size: xx-small; font-weight: bolder"/> 
+                </center>
+                <br/>
+                <br/>
+                <p:panelGrid                                    styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column                               colspan         = "5"
+                                                                style           = "background-color: #F2F5F9; color: #000000; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Datos del inmueble"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "Fideicomiso"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "SubFiso"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "Tipo Bien"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "Inmueble"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "Unidad"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbContabilidad.seleccionaBienFide.bienFideContratoNum}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; color: #004276; font-weight: bold; text-align: center; width: 120px;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbContabilidad.seleccionaBienFide.bienFideContratoNumSub}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; color: #004276; font-weight: bold; text-align: center; width: 80px;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbContabilidad.seleccionaBienFide.bienFideTipo}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; color: #004276; font-weight: bold; text-align: center; width: 120px;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbContabilidad.seleccionaBienFide.bienFideId}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; color: #004276; font-weight: bold; text-align: center; width: 80px;"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{mbContabilidad.seleccionaBienFideU.bienFideUnidadSec}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; color: #004276; font-weight: bold; text-align: center; width: 80px;"/>
+                        </p:column>
+                    </p:row>
+                     <p:row>
+                        <p:column                               colspan         = "5"
+                                                                style           = "background-color: #F2F5F9; color: #000000; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Archivo"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5">
+                            <p:fileUpload                     fileUploadListener= "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoTransfiere}"
+                                                              invalidSizeMessage= "Error, el tamaño máximo del archivo debe de ser de 1024Kb ( 1MB )"
+                                                              invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt)"
+                                                                showButtons     = "false"
+                                                                allowTypes      = "/(\.|\/)(txt)$/"
+                                                                mode            = "advanced"
+                                                                sizeLimit       = "10000024"
+                                                                update          = "growl, lstErrores, dtInmueble, dtUnidad, dtUnidadIndiv, cmdArchivoAplica"
+                                                                label           = "Archivo"
+                                                                uploadLabel     = "Transferir archivo"
+                                                                style           = "margin-left: auto; margin-right: auto;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5"
+                                                                style           = "background-color: #F2F5F9; font-weight: bolder;">
+                            <h:outputLabel                      value           = ".:: Mensajes del procesamiento"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5">
+                            <p:selectOneListbox                 id              = "lstErrores"
+                                                                style           = "height: 150px; width: 650px;">
+                                <f:selectItems                  value           = "#{mbContabilidad.listaErr}"/>
+                            </p:selectOneListbox>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton                            id              = "cmdArchivoAplica"
+                                                                icon            = "ui-icon-gear"
+                                                                value           = "Aplicar"
+                                                                title           = "Procesa la información del archivo dentro del sistema"
+                                                                style           = "margin-right: 20px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadBienFideIndiv_ArchivoAplica}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado04}"
+                                                                update          = ":frmBienFideIndiv:dtInmueble,
+                                                                                   :frmBienFideIndiv:dtUnidad,
+                                                                                   :frmBienFideIndiv:dtUnidadIndiv,
+                                                                                   :frmBienFideIndiv:panelCriterio,
+                                                                                   :frmBienFideIndiv:panelCapturaUnidad,
+                                                                                   :frmBienFideIndiv:lstErrores,
+                                                                                   :frmBienFideIndiv:panelCapturaUnidad,
+                                                                                   @this"/>
+
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                hideEffect      = "explode"
+                                                                modal           = "true"
+                                                                position        = "450, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion}"
+                                                                update          = ":frmBienFideIndiv:dtInmueble,
+                                                                                   :frmBienFideIndiv:dtUnidad,
+                                                                                   :frmBienFideIndiv:dtUnidadIndiv,
+                                                                                   :frmBienFideIndiv:panelCriterio,
+                                                                                   :frmBienFideIndiv:panelCapturaUnidad"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

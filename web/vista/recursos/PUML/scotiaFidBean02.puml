@@ -1,0 +1,301 @@
+@startuml
+    class scotiaFid.bean.ContabilidadPolizaManBean{
+        -polizaEncaNombre;
+        -polizaEncaNumero;
+        -polizaEncaFechaVal;
+        -polizaEncaFechaMovto;
+        -polizaEncaAportPatrim;
+        -polizaEncaFolio;
+        -polizaEncaHoraAplica;
+        -polizaEncaRedaccion;
+        -polizaEncaLiqCveMovto;
+        -polizaEncaLiqCveCpto;
+        -polizaEncaSugerCve;
+        -polizaEncaFidRol;
+        -polizaEncaFidPers;
+        -polizaEncaFidNum;
+        -polizaEncaTipoPol;
+        -polizaEncaCamposArr;
+        -polizaEncaCamposNum;
+        -polizaEncaBitTipoOper;
+        -polizaEncaBitPantalla;
+        -polizaEncaBitTerminal;
+        -polizaEncaBitUsuario;
+        -poliza00Etiqueta;
+        -poliza00Valor;
+        -poliza00Visible;
+        -poliza01Etiqueta;
+        -poliza01Valor;
+        -poliza01Visible;
+        -poliza02Etiqueta;
+        -poliza02Valor;
+        -poliza02Visible;
+        -poliza03Etiqueta;
+        -poliza03Valor;
+        -poliza03Visible;
+        -poliza04Etiqueta;
+        -poliza04Valor;
+        -poliza04Visible;
+        -poliza05Etiqueta;
+        -poliza05Valor;
+        -poliza05Visible;
+        -poliza06Etiqueta;
+        -poliza06Valor;
+        -poliza06Visible;
+        -poliza07Etiqueta;
+        -poliza07Valor;
+        -poliza07Visible;
+        -poliza08Etiqueta;
+        -poliza08Valor;
+        -poliza08Visible;
+        -poliza09Etiqueta;
+        -poliza09Valor;
+        -poliza09Visible;
+        -poliza10Etiqueta;
+        -poliza10Valor;
+        -poliza10Visible;
+        -poliza11Etiqueta;
+        -poliza11Valor;
+        -poliza11Visible;
+        -poliza12Etiqueta;
+        -poliza12Valor;
+        -poliza12Visible;
+        -poliza13Etiqueta;
+        -poliza13Valor;
+        -poliza13Visible;
+        -poliza14Etiqueta;
+        -poliza14Valor;
+        -poliza14Visible;
+        -poliza15Etiqueta;
+        -poliza15Valor;
+        -poliza15Visible;
+        -poliza16Etiqueta;
+        -poliza16Valor;
+        -poliza16Visible;
+        -poliza17Etiqueta;
+        -poliza17Valor;
+        -poliza17Visible;
+        -poliza18Etiqueta;
+        -poliza18Valor;
+        -poliza18Visible;
+        -poliza19Etiqueta;
+        -poliza19Valor;
+        -poliza19Visible;
+
+        +getPolizaEncaNombre
+        +setPolizaEncaNombre(String polizaEncaNombre)
+        +getPolizaEncaNumero
+        +setPolizaEncaNumero(String polizaEncaNumero)
+        +getPolizaEncaFechaVal
+        +setPolizaEncaFechaVal(Date polizaEncaFechaVal)
+        +getPolizaEncaFechaMovto
+        +setPolizaEncaFechaMovto(Date polizaEncaFechaMovto)
+        +getPolizaEncaAportPatrim
+        +setPolizaEncaAportPatrim(String polizaEncaAportPatrim)
+        +getPolizaEncaFolio
+        +setPolizaEncaFolio(Long polizaEncaFolio)
+        +setPolizaEncaHoraAplica(String polizaEncaHoraAplica)
+        +getPolizaEncaRedaccion
+        +setPolizaEncaRedaccion(String polizaEncaRedaccion)
+        +getPolizaEncaLiqCveMovto
+        +getPolizaEncaLiqCveCpto
+        +setPolizaEncaLiqCveCpto(Integer polizaEncaLiqCveCpto)
+        +getPolizaEncaSugerCve
+        +setPolizaEncaSugerCve(Integer polizaEncaSugerCve)
+        +getPolizaEncaFidRol
+        +setPolizaEncaFidRol(String polizaEncaFidRol)
+        +getPolizaEncaFidPers
+        +setPolizaEncaFidPers(String polizaEncaFidPers)
+        +getPolizaEncaFidNum
+        +setPolizaEncaFidNum(Integer polizaEncaFidNum)
+        +getPolizaEncaTipoPol
+        +setPolizaEncaTipoPol(String polizaEncaTipoPol)
+        +getPolizaEncaCamposArr
+        +setPolizaEncaCamposArr(String[] polizaEncaCamposArr)
+        +getPolizaEncaCamposNum
+        +setPolizaEncaCamposNum(Integer polizaEncaCamposNum)
+        +getPolizaEncaBitTipoOper
+        +setPolizaEncaBitTipoOper(String polizaEncaBitTipoOper)
+        +getPolizaEncaBitPantalla
+        +setPolizaEncaBitPantalla(String polizaEncaBitPantalla)
+        +getPolizaEncaBitTerminal
+        +setPolizaEncaBitTerminal(String polizaEncaBitTerminal)
+        +getPolizaEncaBitUsuario
+        +setPolizaEncaBitUsuario(Integer polizaEncaBitUsuario)
+        +getPoliza00Etiqueta
+        +setPoliza00Etiqueta(String poliza00Etiqueta)
+        +getPoliza00Valor
+        +setPoliza00Valor(String poliza00Valor)
+        +getPoliza00Visible
+        +setPoliza00Visible(String poliza00Visible)
+        +getPoliza01Etiqueta
+        +setPoliza01Etiqueta(String poliza01Etiqueta)
+        +getPoliza01Valor
+        +setPoliza01Valor(String poliza01Valor)
+        +getPoliza01Visible
+        +setPoliza01Visible(String poliza01Visible)
+        +getPoliza02Etiqueta
+        +setPoliza02Etiqueta(String poliza02Etiqueta)
+        +getPoliza02Valor
+        +setPoliza02Valor(String poliza02Valor)
+        +getPoliza02Visible
+        +setPoliza02Visible(String poliza02Visible)
+        +getPoliza03Etiqueta
+        +setPoliza03Etiqueta(String poliza03Etiqueta)
+        +getPoliza03Valor
+        +setPoliza03Valor(String poliza03Valor)
+        +getPoliza03Visible
+        +setPoliza03Visible(String poliza03Visible)
+        +getPoliza04Etiqueta
+        +setPoliza04Etiqueta(String poliza04Etiqueta)
+        +getPoliza04Valor
+        +setPoliza04Valor(String poliza04Valor)
+        +getPoliza04Visible
+        +setPoliza04Visible(String poliza04Visible)
+        +getPoliza05Etiqueta
+        +setPoliza05Etiqueta(String poliza05Etiqueta)
+        +getPoliza05Valor
+        +setPoliza05Valor(String poliza05Valor)
+        +getPoliza05Visible
+        +setPoliza05Visible(String poliza05Visible)
+        +getPoliza06Etiqueta
+        +setPoliza06Etiqueta(String poliza06Etiqueta)
+        +getPoliza06Valor
+        +setPoliza06Valor(String poliza06Valor)
+        +getPoliza06Visible
+        +setPoliza06Visible(String poliza06Visible)
+        +getPoliza07Etiqueta
+        +setPoliza07Etiqueta(String poliza07Etiqueta)
+        +getPoliza07Valor
+        +setPoliza07Valor(String poliza07Valor)
+        +getPoliza07Visible
+        +setPoliza07Visible(String poliza07Visible)
+        +getPoliza08Etiqueta
+        +setPoliza08Etiqueta(String poliza08Etiqueta)
+        +getPoliza08Valor
+        +setPoliza08Valor(String poliza08Valor)
+        +getPoliza08Visible
+        +setPoliza08Visible(String poliza08Visible)
+        +getPoliza09Etiqueta
+        +setPoliza09Etiqueta(String poliza09Etiqueta)
+        +getPoliza09Valor
+        +setPoliza09Valor(String poliza09Valor)
+        +getPoliza09Visible
+        +setPoliza09Visible(String poliza09Visible)
+        +getPoliza10Etiqueta
+        +setPoliza10Etiqueta(String poliza10Etiqueta)
+        +getPoliza10Valor
+        +setPoliza10Valor(String poliza10Valor)
+        +getPoliza10Visible
+        +setPoliza10Visible(String poliza10Visible)
+        +getPoliza11Etiqueta
+        +setPoliza11Etiqueta(String poliza11Etiqueta)
+        +getPoliza11Valor
+        +setPoliza11Valor(String poliza11Valor)
+        +getPoliza11Visible
+        +setPoliza11Visible(String poliza11Visible)
+        +getPoliza12Etiqueta
+        +setPoliza12Etiqueta(String poliza12Etiqueta)
+        +getPoliza12Valor
+        +setPoliza12Valor(String poliza12Valor)
+        +getPoliza12Visible
+        +setPoliza12Visible(String poliza12Visible)
+        +getPoliza13Etiqueta
+        +setPoliza13Etiqueta(String poliza13Etiqueta)
+        +getPoliza13Valor
+        +setPoliza13Valor(String poliza13Valor)
+        +getPoliza13Visible
+        +setPoliza13Visible(String poliza13Visible)
+        +getPoliza14Etiqueta
+        +setPoliza14Etiqueta(String poliza14Etiqueta)
+        +getPoliza14Valor
+        +setPoliza14Valor(String poliza14Valor)
+        +getPoliza14Visible
+        +setPoliza14Visible(String poliza14Visible)
+        +getPoliza15Etiqueta
+        +setPoliza15Etiqueta(String poliza15Etiqueta)
+        +getPoliza15Valor
+        +setPoliza15Valor(String poliza15Valor)
+        +getPoliza15Visible
+        +setPoliza15Visible(String poliza15Visible)
+        +getPoliza16Etiqueta
+        +setPoliza16Etiqueta(String poliza16Etiqueta)
+        +getPoliza16Valor
+        +setPoliza16Valor(String poliza16Valor)
+        +getPoliza16Visible
+        +setPoliza16Visible(String poliza16Visible)
+        +getPoliza17Etiqueta
+        +setPoliza17Etiqueta(String poliza17Etiqueta)
+        +getPoliza17Valor
+        +setPoliza17Valor(String poliza17Valor)
+        +getPoliza17Visible
+        +setPoliza17Visible(String poliza17Visible)
+        +getPoliza18Etiqueta
+        +setPoliza18Etiqueta(String poliza18Etiqueta)
+        +getPoliza18Valor
+        +setPoliza18Valor(String poliza18Valor)
+        +getPoliza18Visible
+        +setPoliza18Visible(String poliza18Visible)
+        +getPoliza19Etiqueta
+        +setPoliza19Etiqueta(String poliza19Etiqueta)
+        +getPoliza19Valor
+        +setPoliza19Valor(String poliza19Valor)
+        +getPoliza19Visible
+        +setPoliza19Visible(String poliza19Visible)
+
+        +ContabilidadPolizaManBean()
+    }
+    class scotiaFid.bean.ContabilidadSaldoPromBean{
+        -saldoPromContratoNum;
+        -saldoPromContratoNumSub;
+        -saldoPromContratoNom;
+        -saldoPromFecha;
+        -saldoPromActivo;
+        -saldoPromPatrim;
+        -saldoPromInv;
+        -saldoPromTotal;
+
+        +getSaldoPromContratoNum
+        +setSaldoPromContratoNum(Long saldoPromContratoNum)
+        +getSaldoPromContratoNumSub
+        +setSaldoPromContratoNumSub(Long saldoPromContratoNumSub)
+        +getSaldoPromContratoNom
+        +setSaldoPromContratoNom(String saldoPromContratoNom)
+        +getSaldoPromFecha
+        +setSaldoPromFecha(Date saldoPromFecha)
+        +getSaldoPromActivo
+        +setSaldoPromActivo(Double saldoPromActivo)
+        +getSaldoPromPatrim
+        +setSaldoPromPatrim(Double saldoPromPatrim)
+        +getSaldoPromInv
+        +setSaldoPromInv(Double saldoPromInv)
+        +getSaldoPromTotal
+        +setSaldoPromTotal(Double saldoPromTotal)
+
+        +ContabilidadSaldoPromBean()
+        
+    }
+    class scotiaFid.bean.ContabilidadTipoCambBean{
+        -tipoCambioFecha;
+        -tipoCambioMonedaNom;
+        -tipoCambioMonedaNum;
+        -tipoCambioValor;
+        -tipoCambioStatus;
+        -tipoCambioTipoOperacion;
+
+        +getTipoCambioFecha
+        +setTipoCambioFecha(Date tipoCambioFecha)
+        +getTipoCambioMonedaNom
+        +setTipoCambioMonedaNom(String tipoCambioMonedaNom)
+        +getTipoCambioMonedaNum
+        +setTipoCambioMonedaNum(Integer tipoCambioMonedaNum)
+        +getTipoCambioValor
+        +setTipoCambioValor(Double tipoCambioValor)
+        +getTipoCambioStatus
+        +setTipoCambioStatus(String tipoCambioStatus)
+        +getTipoCambioTipoOperacion
+        +setTipoCambioTipoOperacion(String tipoCambioTipoOperacion)
+            
+        +ContabilidadTipoCambBean()
+    }
+@enduml

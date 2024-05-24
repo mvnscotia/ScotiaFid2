@@ -1,0 +1,1153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+    <style type = "text/css"
+           media="screen"> 
+         .txtLargo{width: 230px !important;}
+         .masAncho{width: 230px !important;}
+         .selLarga{width: 230px !important;}
+         .ColumnBtnOpc { width: 130px !important;}
+         td.rightColumnContent{text-align: right;} 
+         td.centeredColumnContent{text-align: center;}
+         td.leftColumnContent{text-align: left;}
+		 .ui-panelgrid td, .ui-panelgrid tr { border-style: none !important } 
+		.panelGrid { border-style: none !important; }
+         .btnStyle {width: 115px; height:25px ;margin : 5px; }  
+         .btnStyle2 {width: 115px; height:35px ;margin : 5px; }  
+         .btnStyle3 {width: 150px; height:25px ;}   
+         .inputRead{ background-color:#ffffcc !important}
+         .firstColumn { width: 150px !important; text-align: left !important;font-weight: bolder}
+         .secondColumn { width: 900px !important;}
+         .rightContent{text-align: right !important;}
+         .leftContent{text-align: left !important;}
+    </style>    
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmDireccionesFiscales">
+ 			<p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+
+             <p:growl                                           id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+                                                                
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+
+        
+        <p:panel id="pnConsulta" 
+        		 header="Direcciones Fiscales">
+         
+		    <p:dataTable id="dtDirecciones"  
+                      scrollable="true" 
+                      value="#{mbDireccionesFiscales.direcciones}" 
+                      selection ="#{mbDireccionesFiscales.selectDirecci}"
+                      var="direcciones"
+                      rowKey="#{direcciones}"
+                      rows="10"   
+                      scrollHeight="300" 
+					  paginator="true" 
+					  resizableColumns= "true"
+					  liveResize      = "true"
+					  lazy            = "true"
+		              paginatorPosition="bottom" 
+		              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+		              currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+		              emptyMessage="Sin registros" > 
+             
+             <p:ajax event="rowSelectRadio" 
+             		 listener="#{mbDireccionesFiscales.onRowSelect_Direcciones}" 
+					 update=":frmDireccionesFiscales:pnBtnOpciones,:frmDireccionesFiscales:BtnMantenimiento,:frmDireccionesFiscales:dlgDirFiscal,
+					 		 :frmDireccionesFiscales:pgDetalleDir " />
+								 
+             <p:column selectionMode="single" style="width:2%;text-align:center"/>
+             
+             <p:column  style="width:2%">
+               <p:rowToggler title="Detalle"/>
+             </p:column>
+					
+             <p:column 	headerText="Fideicomiso" 
+                       style="width:9%" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{direcciones.dif_num_contrato}"/>
+			 </p:column>  
+             <p:column 	headerText="Tipo Participante" 
+                       style="width:10%" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{direcciones.dif_cve_pers_fid}"/>
+			 </p:column> 
+             <p:column 	headerText="No. Participante"  
+                       style="width:7%" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{direcciones.dif_num_pers_fid}"/>
+			 </p:column>    
+             <p:column 	headerText="Calle" 
+                       style="width:15%" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{direcciones.dif_recep_calle}"/>
+			 </p:column> 
+             <p:column 	headerText="No. Ext."  
+                       style="width:6%" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{direcciones.dif_recep_no_ext}"/>
+			 </p:column> 
+             <p:column 	headerText="No. Int."  
+                       style="width:6%" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{direcciones.dif_recep_no_int}"/>
+			 </p:column> 
+             <p:column 	headerText="Colonia" 
+                       style="width:15%" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{direcciones.dif_recep_colonia}"/>
+			 </p:column> 
+			 <p:column 	headerText="Localidad" 
+                       style="width:20%" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{direcciones.dif_recep_localidad}"/>
+			 </p:column>  
+             <p:column 	headerText="País" 
+                       style="width:8%" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{direcciones.dif_nom_pais}"/>
+			 </p:column> 
+			 
+			 <p:rowExpansion>
+			 
+			 <p:panelGrid > 
+			 <p:row>
+			 <p:column styleClass="rightContent" > 
+			 			 <p:outputLabel value="Fideicomiso:" /></p:column>
+			 <p:column > <p:inputText 	styleClass="inputRead" 
+										readonly="true" 
+			 							value="#{direcciones.dif_num_contrato}"/> </p:column> 
+			 
+			 <p:column styleClass="rightContent" >
+			 			<p:outputLabel 	value="Participante:" /> </p:column >
+			 <p:column ><p:inputText 	styleClass="inputRead"
+										readonly="true" 
+			 							value="#{direcciones.dif_cve_pers_fid}"/>	</p:column >
+			  
+             <p:column styleClass="rightContent" >
+             			<p:outputLabel 	value="No." /> </p:column >
+			 <p:column ><p:inputText 	styleClass="inputRead"
+										readonly="true" 
+			 						 	value="#{direcciones.dif_num_pers_fid}"/>	</p:column > 
+			 </p:row>
+			 
+			 <p:row>
+			  <p:column styleClass="rightContent" >
+             			<p:outputLabel 	value="Nombre Legal:" /> </p:column >
+			 <p:column colspan="5">
+			            <p:inputText 	styleClass="inputRead"
+										readonly="true" 
+			 						 	value="#{direcciones.dif_nom_legal}"/>	</p:column > 
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column styleClass="rightContent">
+			     					   <p:outputLabel 	value="Calle:"  /></p:column >
+				 <p:column colspan="5"><p:inputText 	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_recep_calle}"/></p:column >
+			 </p:row>
+			 
+			 <p:row>
+				 <p:column styleClass="rightContent" >
+				 			<p:outputLabel 	value="No. Ext.:" /></p:column >
+				 <p:column ><p:inputText 	styleClass="inputRead"
+										 	readonly="true" 
+			 							 	value="#{direcciones.dif_recep_no_ext}"/></p:column >
+				  
+	             <p:column styleClass="rightContent" >
+	             			<p:outputLabel 	value="No. Int.:"  /></p:column >
+				 <p:column ><p:inputText 	styleClass="inputRead"
+										 	readonly="true" 
+			 							 	value="#{direcciones.dif_recep_no_int}"/></p:column > 
+			 </p:row>
+			 
+			 <p:row>  
+			 	<p:column  styleClass="rightContent">
+			 						  <p:outputLabel 	value="Colonia:" /></p:column >
+				<p:column colspan="5"><p:inputText  	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_recep_colonia}"/></p:column >
+			 </p:row>
+			  
+			 <p:row>
+			     <p:column  styleClass="rightContent">
+			     					   <p:outputLabel 	value="Municipio/Delegación/Localidad:" /></p:column >
+				 <p:column colspan="5"><p:inputText 	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_recep_localidad}"/></p:column >
+			 </p:row>
+			 	  
+			 <p:row>
+			 <p:column styleClass="rightContent" ><p:outputLabel 	value="Estado:" 
+			 														styleClass="rightContent"/></p:column >
+			 <p:column styleClass="rightContent" ><p:inputText 		styleClass="inputRead"
+																	readonly="true" 
+			 														value="#{direcciones.dif_nom_estado}"/></p:column >
+			   
+             <p:column styleClass="rightContent" >
+             			<p:outputLabel value="País:" /></p:column >
+			 <p:column ><p:inputText 	styleClass="inputRead"
+									 	readonly="true" 
+			 						 	value="#{direcciones.dif_nom_pais}"/></p:column >
+			  
+             <p:column styleClass="rightContent" >
+             			<p:outputLabel 	value="C.P:" /></p:column >
+			 <p:column ><p:inputText 	styleClass="inputRead"
+									 	readonly="true" 
+			 						 	value="#{direcciones.dif_recep_cp}"/></p:column >
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column  styleClass="rightContent">
+			     					  <p:outputLabel 	value="Referencia:"  /></p:column >
+				 <p:column colspan="5"><p:inputText 	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_recep_referencia}"/></p:column >
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column  styleClass="rightContent">
+			     					   <p:outputLabel 	value="Teléfonos:"  /></p:column >
+				 <p:column colspan="2"><p:inputText 	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_telefono}"/></p:column >
+				 
+			     <p:column styleClass="rightContent" >
+			     					   <p:outputLabel 	value="Correo Eléctronico:" /></p:column >
+				 <p:column colspan="2"><p:inputText 	styleClass="inputRead"
+														readonly="true" 
+			 											value="#{direcciones.dif_mail}"/></p:column >
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column  styleClass="rightContent">
+			     		   <p:outputLabel 	value="Cve. Régimen Fiscal:" /></p:column >
+				 <p:column><p:inputText 	styleClass="inputRead" 
+											readonly="true" 
+			 								value="#{direcciones.dif_regimen_fiscal}"/></p:column > 
+				 
+			     <p:column colspan="4"><p:inputText styleClass="inputRead"
+													readonly="true" 
+													style="text-transform: uppercase"
+			 										value="#{direcciones.dif_desc_regimen_fiscal}"/></p:column >
+			 </p:row> 
+			 </p:panelGrid>  
+			 </p:rowExpansion>
+           </p:dataTable>           
+         		   
+           <p:panelGrid                                    styleClass      = "bordePanel"
+                                                           style           = "margin: 0.3% 0.3% 0.3% 10%;">
+              <p:row>
+                 <p:column                               colspan         = "7"
+                                                         styleClass      = "degradadoOrigenCentro"
+                                                         style           = "color: #ffffff; font-weight: bolder;"> 
+                         <h:outputLabel                  value           = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         													Criterios de Búsqueda
+                         													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/> 
+                 </p:column>
+              </p:row>
+         </p:panelGrid> 
+         
+         <h:panelGrid id="pgCriteriosCons" 
+                      columns="5" 
+                      cellpadding="5"  >
+	         <h:panelGrid id="dtConsulta" 
+	                      columns="2" 
+                      	  cellpadding="2" >
+                         
+					 <h:outputLabel  value =  "No. de Fideicomiso:" /> 
+					 <p:inputText    id="txtFideicomiso" 
+						             maxlength="10" 
+					 				 styleClass="txtLargo" 
+						             value="#{mbDireccionesFiscales.sFideicomiso}"  
+						             onkeypress = "if(event.which &lt; 48 || event.which &gt; 57)  return false;" > 
+						    <p:ajax event="focus" 
+									listener="#{mbDireccionesFiscales.validaConsulta}"
+									update=":frmDireccionesFiscales:btnAceptar"/>
+						    <p:ajax event="blur" 
+									listener="#{mbDireccionesFiscales.validateFiso}"
+									update="@this,:frmDireccionesFiscales:btnAceptar"/> 
+					 </p:inputText> 
+					 
+					<p:outputLabel 	 value="Tipo Participante:"  />
+					<p:selectOneMenu id="selTipoPart" 
+					 				 styleClass="selLarga"
+									 value="#{mbDireccionesFiscales.sTipo_Participante}" > 
+						<f:selectItem itemValue = "" itemLabel="" />
+						<f:selectItem itemValue = "FIDEICOMITENTE"	itemLabel="FIDEICOMITENTE" />
+						<f:selectItem itemValue = "FIDEICOMISARIO" 	itemLabel="FIDEICOMISARIO" />
+						<f:selectItem itemValue = "TERCERO" 		itemLabel="TERCERO" /> 
+						    <p:ajax event="change" 
+									listener="#{mbDireccionesFiscales.disableConsulta}"
+									update="@this,:frmDireccionesFiscales:btnAceptar"/>
+					</p:selectOneMenu>   
+         </h:panelGrid>
+         <h:outputText value="&lt;br/&gt;" escape="false" /> 
+         
+         <h:panelGrid id="dtButtons" 
+                      columns="3"  
+			          columnClasses="ColumnBtnOpc,ColumnBtnOpc"> 
+          			 <p:commandButton  id="btnAceptar" 
+		                               icon="ui-icon-search" 
+		                               value="Consultar"
+		                               styleClass="btnStyle"
+                 				       disabled="#{!mbDireccionesFiscales.bConsulta_Disable}"
+		                               actionListener="#{mbDireccionesFiscales.Aceptar_click}"
+		                               update=":frmDireccionesFiscales:pnConsulta,:frmDireccionesFiscales:dtDirecciones,:frmDireccionesFiscales:pgCriteriosCons,
+		                               		   :frmDireccionesFiscales:dtConsulta,:frmDireccionesFiscales:dtButtons,:frmDireccionesFiscales:btnExportar,
+		                               		   :frmDireccionesFiscales:BtnMantenimiento"  /> 
+			   		<p:commandButton   id="btnLimpiar" 
+		                               icon="ui-icon-trash" 
+		                               styleClass="btnStyle"
+		                               value="Limpiar"
+		                               actionListener="#{mbDireccionesFiscales.cleanDirecciones}" 
+		                               update=":frmDireccionesFiscales:pnConsulta,:frmDireccionesFiscales:dtDirecciones,:frmDireccionesFiscales:pgCriteriosCons,
+		                               		   :frmDireccionesFiscales:dtConsulta,:frmDireccionesFiscales:dtButtons,:frmDireccionesFiscales:btnExportar,
+		                               		   :frmDireccionesFiscales:BtnMantenimiento" /> 
+		            <p:commandButton value="Exportar Consulta" 
+		                             id="btnExportar" 
+		                             icon="ui-icon-print"  
+		                             styleClass="btnStyle2" 
+		                             disabled="#{!(mbDireccionesFiscales.direcciones.size() != 0)}" 
+                                     title           = "Exporta el resultado de la consulta a un archivo de texto"
+                                     actionListener  = "#{mbDireccionesFiscales.Exportar}"/>
+         </h:panelGrid>
+         <h:outputText value="&lt;br/&gt;" escape="false" /> 
+         
+        <p:panel id="pnBtnOpciones"> 
+      	<h:panelGrid id="pgButtonsOpc" 
+                      columns="2"  
+			          columnClasses="ColumnBtnOpc,ColumnBtnOpc" > 
+                  <h:outputText 	value="Acción"  
+                     				style = "font-weight:bold; color:#D23D1E" />
+          			 <h:outputText value="&lt;br/&gt;" escape="false" /> 
+          			                     					  
+                  <p:commandButton 	id="BtnMantenimiento"
+                  					value="Mantenimiento"   
+                 					styleClass="btnStyle" 
+                 					icon="ui-icon-wrench"  
+		                            disabled="#{!(mbDireccionesFiscales.bBtnManto)}" 
+                 					actionListener="#{mbDireccionesFiscales.Manto_Direcci}"  
+                 					update="@this,:frmDireccionesFiscales:dlgDirFiscal,:frmDireccionesFiscales:pgDetalleDir,
+                 					        :frmDireccionesFiscales:dtDirFiscal,:frmDireccionesFiscales:txtNomLegal,:frmDireccionesFiscales:selPais" />                    					
+                  <p:commandButton 	value="Importar" 
+                 					styleClass="btnStyle"
+                 					icon="ui-icon-circle-arrow-n"  
+                                    actionListener="#{mbDireccionesFiscales.Start_CargaMasiva}"
+									update=":frmDireccionesFiscales:dgCargaMasivaDir,:frmDireccionesFiscales:txtNomArch,
+                                            :frmDireccionesFiscales:txtRegist,:frmDireccionesFiscales:txtCorrectos,
+                                            :frmDireccionesFiscales:txtInconrrectos,:frmDireccionesFiscales:dtCargaMasiva"/>   
+                  
+       </h:panelGrid>
+       </p:panel>
+       </h:panelGrid> 
+      </p:panel>  		
+		    <p:dialog header="Dirección Fiscal" 
+			          id="dlgDirFiscal" 
+			          widgetVar="dlgDirFiscal" 
+			          modal="true" 
+			          resizable="false"  
+                      dynamic="true" 
+                      showEffect="fade" 
+                      hideEffect="fade"   
+                      position="top"
+                      style="overflow: hidden"
+			          closable="false"> 
+							 
+			 <p:panelGrid id="pgDetalleDir"> 
+			 <p:row>
+				 <p:column styleClass="rightContent" > 
+				 			 <p:outputLabel value="Fideicomiso:" /></p:column>
+				 <p:column > <p:inputText	id ="txtFiso"
+				 							maxlength="10" 
+				 						  	value="#{mbDireccionesFiscales.direcciFBean.dif_num_contrato}"
+				 						  	disabled ="#{!mbDireccionesFiscales.bObligatorios}" 
+				 						  	onkeypress = "if(event.which &lt; 48 || event.which &gt; 57)  return false;" > 
+						    <p:ajax event="blur" 
+									listener="#{mbDireccionesFiscales.validateFiso2}"
+									update="@this,:frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:txtNomFiso,:frmDireccionesFiscales:selParticipante,
+											:frmDireccionesFiscales:pnContRegCapital,:frmDireccionesFiscales:pgRegCapital,
+											:frmDireccionesFiscales:txtNoPart,:frmDireccionesFiscales:txtNomPart,
+								    		:frmDireccionesFiscales:txtNomFiscal,:frmDireccionesFiscales:txtRFC,:frmDireccionesFiscales:txtNomLegal,
+								    		:frmDireccionesFiscales:txtCalle,:frmDireccionesFiscales:txtNoExt,:frmDireccionesFiscales:txtNoInt,:frmDireccionesFiscales:txtCP,
+			                 				:frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:txtLocalidad,:frmDireccionesFiscales:selPais,
+			                 				:frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtReferencia,:frmDireccionesFiscales:txtTel,
+			                 				:frmDireccionesFiscales:txtMail,:frmDireccionesFiscales:selRegFiscal,:frmDireccionesFiscales:txtCveReg,
+			                 				:frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal,:frmDireccionesFiscales:btnCargaCSF"/>
+							</p:inputText>  
+				 </p:column> 
+				 <p:column colspan="4"> <p:inputText id="txtNomFiso"   
+												     readonly="true" 
+												     styleClass="inputRead" 
+												     value="#{mbDireccionesFiscales.direcciFBean.dif_nom_cto}"/> 
+				 </p:column> 
+			 </p:row>
+			 
+			 <p:row>
+			 <p:column styleClass="rightContent" >
+			 			 <p:outputLabel	  value="Participante:"  />			</p:column >
+			 <p:column > <p:selectOneMenu id="selParticipante" 
+					 				 styleClass="selLarga"
+									 value="#{mbDireccionesFiscales.direcciFBean.dif_cve_pers_fid}"  
+			 						 disabled ="#{!mbDireccionesFiscales.bObligatorios}"> 
+						<f:selectItem itemValue = "" itemLabel="" />
+						<f:selectItem itemValue = "FIDEICOMITENTE" 	itemLabel="FIDEICOMITENTE" />
+						<f:selectItem itemValue = "FIDEICOMISARIO" 	itemLabel="FIDEICOMISARIO" />
+						<f:selectItem itemValue = "TERCERO" 		itemLabel="TERCERO" />   
+						<p:ajax event="change" 
+							    listener="#{mbDireccionesFiscales.Consulta_NombreParticipante}" 
+							    update="@this,:frmDireccionesFiscales:txtNoPart,:frmDireccionesFiscales:txtNomPart,:frmDireccionesFiscales:txtNomFiscal,
+							    		:frmDireccionesFiscales:pnContRegCapital,:frmDireccionesFiscales:pgRegCapital,:frmDireccionesFiscales:txtRFC,:frmDireccionesFiscales:txtNomLegal,
+							    		:frmDireccionesFiscales:txtCalle,:frmDireccionesFiscales:txtNoExt,:frmDireccionesFiscales:txtNoInt,:frmDireccionesFiscales:txtCP,
+		                 				:frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:txtLocalidad,:frmDireccionesFiscales:selPais,
+		                 				:frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtReferencia,:frmDireccionesFiscales:txtTel,
+		                 				:frmDireccionesFiscales:txtMail,:frmDireccionesFiscales:selRegFiscal,:frmDireccionesFiscales:txtCveReg,
+		                 				:frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal,:frmDireccionesFiscales:btnCargaCSF"/>
+					</p:selectOneMenu>   
+			 </p:column >
+			  
+             <p:column styleClass="rightContent" >
+             			<p:outputLabel 	value="No." /> </p:column >
+			 <p:column ><p:inputText 	id="txtNoPart"
+			 						 	value="#{mbDireccionesFiscales.direcciFBean.dif_num_pers_fid}"
+			 						 	disabled ="#{!mbDireccionesFiscales.bObligatorios}" 
+				 						onkeypress = "if(event.which &lt; 48 || event.which &gt; 57)  return false;">  
+								<p:ajax event="blur" 
+										listener="#{mbDireccionesFiscales.Valida_NumPart}"
+										update="@this,:frmDireccionesFiscales:txtNomPart,:frmDireccionesFiscales:pnContRegCapital,:frmDireccionesFiscales:pgRegCapital,
+									    		:frmDireccionesFiscales:txtNomFiscal,:frmDireccionesFiscales:txtRFC,
+									    		:frmDireccionesFiscales:txtNomLegal,:frmDireccionesFiscales:txtCalle,
+				                 				:frmDireccionesFiscales:txtNoExt,:frmDireccionesFiscales:txtNoInt,:frmDireccionesFiscales:txtCP,
+				                 				:frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:txtLocalidad,:frmDireccionesFiscales:selPais,
+				                 				:frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtReferencia,:frmDireccionesFiscales:txtTel,
+				                 				:frmDireccionesFiscales:txtMail,:frmDireccionesFiscales:selRegFiscal,:frmDireccionesFiscales:txtCveReg,
+				                 				:frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal,:frmDireccionesFiscales:btnCargaCSF"/>
+							
+							</p:inputText></p:column >
+			 
+			 <p:column colspan="2"> <p:inputText id="txtNomPart"   
+												 readonly="true" 
+												 styleClass="inputRead" 
+												 value="#{mbDireccionesFiscales.direcciFBean.dif_nom_pers}" >				
+			 </p:inputText> </p:column>
+			 </p:row>
+			 
+			 
+			 <p:row>   
+			  <p:column styleClass="rightContent" > 					  
+					 <h:outputLabel  id="lbNomFiscal"
+					                 value="Nombre Fiscal:"  /> 
+			</p:column>
+			<p:column colspan="3">	
+			 		 <p:inputTextarea id="txtNomFiscal" 
+										rows="2" 
+										styleClass="inputRead"
+										value="#{mbDireccionesFiscales.direcciFBean.dif_nom_pers}" 
+										readonly="true"/>   
+			</p:column>
+			<p:column styleClass="rightContent" >						                
+				     <h:outputLabel  value = "R.F.C.: "  /> 
+			</p:column>
+			<p:column>				 
+					 <p:inputText    id="txtRFC"
+				 					 styleClass="inputRead"   
+									 readonly="true"  	  
+						             value="#{mbDireccionesFiscales.direcciFBean.dif_rfc}" />   
+				</p:column >				
+			 </p:row>
+			 
+			 <p:row>
+			   
+				<p:column styleClass="rightContent" > 
+				     <h:outputLabel  value = "Nombre Legal:" /> 
+			</p:column>
+			<p:column  colspan="4" >
+					 <p:inputText    id="txtNomLegal"  	  
+						             value="#{mbDireccionesFiscales.direcciFBean.dif_nom_legal}" 
+					 				 maxlength="250" 
+					 				 onblur="value=value.toUpperCase()" 
+					 				 style="text-transform: uppercase" 
+					 				 disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+							 <p:ajax event="change" update="@this"/>    
+					</p:inputText>
+				</p:column >
+			 </p:row>
+			 
+			 <p:row>
+			  <p:column colspan="7">
+			 	<p:panel id="pnContRegCapital" 
+						 style= "border:none;"  > 
+							<h:panelGrid id="pgRegCapital" 
+										 columns="2" 
+										 cellpadding="2"
+			              		         rendered ="#{mbDireccionesFiscales.bRegCapital}">    
+									<p:column>
+										<p:outputLabel value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Régimen Capital:" />
+									</p:column>
+									<p:column>
+									    <p:inputTextarea id="txtRegCapital" 
+							        	                 rows="2" 
+													 	 styleClass="inputRead"
+													     value="#{mbDireccionesFiscales.sRegCapital}" 
+													 	 style="width:630px"
+							        	                 readonly="true"/> 
+									</p:column> 
+							</h:panelGrid>
+						</p:panel>
+					</p:column>
+				</p:row>
+
+				<p:row>
+			     <p:column styleClass="rightContent" >
+			     					   <p:outputLabel 	value="Calle:"  /></p:column >
+					 <p:column colspan="5"><p:inputText id="txtCalle"
+					 									maxlength="100" 
+				 						 				onblur="value=value.toUpperCase()" 
+				 						 				style="text-transform: uppercase"
+				 						 				value="#{mbDireccionesFiscales.direcciFBean.dif_recep_calle}"
+					 						            disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+											    <p:ajax event="change" update="@this"/>
+							    </p:inputText>
+			 	 </p:column >
+			 </p:row>
+			 <p:row>
+				 <p:column styleClass="rightContent" >
+				 			<p:outputLabel 	value="No. Ext.:" /></p:column >
+				 <p:column ><p:inputText id="txtNoExt"
+				 						 maxlength="20" 
+				 						 onblur="value=value.toUpperCase()" 
+				 						 style="text-transform: uppercase"
+				 						 value="#{mbDireccionesFiscales.direcciFBean.dif_recep_no_ext}"
+				 						 disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+								 <p:ajax event="change" update="@this"/>
+							</p:inputText>
+			 	 </p:column > 
+			 	 
+	             <p:column styleClass="rightContent" >
+	             			<p:outputLabel 	value="No. Int.:" /></p:column >
+				 <p:column ><p:inputText 	id="txtNoInt"
+				 						 	maxlength="20" 
+				 						 	onblur="value=value.toUpperCase()" 
+				 						 	style="text-transform: uppercase"
+				 							value="#{mbDireccionesFiscales.direcciFBean.dif_recep_no_int}"
+				 							disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+						 			<p:ajax event="change" update="@this"/>
+							</p:inputText>
+			 	 </p:column >
+			 	  
+	             <p:column styleClass="rightContent"  >
+	             			<p:outputLabel 	value="C.P.:" /></p:column >
+				 <p:column ><p:inputText   	id="txtCP"
+					 						maxlength="5" 
+				 						   	onkeypress = "if((event.which &lt; 48 || event.which &gt; 57))  return false;" 
+				 							value="#{mbDireccionesFiscales.direcciFBean.dif_recep_cp}"
+				 							disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+						 			<p:ajax event="change" update="@this"/>
+						 			<p:ajax event="blur"  
+											listener="#{mbDireccionesFiscales.Valida_CP}"
+											update="@this"/> 
+						</p:inputText>
+			 	 </p:column >
+			 </p:row>
+			 
+			 <p:row>  
+			 	<p:column styleClass="rightContent" >
+			 						  <p:outputLabel value="Colonia:" /></p:column >
+				<p:column colspan="5"><p:inputText   id="txtColonia"
+				 						 			 maxlength="100" 
+				 						 			 onblur="value=value.toUpperCase()" 
+				 						 			 style="text-transform: uppercase"
+													 value="#{mbDireccionesFiscales.direcciFBean.dif_recep_colonia}"
+				 									 disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+											 <p:ajax event="change" update="@this"/>
+							    </p:inputText>
+			 	 </p:column >
+			 </p:row>
+			 
+			 <p:row> 
+			 	 <p:column styleClass="rightContent" >
+			 	 						<p:outputLabel 	value="Municipio/Delegación/Localidad" /></p:column >  
+				 <p:column colspan="4" ><p:inputText  	id="txtLocalidad" 
+					 						 			maxlength="100"
+					 						 			onblur="value=value.toUpperCase()" 
+					 						 			style="text-transform: uppercase" 
+					 									value="#{mbDireccionesFiscales.direcciFBean.dif_recep_localidad}"
+					 									disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+												<p:ajax event="change" update="@this"/>
+							    </p:inputText>
+			 	 </p:column > 
+			 </p:row>
+			 
+			 <p:row> 
+             <p:column styleClass="rightContent" >
+             			<p:outputLabel 	 value="País:" /></p:column >
+			 <p:column ><p:selectOneMenu id="selPais"  
+						 				 styleClass="selLarga"
+										 value="#{mbDireccionesFiscales.direcciFBean.dif_num_pais}"  
+				 						 disabled ="#{!mbDireccionesFiscales.bMantenimiento}" > 
+						<f:selectItems 	 value="#{mbDireccionesFiscales.mPais.entrySet()}" 
+							             var="paises" 
+							             itemLabel="#{paises.value}" 
+							             itemValue="#{paises.key}"/> 
+						<p:ajax event="change" 
+						        listener="#{mbDireccionesFiscales.select_Pais}" 
+						        update="@this,:frmDireccionesFiscales:selEstados"/>
+					</p:selectOneMenu>   
+			 	 </p:column >
+			  
+			 <p:column styleClass="rightContent" >
+			 					   <p:outputLabel 	 value="Estado:"/></p:column >
+			 <p:column colspan="3"><p:selectOneMenu  id="selEstados"  
+									 				 styleClass="selLarga"
+													 value="#{mbDireccionesFiscales.direcciFBean.dif_num_estado}"  
+							 						 disabled ="#{!mbDireccionesFiscales.bMantenimiento}" > 
+						<f:selectItems value="#{mbDireccionesFiscales.mEstados.entrySet()}" 
+						               var="estados" 
+						               itemLabel="#{estados.value}" 
+						               itemValue="#{estados.key}"/> 
+						<p:ajax event="change" update="@this"/>
+					</p:selectOneMenu>  
+			 </p:column >
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column styleClass="rightContent" >
+			     					   <p:outputLabel value="Referencia:"  /></p:column >
+				 <p:column colspan="5"><p:inputText id="txtReferencia"
+				 									maxlength="100" 
+				 									onblur="value=value.toUpperCase()" 
+				 									style="text-transform: uppercase"
+				 									value="#{mbDireccionesFiscales.direcciFBean.dif_recep_referencia}"
+				 									disabled ="#{!mbDireccionesFiscales.bMantenimiento}"> 
+											<p:ajax event="change" update="@this"/>
+							    </p:inputText>
+			 	 </p:column > 
+			 </p:row>
+			 
+			 <p:row>
+			     <p:column styleClass="rightContent" >
+			     					   <p:outputLabel 	value="Teléfonos:"  /></p:column >
+					 <p:column colspan="2"><p:inputText id="txtTel"
+					 						 			maxlength="100" 
+					 									onkeypress = "if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.keyCode != 44) &amp;&amp; (event.keyCode != 45)) return false;"
+				 						 				value="#{mbDireccionesFiscales.direcciFBean.dif_telefono}"
+					 									disabled ="#{!mbDireccionesFiscales.bMantenimiento}" > 
+												<p:ajax event="change" update="@this"/>
+							    </p:inputText>
+			 	 </p:column >
+				 
+			     <p:column styleClass="rightContent" >	
+			     					   <p:outputLabel 	value="Correo Eléctronico:"  /></p:column >
+				 <p:column colspan="2"><p:inputText 	id="txtMail"
+								 						maxlength="100" 
+								 						onblur="value=value.toUpperCase()" 
+							 							style="text-transform: uppercase"
+								 						value="#{mbDireccionesFiscales.direcciFBean.dif_mail}"
+								 						disabled ="#{!mbDireccionesFiscales.bMantenimiento}" >  
+									 			<p:ajax event="blur"  
+														listener="#{mbDireccionesFiscales.Valida_Email}"
+														update="@this"/> 
+				 		</p:inputText>
+			 	 </p:column >
+			 </p:row>
+			 
+			 <p:row> 
+			     <p:column styleClass="rightContent" >
+			     	<p:outputLabel 	 value="Régimen Fiscal:"  /></p:column > 
+				 <p:column colspan="3"> 
+					 	<p:selectOneMenu id="selRegFiscal" 
+					                     style="width: 450px"
+					                     value="#{mbDireccionesFiscales.direcciFBean.dif_regimen_fiscal}"
+					 					 disabled ="#{!mbDireccionesFiscales.bMantenimiento}">
+						<f:selectItems 	 value="#{mbDireccionesFiscales.mRegFisc.entrySet()}" 
+						                 var="regFisc" 
+						                 itemLabel="#{regFisc.value}" 
+						                 itemValue="#{regFisc.key}"/> 
+								<p:ajax  event="change" 
+								         listener="#{mbDireccionesFiscales.select_RegFisc}"
+										 update="@this,:frmDireccionesFiscales:txtCveReg,:frmDireccionesFiscales:btnValida"/>
+					</p:selectOneMenu>
+			 	 </p:column >
+			 	 
+			 	 <p:column ><p:inputText id="txtCveReg"
+				 						 styleClass="inputRead"
+										 readonly="true" 
+				 						 value="#{mbDireccionesFiscales.direcciFBean.dif_regimen_fiscal}"> 
+								 <p:ajax event="change" update="@this"/>
+						</p:inputText>
+			 	 </p:column >
+			 	 
+				 <p:column styleClass="rightContent" >
+				 <p:commandButton id="btnValida"
+				 				 value="Valida Regimen Fiscal" 
+				                 icon="ui-icon-pencil"   
+                 				 process="@this"
+                 				 disabled="#{!mbDireccionesFiscales.bBtnRegimen}"  
+                 				 actionListener="#{mbDireccionesFiscales.Valida_RegFisc}"
+								 update="@this,:frmDireccionesFiscales:txtCveReg,:frmDireccionesFiscales:selRegFiscal"  /> </p:column >
+				 
+			 </p:row>
+			 </p:panelGrid>
+			  
+			  <p:panel id="pnDireccionesPart"
+					   style= "border:none;">
+			    <p:dataTable id="dtDirFiscal" 
+					      rendered="#{mbDireccionesFiscales.bDirecci}" 
+						  selectionMode="single" 
+	                      scrollable="true" 
+	               		  scrollHeight="80"  
+						  scrollWidth="990"
+	                      value="#{mbDireccionesFiscales.dirParticipantes}" 
+	                      var="dirFiscales"
+	                      rowKey="#{dirFiscales}"
+	                      rows="3"   
+						  paginator="true"  
+						  liveResize      = "true" 
+						  lazy            = "true"
+			              paginatorPosition="bottom" 
+			              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+			              currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+			              emptyMessage="Sin registros" > 
+						  
+	              <p:ajax event="rowDblselect"  
+	              		  listener="#{mbDireccionesFiscales.onRowSelectDirPart}" 
+	              		  update=":frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:txtFiso,
+	              		  :frmDireccionesFiscales:selParticipante,:frmDireccionesFiscales:txtNoPart,:frmDireccionesFiscales:txtNomPart,
+	              		  :frmDireccionesFiscales:txtCalle,:frmDireccionesFiscales:txtNoExt,:frmDireccionesFiscales:txtNoInt,
+	              		  :frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:selPais,
+	              		  :frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtCP,:frmDireccionesFiscales:txtTel,
+	              		  :frmDireccionesFiscales:txtMail" />
+                                
+	             <p:column headerText="Fideicomiso" 
+	                       style="width:80px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_num_contrato}"/>
+				 </p:column>  
+	             <p:column headerText="Tipo Participante" 
+	                       style="width:110px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_cve_pers_fid}"/>
+				 </p:column> 
+	             <p:column headerText="No. Participante" 
+	                       style="width:80px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_num_pers_fid}"/>
+				 </p:column>    
+	             <p:column headerText="Calle" 
+	                       style="width:200px" 
+	             		   styleClass="leftColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_calle_num}"/>
+				 </p:column> 
+	             <p:column headerText="No. Int." 
+	                       style="width:50px" 
+	             		   styleClass="centeredColumnContent" >
+				 </p:column> 
+	             <p:column headerText="No. Ext." 
+	                       style="width:90px" 
+	             		   styleClass="leftColumnContent" >
+				 </p:column> 
+	             <p:column 	headerText="Colonia" 
+	                       style="width:170px" 
+	             		   styleClass="leftColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_nom_colonia}"/>
+				 </p:column>
+	             <p:column headerText="Municipio"
+	                       style="width:150px" 
+	             		   styleClass="leftColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_nom_poblacion}"/>
+				 </p:column> 
+	             <p:column headerText="País" 
+	                       style="width:50px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_nom_pais}"/>
+				 </p:column> 
+	             <p:column headerText="Estado" 
+	                       style="width:100px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_nom_estado}"/>
+				 </p:column>  
+	             <p:column headerText="C.P." 
+	                       style="width:40px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_codigo_postal}"/>
+				 </p:column> 
+	             <p:column headerText="Lada Casa" 
+	                       style="width:60px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.ben_num_lada_casa}"/>
+				 </p:column> 
+	             <p:column headerText="Teléfono Casa" 
+	                       style="width:60px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.ben_num_telef_casa}"/>
+				 </p:column> 
+	             <p:column headerText="Lada Oficina" 
+	                       style="width:60px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.ben_num_lada_ofic}"/>
+				 </p:column> 
+	             <p:column headerText="Teléfono Oficina" 
+	                       style="width:60px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.ben_num_telef_ofic}"/>
+				 </p:column>
+	             <p:column headerText="Ext. Oficina" 
+	                       style="width:60px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.ben_num_ext_ofic}"/>
+				 </p:column>
+	             <p:column headerText="Correo Eléctronico:" 
+	                       style="width:100px" 
+	             		   styleClass="centeredColumnContent" >
+					 <h:outputText value="#{dirFiscales.dir_mail}"/>
+				 </p:column> 
+	           </p:dataTable> 
+    		</p:panel>	 
+    		
+				<center>
+				<h:panelGrid  id="pgBtnsMantenimiento"
+							  columns="5" 
+			          		  cellpadding="5">  
+					<p:commandButton value="Alta" 
+				                 icon="ui-icon-person" 
+                 				 styleClass="btnStyle" 
+                 				 disabled="#{!mbDireccionesFiscales.bOpciones_Disable}"
+                 				 actionListener="#{mbDireccionesFiscales.Alta_Direccion}"
+                 				 update=":frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:pgBtnsMantenimiento,
+                 				 		 :frmDireccionesFiscales:pgBtnsConfirmacion" /> 
+				 	<p:commandButton value="Modificar" 
+					                 icon="ui-icon-wrench"  
+	                 				 styleClass="btnStyle" 
+	                 				 disabled="#{!mbDireccionesFiscales.bOpciones_Disable}"
+	                 				 actionListener="#{mbDireccionesFiscales.Modificar_Direccion}"
+	                 				 update=":frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:pgBtnsMantenimiento,
+	                 				 		 :frmDireccionesFiscales:pgBtnsConfirmacion"/> 
+				 	<p:commandButton value="Baja" 
+			                         icon="ui-icon-trash" 
+	                 				 styleClass="btnStyle"
+	                 				 disabled="#{!mbDireccionesFiscales.bOpciones_Disable}"
+	                 				 actionListener="#{mbDireccionesFiscales.Eliminar_Direccion}"
+	                 				 disable="#{!mbDireccionesFiscales.bMantenimiento}"
+	                 				 update="@this" /> 
+                 				 				 	 
+				<h:panelGrid    id="pgBtnsConfirmacion"
+				    		   	columns="4" 
+			          			cellpadding="4"
+			          			rendered="#{mbDireccionesFiscales.bConfirmar_Disable}">  
+					<p:commandButton value="Aceptar" 
+	                 				 styleClass="btnStyle"
+					                 icon="ui-icon-check"
+	                 				 process="@this" 
+					                 actionListener="#{mbDireccionesFiscales.Mantenimiento_DirFiscal}"  
+					                 update=":frmDireccionesFiscales:dtDirecciones,:frmDireccionesFiscales:BtnMantenimiento,
+					                          :frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:txtFiso,:frmDireccionesFiscales:selParticipante,
+					                          :frmDireccionesFiscales:txtNoPart,:frmDireccionesFiscales:txtNomPart,:frmDireccionesFiscales:pnContRegCapital,
+					                          :frmDireccionesFiscales:pgRegCapital,:frmDireccionesFiscales:txtNomFiscal,
+					                          :frmDireccionesFiscales:txtRFC,:frmDireccionesFiscales:txtNomLegal,:frmDireccionesFiscales:txtCalle,:frmDireccionesFiscales:txtNoExt,
+					                 		  :frmDireccionesFiscales:txtNoInt,:frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:txtLocalidad,
+						              		  :frmDireccionesFiscales:selPais,:frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtCP,
+						              		  :frmDireccionesFiscales:txtTel,:frmDireccionesFiscales:txtMail,:frmDireccionesFiscales:dtDirFiscal,
+	                 				 		  :frmDireccionesFiscales:pgBtnsMantenimiento,:frmDireccionesFiscales:pgBtnsConfirmacion,
+	                 				 		  :frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal"/> 
+				 	<p:commandButton value="Cancelar" 
+	                 				 styleClass="btnStyle"  
+					                 icon="ui-icon-closethick" 
+	                 				 process="@this" 
+	                 				 actionListener="#{mbDireccionesFiscales.CancelaManto}"
+	                 				 update=":frmDireccionesFiscales:dtDirecciones,
+	                 				         :frmDireccionesFiscales:BtnMantenimiento,:frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:pgBtnsMantenimiento,
+	                 				 		 :frmDireccionesFiscales:pgBtnsConfirmacion,:frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal,
+	                 				 		 :frmDireccionesFiscales:pnContRegCapital,:frmDireccionesFiscales:pgRegCapital,"  /> 
+				
+			    <p:commandButton value="Importar" 
+				                 icon="ui-icon-arrowreturnthick-1-w"  
+			          			 disabled="#{!mbDireccionesFiscales.bMantenimiento}"
+                 				 styleClass="btnStyle"  
+                 				 process="@this" 
+                 				 actionListener="#{mbDireccionesFiscales.Importar}"
+								 update=":frmDireccionesFiscales:pnDireccionesPart,:frmDireccionesFiscales:dtDirFiscal" >
+				</p:commandButton> 
+				
+			 	<p:commandButton id="btnCargaCSF"
+			 					 value="Cargar CSF" 
+                 				 icon="ui-icon-circle-arrow-n"   
+                 				 disabled="#{!mbDireccionesFiscales.bCargaCSF}"  
+                 				 styleClass="btnStyle"   
+				 				 oncomplete="dlgCargaCIF.show()" 
+								 update=":frmDireccionesFiscales:dlgCargaCIF" >
+				</p:commandButton> 
+				</h:panelGrid> 
+				  
+                <p:commandButton value="Cerrar" 
+				                 icon="ui-icon-close"  
+                 				 styleClass="btnStyle" 
+                 				 disabled="#{!mbDireccionesFiscales.bOpciones_Disable}" 
+								 actionListener="#{mbDireccionesFiscales.Cerrar_Manto_Direcci}" 
+                 				 update=":frmDireccionesFiscales:dlgDirFiscal,:frmDireccionesFiscales:BtnMantenimiento"/>
+				</h:panelGrid>   
+				</center>
+			</p:dialog>
+				
+        <p:dialog id="dlgAjaxStatus" 
+        		  closable="false" 
+        		  header="Espere" 
+        		  modal="true" 
+        		  resizable="false" 
+        		  style="background-color: #eee; height : auto; width : auto;" 
+        		  widgetVar = "dlgAjaxStatus">
+        <center>
+         <p:graphicImage value = "../vista/recursos/img/gif/000.gif" />
+        </center>
+        </p:dialog>        
+        			 
+        <p:confirmDialog header="Eliminar Dirección" 
+        				 id="dlgEliminaDir" 
+        				 widgetVar="dlgEliminaDir" 
+        				 message="¿Esta seguro de eliminar la dirección fiscal?" 
+        				 closable="false">
+          <p:commandButton 	title="Aceptar"  
+          					value="Si" 
+          					icon="ui-icon-check" 
+          					actionListener="#{mbDireccionesFiscales.Mantenimiento_DirFiscal}" 
+          					oncomplete="dlgEliminaDir.hide()" 
+          					update=":frmDireccionesFiscales:pnConsulta,:frmDireccionesFiscales:dtDirecciones,
+          					:frmDireccionesFiscales:pgCriteriosCons,:frmDireccionesFiscales:dtConsulta,
+          					:frmDireccionesFiscales:dtButtons,:frmDireccionesFiscales:btnExportar" />
+          <p:commandButton title="Cancelar" 
+          				   value="No" 
+          				   icon="ui-icon-close" 
+          				   oncomplete="dlgEliminaDir.hide()"/>
+        </p:confirmDialog>
+        		
+		    <p:dialog id="dgCargaMasivaDir" 
+			          widgetVar="dgCargaMasivaDir" 
+			          header="Carga Masiva Participantes" 
+			          modal="true" 
+			          resizable="false"  
+                      dynamic="true" 
+                      showEffect="fade" 
+                      hideEffect="fade"  
+                      height="400"
+                      style="overflow: hidden"
+			          closable="false"> 
+                        
+			 <p:outputPanel> 
+			 <p:fileUpload fileUploadListener= "#{mbDireccionesFiscales.CargaArchivo}" 
+			 			   invalidSizeMessage= "Error, el tamaño máximo del archivo debe de ser de 1024Kb ( 1MB )"
+	                       invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt) 10MB" 
+	                       showButtons  = "false"
+	                       allowTypes = "/(\.|\/)(txt)$/"  
+	                       mode = "advanced" 
+	                       sizeLimit = "10000024"  
+	                       label = "Archivo"
+	                       icon="ui-icon-document" 
+	                       uploadLabel = "Carga de archivo Participantes"  
+	                       update="@this,:frmDireccionesFiscales:txtNomArch,:frmDireccionesFiscales:txtRegist,
+	                               :frmDireccionesFiscales:pnCargaMas,:frmDireccionesFiscales:pgBtnsEstatus,
+	                               :frmDireccionesFiscales:txtCorrectos,:frmDireccionesFiscales:txtInconrrectos,
+	                               :frmDireccionesFiscales:dtCargaMasiva"/>  
+	                       
+	            <center>    
+			   <p:panelGrid columns="2">  
+			  	  <p:panelGrid columns="3" 
+			  	  			   cellpadding="3" 
+			  	  			   columnClasses="firstColumn, firstColumn">
+			  	  			   
+			  	    <p:outputLabel 	value="Nombre Archivo"/>
+					<p:inputText 	id="txtNomArch"  
+									value="#{mbDireccionesFiscales.sNomArchivo}" 
+									styleClass="inputRead" 
+									style="width:150px !important"
+									readonly="true" /> 
+									
+					<p:commandButton id="btnValidar"
+									 value="Validar" 
+									 actionListener="#{mbDireccionesFiscales.ValidaArchivo_CargaMasiva}" 
+									 icon="ui-icon-clipboard" 
+                 				 	 styleClass="btnStyle3"
+									 update=":frmDireccionesFiscales:txtRegist,:frmDireccionesFiscales:pnCargaMas,
+											 :frmDireccionesFiscales:pgBtnsEstatus,:frmDireccionesFiscales:txtCorrectos, 
+											 :frmDireccionesFiscales:txtInconrrectos,:frmDireccionesFiscales:dtCargaMasiva"/>
+									  
+			  	  	<p:outputLabel value="Registros"/>
+					<p:inputText id="txtRegist" 
+								 value="#{mbDireccionesFiscales.iRegistros}" 
+								 readonly="true" 
+								 styleClass="inputRead">
+						<f:convertNumber pattern="#,###,##0"/>
+					</p:inputText>	 	
+					 
+					<p:commandButton id="btnAplicaArch" 
+									 value="Aplicar Archivo" 
+									 actionListener="#{mbDireccionesFiscales.Invoca_CargaMasiva}" 
+									 icon="ui-icon-folder-open" 
+                 				 	 styleClass="btnStyle3"
+									 update=":frmDireccionesFiscales:txtRegist,:frmDireccionesFiscales:pnCargaMas,
+											 :frmDireccionesFiscales:pgBtnsEstatus,:frmDireccionesFiscales:txtCorrectos, 
+											 :frmDireccionesFiscales:txtInconrrectos,:frmDireccionesFiscales:dtCargaMasiva"/> 
+			 	</p:panelGrid> 
+			 	
+			 	<p:panel id="pnCargaMas"
+			 			 style= "border:none;">
+			 	<h:panelGrid    id="pgBtnsEstatus"
+			 					columns="2" 
+			  	  			   	cellpadding="2"  
+			          			rendered="#{mbDireccionesFiscales.bEstatus_Disable}">   
+			          			
+				  	  	<p:outputLabel value="Registros Correctos"/>
+						<p:inputText id="txtCorrectos" 
+									 value="#{mbDireccionesFiscales.dCorrectos}" 
+									 readonly="true" 
+									 styleClass="inputRead">
+							<f:convertNumber pattern="#,###,##0"/>
+						</p:inputText> 		 
+						
+				  	  	<p:outputLabel value="Registros Incorrectos"/>
+						<p:inputText id="txtInconrrectos" 
+									 value="#{mbDireccionesFiscales.iIncorrectos}" 
+									 readonly="true" 
+									 styleClass="inputRead" >
+							<f:convertNumber pattern="#,###,##0"/>
+						</p:inputText> 
+					</h:panelGrid>
+				</p:panel>
+			</p:panelGrid>   
+			 </center> 
+			 
+			 <p:separator />
+			 <h:outputText value="&lt;br/&gt;" escape="false"/>
+			 
+			 <h:panelGrid id="panelGridCarga" >
+					<p:dataTable id="dtCargaMasiva" 
+								 resizableColumns="true"
+								 value="#{mbDireccionesFiscales.cargaInterfaz}" 
+								 var="cargaMasiva" 
+								 rowKey="#{cargaMasiva.secuencial}" 
+								 rows="10" 
+								 paginator="true" 
+								 paginatorPosition="bottom"
+								 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+								 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+								 emptyMessage="Sin registros"
+								 liveResize= "true"
+								 scrollable="true"
+								 liveScroll="true">
+						
+						<p:column headerText="No.Arch" 
+								  width="4%" 
+								  styleClass="rightColumnContent">
+                        <h:outputText value="#{cargaMasiva.secuencialArchivo}" title="#{cargaMasiva.secuencialArchivo}"/>
+						</p:column>
+						
+						<p:column headerText="Sec." 
+								  width="4%" 
+								  styleClass="rightColumnContent">
+							<h:outputText value="#{cargaMasiva.secuencial}" title="#{cargaMasiva.secuencial}" />
+						</p:column>
+						
+						<p:column headerText="Registro" 
+								  width="37%" 
+								  styleClass="rightColumnContent">
+							<h:outputText value="#{cargaMasiva.cadena}" title="#{cargaMasiva.cadena}"/>
+						</p:column>
+						
+						<p:column headerText="Estatus" 
+								  width="5%" 
+								  styleClass="rightColumnContent">
+							<h:outputText value="#{cargaMasiva.estatus}" title="#{cargaMasiva.estatus}"/>
+						</p:column>
+						
+						<p:column headerText="Mensaje" 
+								  width="40%" 
+								  styleClass="leftColumnContent">
+							<h:outputText value="#{cargaMasiva.mensaje}" title="#{cargaMasiva.mensaje}"/>
+						</p:column>
+
+						<p:column headerText="Archivo" 
+						          width="10%" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{cargaMasiva.nombreArchivo}" title="#{cargaMasiva.nombreArchivo}"/>
+						</p:column>
+
+					</p:dataTable>
+				</h:panelGrid>
+				
+			 	<h:outputText value="&lt;br/&gt;" escape="false"/>
+				<center>
+				<p:commandButton id="btnCerrar" 
+								 value="Cerrar" 
+								 icon="ui-icon-close" 
+                 				 styleClass="btnStyle"
+								 actionListener="#{mbDireccionesFiscales.Limpia_CargaMasiva}" 
+								 update=":frmDireccionesFiscales:dgCargaMasivaDir,:frmDireccionesFiscales:txtNomArch,
+		           				 :frmDireccionesFiscales:txtRegist,:frmDireccionesFiscales:txtCorrectos,
+		           				 :frmDireccionesFiscales:txtInconrrectos,:frmDireccionesFiscales:dtCargaMasiva"/>
+				</center>
+			 </p:outputPanel>   
+    		</p:dialog>	
+    		
+			<p:dialog id="dlgCargaCIF" 
+			          widgetVar="dlgCargaCIF" 
+			          header="Carga CSF Participantes" 
+			          modal="true" 
+			          resizable="false"  
+                      dynamic="true" 
+                      showEffect="fade" 
+                      hideEffect="fade"  
+                      height="100"
+                      position  = "500, 150"
+                      style="overflow: hidden"
+			          closable="true"> 
+                        
+			 <p:outputPanel> 
+			 <p:fileUpload fileUploadListener= "#{mbDireccionesFiscales.CargarCSF}"  
+	                       showButtons  = "false"
+	                       allowTypes = "/(\.|\/)(pdf)$/"  
+	                       mode = "advanced" 
+	                       sizeLimit = "10000024"  
+	                       label = "Cargar CSF"   
+				 		   style="background-color:#ffffcc !important"
+			          	   disabled="#{!mbDireccionesFiscales.bMantenimiento}"
+	                       icon="ui-icon-document" 
+	                       uploadLabel = "Carga CSF"  
+	                       oncomplete="dlgCargaCIF.hide()"
+	                       update="@this,:frmDireccionesFiscales:pnContRegCapital,:frmDireccionesFiscales:pgRegCapital,
+	                               :frmDireccionesFiscales:txtNomFiscal,:frmDireccionesFiscales:txtRFC,:frmDireccionesFiscales:txtNomLegal,
+	                               :frmDireccionesFiscales:txtNomPart,:frmDireccionesFiscales:txtColonia,:frmDireccionesFiscales:txtLocalidad,
+	                               :frmDireccionesFiscales:txtNoExt,:frmDireccionesFiscales:txtNoInt,:frmDireccionesFiscales:txtCP,
+								   :frmDireccionesFiscales:txtCalle,:frmDireccionesFiscales:selRegFiscal,:frmDireccionesFiscales:selPais,
+								   :frmDireccionesFiscales:selEstados,:frmDireccionesFiscales:txtCveReg,:frmDireccionesFiscales:dlgCargaCIF"/>      
+			 </p:outputPanel>   
+    		</p:dialog>
+    	<p:confirmDialog header="Alta de Direcciones Fiscales" id="dlgAltaDir" widgetVar="dlgAltaDir" message="¿Desea agregar una dirección fiscal a este fideicomiso?" closable="false">
+          <p:commandButton title="Aceptar"  value="Si" icon="ui-icon-check" actionListener="#{mbDireccionesFiscales.Confirmar_NuevaAlta}" oncomplete="dlgAltaDir.hide()" update=":frmDireccionesFiscales:dlgDirFiscal,:frmDireccionesFiscales:pgDetalleDir,:frmDireccionesFiscales:selPais" />
+          <p:commandButton title="Cancelar" value="No" icon="ui-icon-close" oncomplete="dlgAltaDir.hide()"/>
+        </p:confirmDialog>
+        </h:form>
+    </h:body>
+</html>

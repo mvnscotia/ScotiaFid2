@@ -1,0 +1,1417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+       
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmContabilidadCancelaSaldo"
+                                                                enctype         = "multipart/form-data">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+             <p:growl                                           id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "5000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Cancelación de Saldos">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <p:panelGrid                                    id              = "panelContrato"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText                        value           = "#{mbContabilidad.cancelaSaldoFidecomisoTxt}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                size            = "12"
+                                                                style           = "text-align: center;"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;">  
+                                                               
+                                <p:ajax                         event           = "blur"
+                                                                listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_VerificaFiso}"
+                                                                update          = ":frmContabilidadCancelaSaldo:txtCritCtoNom,
+                                                                                   :frmContabilidadCancelaSaldo:cmdBuscar,
+                                                                                   :frmContabilidadCancelaSaldo:cmdLimpiar,
+                                                                                   :frmContabilidadCancelaSaldo:cmdContinuar,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtInvPlazo,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtInvDir,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtBienGar,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtBienFid,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtCtaCheq,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtCtoInv,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtFianzas,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtHonor,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaIP,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaID,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaBG,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaBF,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaCC,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaHono,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaFianzas,
+                                                                                   :frmContabilidadCancelaSaldo:bReportePDF,
+                                                                                   :frmContabilidadCancelaSaldo:bReportePDF2,
+                                                                                   @this"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtCritCtoNom"
+                                                                value           = "#{beanCriterioBusqueda.criterioContratoNombre}"
+                                                                maxlength       = "200"
+                                                                readonly        = "true"
+                                                                size            = "200"
+                                                                style           = "background-color: #ffffcc; text-align: left;"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    id              = "cmdBuscar"
+                                                                icon            = "ui-icon-search"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                title           = "Busca información del fideicomiso seleccionado"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaSaldo_GeneraInformacion}"
+                                                                update          = ":frmContabilidadCancelaSaldo:tab:dtInvPlazo,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtInvDir,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtBienGar,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtBienFid,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtCtaCheq,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtCtoInv,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtFianzas,
+                                                                                   :frmContabilidadCancelaSaldo:tab:dtHonor,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaIP,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaID,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaBG,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaBF,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaCC,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaHono,
+                                                                                   :frmContabilidadCancelaSaldo:tab:panelMonedaFianzas"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    id              = "cmdLimpiar"
+                                                                icon            = "ui-icon-refresh"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                title           = "Limpia Campos"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaSaldo_Limpia}"
+                                                                update          = ":frmContabilidadCancelaSaldo:panelContrato,
+                                                                                   :frmContabilidadCancelaSaldo:tab"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    id              = "cmdContinuar"
+                                                                icon            = "ui-icon-circle-arrow-e"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                title           = "Continuar"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaSaldo_Continua}"
+                                                                update          = ":frmContabilidadCancelaSaldo:dlgSaldos"/>
+                        </p:column>
+                        <p:column>
+                        <p:commandButton                        id              ="bReportePDF"
+                                                                icon            = "ui-icon-gear"
+                                                                value           = "Reporte PDF"
+                                                                 
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                actionListener  = "#{mbReporte.main(beanCriterioBusqueda.criterioContratoNumero,beanCriterioBusqueda.criterioContratoNombre)}"
+                                                                />
+                    
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:tabView                                      id              = "tab"
+                                                                style           = "height: 600px;">
+                    <p:tab                                      id              = "tabInv"
+                                                                title           = "Inversiones">
+                        <br/>
+                        <p:dataTable                            id              = "dtInvPlazo"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom"
+                                                                rows            = "10"
+                                                                lazy            = "true"
+                                                                value           = "#{mbContabilidad.consultaGenInvPlazo}"
+                                                                var             = "invPzo">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Inversiones a plazo"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo00}"
+                                                                title           = "#{invPzo.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 5%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{invPzo.genericoCampo01}"
+                                                                title           = "#{invPzo.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Folio Rep."
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo02}"
+                                                                title           = "#{invPzo.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Cto. Inv."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo03}"
+                                                                title           = "#{invPzo.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Custodio"
+                                                                style           = "width: 25%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo04}"
+                                                                title           = "#{invPzo.genericoCampo04}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 12%;">
+                                <h:inputText                    value           = "#{invPzo.genericoCampo05}"
+                                                                title           = "#{invPzo.genericoCampo05}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Plazo"
+                                                                style           = "width: 3%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo06}"
+                                                                title           = "#{invPzo.genericoCampo06}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Tasa"
+                                                                style           = "width: 3%;">
+                                <h:inputText                    value           = "#{invPzo.genericoCampo07}"
+                                                                title           = "#{invPzo.genericoCampo07}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Premio"
+                                                                style           = "width: 7%;">
+                                <h:inputText                    value           = "#{invPzo.genericoCampo08}"
+                                                                title           = "#{invPzo.genericoCampo08}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo09}"
+                                                                title           = "#{invPzo.genericoCampo09}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Fec. Vencim."
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo11}"
+                                                                title           = "#{invPzo.genericoCampo11}">
+                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"/>
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{invPzo.genericoCampo10}"
+                                                                title           = "#{invPzo.genericoCampo10}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaIP"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomInvPlazo}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaInvPlazo()}"
+                                                                        update          = "dtInvPlazo,sumaInvPlazo"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaInvPlazo"
+                                                                         value           = "#{mbContabilidad.sumaInvPlazo}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center; background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+                
+                        <br/>
+                        <br/>
+                        
+                        <p:dataTable                            id              = "dtInvDir"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenInvDir}"
+                                                                var             = "invDir"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Inversiones en directo"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo00}"
+                                                                title           = "#{invDir.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 5%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{invDir.genericoCampo01}"
+                                                                title           = "#{invDir.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Cto. Inv."
+                                                                style           = "width: 8%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo02}"
+                                                                title           = "#{invDir.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Fecha Cpa."
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo12}"
+                                                                title           = "#{invDir.genericoCampo12}">
+                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"/>
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column                           headerText      = "Intermediario"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo13}"
+                                                                title           = "#{invDir.genericoCampo13}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Pizarra"
+                                                                style           = "width: 5%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo03}"
+                                                                title           = "#{invDir.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Serie"
+                                                                style           = "width: 3%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo04}"
+                                                                title           = "#{invDir.genericoCampo04}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Cupón"
+                                                                style           = "width: 4%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo05}"
+                                                                title           = "#{invDir.genericoCampo05}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo06}"
+                                                                title           = "#{invDir.genericoCampo06}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Títulos Compra"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{invDir.genericoCampo07}"
+                                                                title           = "#{invDir.genericoCampo07}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;"/>
+                            </p:column>
+                            <p:column                           headerText      = "Títulos Disp."
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{invDir.genericoCampo08}"
+                                                                title           = "#{invDir.genericoCampo08}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;"/>
+                            </p:column>
+                            <p:column                           headerText      = "Precio"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{invDir.genericoCampo09}"
+                                                                title           = "#{invDir.genericoCampo09}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Importe Compra"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{invDir.genericoCampo10}"
+                                                                title           = "#{invDir.genericoCampo10}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{invDir.genericoCampo11}"
+                                                                title           = "#{invDir.genericoCampo11}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaID"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomInvDirecto}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaInvDirecto()}"
+                                                                        update          = "dtInvDir,sumaInvDirecto"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Titulos:"/>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaInvDirecto"
+                                                                         value           = "#{mbContabilidad.sumaInvDir}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+                           </p:row>
+                        </p:panelGrid>
+
+                    </p:tab>
+                    <p:tab                                      id              = "tabBienes"
+                                                                title           = "Bienes">
+                        <br/>
+                        <p:dataTable                            id              = "dtBienGar"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenBienGar}"
+                                                                var             = "gar"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Bienes en garantía"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo00}"
+                                                                title           = "#{gar.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{gar.genericoCampo01}"
+                                                                title           = "#{gar.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Tipo"
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo02}"
+                                                                title           = "#{gar.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Clasificación"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo03}"
+                                                                title           = "#{gar.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Sec."
+                                                                style           = "width: 2%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{gar.genericoCampo04}"
+                                                                title           = "#{gar.genericoCampo04}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 8%;">
+                                <h:inputText                    value           = "#{gar.genericoCampo05}"
+                                                                title           = "#{gar.genericoCampo05}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Importe Ult. Val."
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{gar.genericoCampo06}"
+                                                                title           = "#{gar.genericoCampo06}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Descripción"
+                                                                style           = "width: 34%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo07}"
+                                                                title           = "#{gar.genericoCampo07}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo08}"
+                                                                title           = "#{gar.genericoCampo08}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{gar.genericoCampo09}"
+                                                                title           = "#{gar.genericoCampo09}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaBG"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomBienGaratia}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaBienesGarantia()}"
+                                                                        update          = "dtBienGar,sumaBienGar"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+  
+                                <p:column>
+                                     <h:inputText                        id              = "sumaBienGar"
+                                                                         value           = "#{mbContabilidad.sumaBienGar}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+
+                        <br/>
+                        <br/>
+                        
+                        <p:dataTable                            id              = "dtBienFid"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenBienFid}"
+                                                                var             = "fid"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Bienes fideicomitidos"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo00}"
+                                                                title           = "#{fid.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{fid.genericoCampo01}"
+                                                                title           = "#{fid.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Tipo"
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo02}"
+                                                                title           = "#{fid.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Clasificación"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo04}"
+                                                                title           = "#{fid.genericoCampo04}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Sec."
+                                                                style           = "width: 2%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{fid.genericoCampo03}"
+                                                                title           = "#{fid.genericoCampo03}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 8%;">
+                                <h:inputText                    value           = "#{fid.genericoCampo05}"
+                                                                title           = "#{fid.genericoCampo05}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Importe Ult. Val."
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{fid.genericoCampo06}"
+                                                                title           = "#{fid.genericoCampo06}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            
+                            <p:column                           headerText      = "Descripción"
+                                                                style           = "width: 35%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo08}"
+                                                                title           = "#{fid.genericoCampo08}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo07}"
+                                                                title           = "#{fid.genericoCampo07}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{fid.genericoCampo09}"
+                                                                title           = "#{fid.genericoCampo09}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaBF"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomBienFideicomitido}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaBienesFideicomitidos()}"
+                                                                        update          = "dtBienFid,sumaBienFid"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaBienFid"
+                                                                         value           = "#{mbContabilidad.sumaBienfid}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+
+                    </p:tab>
+                    <p:tab                                      id              = "tabCtas"
+                                                                title           = "Cuentas">
+                        <br/>
+                        <p:dataTable                            id              = "dtCtaEsp"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Cuentas especiales"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 10%;">
+                                
+                            </p:column>
+                            <p:column                           headerText      = "Cuenta Especial"
+                                                                style           = "width: 15%;">
+                                
+                            </p:column>
+                            <p:column                           headerText      = "Banco"
+                                                                style           = "width: 35%;">
+                                
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 20%;">
+                                
+                            </p:column>
+                            <p:column                           headerText      = "Fecha Ult. Mod."
+                                                                style           = "width: 10%;">
+                                
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 10%;">
+                                
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:dataTable                            id              = "dtCtaCheq"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenCtaChq}"
+                                                                var             = "chq"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Cuentas de cheques"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo00}"
+                                                                title           = "#{chq.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{chq.genericoCampo01}"
+                                                                title           = "#{chq.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Tipo"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo02}"
+                                                                title           = "#{chq.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Cuenta"
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo03}"
+                                                                title           = "#{chq.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{chq.genericoCampo04}"
+                                                                title           = "#{chq.genericoCampo04}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Banco"
+                                                                style           = "width: 40%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo05}"
+                                                                title           = "#{chq.genericoCampo05}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo06}"
+                                                                title           = "#{chq.genericoCampo06}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 8%;">
+                                <h:outputLabel                  value           = "#{chq.genericoCampo07}"
+                                                                title           = "#{chq.genericoCampo07}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaCC"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomCtasCheques}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaCtasCheques()}"
+                                                                        update          = "dtCtaCheq,sumaCtasChq"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaCtasChq"
+                                                                         value           = "#{mbContabilidad.sumaCtaChq}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+
+
+                    </p:tab>
+                    <p:tab                                      id              = "tabHonor"
+                                                                title           = "Honorarios">
+                        <br/>
+                        <p:dataTable                            id              = "dtHonor"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenHonor}"
+                                                                var             = "hon"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Honorarios pendientes"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo00}"
+                                                                title           = "#{hon.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Persona"
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo01}"
+                                                                title           = "#{hon.genericoCampo01}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Tipo honorario"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo02}"
+                                                                title           = "#{hon.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Fecha cálc."
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo03}"
+                                                                title           = "#{hon.genericoCampo03}">
+                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"/> 
+                                </h:outputLabel>
+                            </p:column>
+                            <p:column                           headerText      = "Periodo"
+                                                                style           = "width: 13%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo04}"
+                                                                title           = "#{hon.genericoCampo04}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 8%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo05}"
+                                                                title           = "#{hon.genericoCampo05}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "I.V.A."
+                                                                style           = "width: 6%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo06}"
+                                                                title           = "#{hon.genericoCampo06}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Gastos Cobranza"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo07}"
+                                                                title           = "#{hon.genericoCampo07}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Importe Rem."
+                                                                style           = "width: 7%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo08}"
+                                                                title           = "#{hon.genericoCampo08}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "I.V.A. Rem."
+                                                                style           = "width: 6%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo09}"
+                                                                title           = "#{hon.genericoCampo09}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Gastos Rem."
+                                                                style           = "width: 7%;">
+                                <h:inputText                    value           = "#{hon.genericoCampo10}"
+                                                                title           = "#{hon.genericoCampo10}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo11}"
+                                                                title           = "#{hon.genericoCampo11}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{hon.genericoCampo12}"
+                                                                title           = "#{hon.genericoCampo12}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaHono"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomHonorarios}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaHonorarios()}"
+                                                                        update          = "dtHonor,sumaHonorarios"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaHonorarios"
+                                                                         value           = "#{mbContabilidad.sumaHonorarios}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                    </p:tab>
+                    <p:tab                                      id              = "tabOtros"
+                                                                title           = "Otros">
+                        <br/>
+                        <p:dataTable                            id              = "dtCtoInv"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenCtoInv}"
+                                                                var             = "ctoInv"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Contratos de Inversión"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "height: 25px; width: 10%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo00}"
+                                                                title           = "#{ctoInv.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "SubFiso"
+                                                                style           = "width: 5%;">
+                                <center>
+                                    <h:outputLabel              value           = "#{ctoInv.genericoCampo01}"
+                                                                title           = "#{ctoInv.genericoCampo01}"/>
+                                </center>
+                            </p:column>
+                            <p:column                           headerText      = "Cto. Inv."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo02}"
+                                                                title           = "#{ctoInv.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Intermediario"
+                                                                style           = "width: 43%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo03}"
+                                                                title           = "#{ctoInv.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo04}"
+                                                                title           = "#{ctoInv.genericoCampo04}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Apertura"
+                                                                style           = "width: 6%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo05}"
+                                                                title           = "#{ctoInv.genericoCampo05}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Vencimiento"
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo07}"
+                                                                title           = "#{ctoInv.genericoCampo07}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{ctoInv.genericoCampo06}"
+                                                                title           = "#{ctoInv.genericoCampo06}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <br/>
+                        <p:dataTable                            id              = "dtFianzas"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "200"
+                                                                value           = "#{mbContabilidad.consultaGenFianzas}"
+                                                                var             = "fza"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom">
+                            <f:facet                            name            = "header">
+                                <h:outputLabel                  value           = "Fianzas"/>
+                            </f:facet>
+                            <p:column                           headerText      = "Fiso."
+                                                                style           = "width: 10%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo00}"
+                                                                title           = "#{fza.genericoCampo00}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Fianza"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo01}"
+                                                                title           = "#{fza.genericoCampo01}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Folio"
+                                                                style           = "width: 9%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo02}"
+                                                                title           = "#{fza.genericoCampo02}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Titular"
+                                                                style           = "width: 21%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo03}"
+                                                                title           = "#{fza.genericoCampo03}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Importe"
+                                                                style           = "width: 9%;">
+                                <h:inputText                    value           = "#{fza.genericoCampo04}"
+                                                                title           = "#{fza.genericoCampo04}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent; border-style: none!important; text-align: right;">
+                                    <f:convertNumber           maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           headerText      = "Moneda"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo05}"
+                                                                title           = "#{fza.genericoCampo05}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Afianzadora"
+                                                                style           = "width: 15%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo06}"
+                                                                title           = "#{fza.genericoCampo06}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Agente"
+                                                                style           = "width: 15%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo07}"
+                                                                title           = "#{fza.genericoCampo07}"/>
+                            </p:column>
+                            <p:column                           headerText      = "Status"
+                                                                style           = "width: 7%;">
+                                <h:outputLabel                  value           = "#{fza.genericoCampo08}"
+                                                                title           = "#{fza.genericoCampo08}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:panelGrid                                    id              = "panelMonedaFianzas"
+                                                                        styleClass      = "bordePanel"
+                                                                        style           = "margin-left: auto; margin-right: auto;">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel                      value           = "Moneda:"/>
+                                </p:column>
+                                <p:column>
+                                    <h:selectOneMenu                    value           = "#{mbContabilidad.monedaNomFianzas}"
+                                                                        disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                        <f:selectItem                   itemLabel       = "..."
+                                                                        itemValue       = ""/>
+                                        <f:selectItems                  value           = "#{mbContabilidad.listaMoneda}"/>
+                                        <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_MonedaFianzas()}"
+                                                                        update          = "dtFianzas,sumaFianzas"/>
+                                    </h:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                     <h:inputText                        id              = "sumaFianzas"
+                                                                         value           = "#{mbContabilidad.sumaFianzas}"
+                                                                         autocomplete    = "off"
+                                                                         maxlength       = "15"
+                                                                         size            = "15"
+                                                                         style           = "text-align: center;background-color: #ffffcc; text-align: left;"
+                                                                         readonly        = "true">
+                                      <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                                     <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                </h:inputText>
+                                </p:column>
+
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+
+
+                    </p:tab>
+                </p:tabView>
+                <br/>
+            </p:panel>
+           
+            <p:dialog                                           id              = "dlgSaldos" 
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Cancelación de Saldos" 
+                                                                modal           = "true" 
+                                                                position        = "5, 60" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgSaldosVar">
+                <br/>
+                <p:dataTable                                    id              = "dtSaldo"
+                                                                emptyMessage    = "Sin Registros"
+                                                                value           = "#{mbContabilidad.consultaGen}"
+                                                                var             = "gen"
+                                                                scrollable      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                               paginatorPosition= "bottom"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true">
+                    <f:facet                                    name            = "header">
+                        <h:outputLabel                          value           = "#{beanGenericoTitulo.genericoTitulo01}"/>
+                    </f:facet>
+                    <p:column                                   headerText      = "Sec."
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo00}"
+                                                                title           = "#{gen.genericoCampo00}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "CTAM"
+                                                                style           = "width: 3%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo01}"
+                                                                title           = "#{gen.genericoCampo01}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SC1"
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo02}"
+                                                                title           = "#{gen.genericoCampo02}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SC2"
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo03}"
+                                                                title           = "#{gen.genericoCampo03}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SC3"
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo04}"
+                                                                title           = "#{gen.genericoCampo04}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SC4"
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo05}"
+                                                                title           = "#{gen.genericoCampo05}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Mda."
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo06}"
+                                                                title           = "#{gen.genericoCampo06}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fiso."
+                                                                style           = "width: 8%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo07}"
+                                                                title           = "#{gen.genericoCampo07}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "AX2"
+                                                                style           = "width: 3%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo08}"
+                                                                title           = "#{gen.genericoCampo08}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "AX3"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo09}"
+                                                                title           = "#{gen.genericoCampo09}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Saldo Ini."
+                                                                style           = "width: 10%;">
+                        <h:inputText                            value           = "#{gen.genericoCampo10}"
+                                                                title           = "#{gen.genericoCampo10}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important; 
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                          <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>  
+                    </p:column>
+                    <p:column                                   headerText      = "Folio"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo11}"
+                                                                title           = "#{gen.genericoCampo11}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Sec. Asi."
+                                                                style           = "width: 5%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo12}"
+                                                                title           = "#{gen.genericoCampo12}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "C/A"
+                                                                style           = "width: 2%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo13}"
+                                                                title           = "#{gen.genericoCampo13}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Importe"
+                                                                style           = "width: 8%;">
+                        <h:inputText                            value           = "#{gen.genericoCampo14}"
+                                                                title           = "#{gen.genericoCampo14}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important; 
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                          <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>  
+                    </p:column>
+                    <p:column                                   headerText      = "Saldo Actual"
+                                                                style           = "width: 8%;">
+                        <h:inputText                            value           = "#{gen.genericoCampo15}"
+                                                                title           = "#{gen.genericoCampo15}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important; 
+                                                                                   text-align      : right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                          <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>  
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 5%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo16}"
+                                                                title           = "#{gen.genericoCampo16}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fec. Sim."
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo18}"
+                                                                title           = "#{gen.genericoCampo18}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fec. Apl."
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo19}"
+                                                                title           = "#{gen.genericoCampo19}"/>
+                    </p:column>
+
+                    <p:column                                   headerText      = "Descripción"
+                                                                style           = "width: 8%; ">
+                        <h:outputLabel                          value           = "#{gen.genericoCampo17}"
+                                                                title           = "#{gen.genericoCampo17}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <br/>
+                <p:panelGrid                                    style           = "margin-right: auto; margin-left: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoTitulo.genericoTitulo00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItem                   itemLabel       = "HONORARIOS"
+                                                                itemValue       = "CTAS HONORARIOS"
+                                                                itemDisabled    = "#{mbContabilidad.secHonorarios}"/>
+                                <f:selectItem                   itemLabel       = "CUENTAS DE RESULTADOS"
+                                                                itemValue       = "CTAS RESULTADO"
+                                                                itemDisabled    = "#{mbContabilidad.secCtasResultados}"/>
+                                <f:selectItem                   itemLabel       = "BIENES"
+                                                                itemValue       = "CTAS BIENES"
+                                                                itemDisabled    = "#{mbContabilidad.secBienes}"/>
+                                <f:selectItem                   itemLabel       = "INVERSIONES"
+                                                                itemValue       = "CTAS INVERSION"
+                                                                itemDisabled    = "#{mbContabilidad.secInversiones}"/>
+                                <f:selectItem                   itemLabel       = "BANCOS"
+                                                                itemValue       = "CTAS BANCOS"
+                                                                itemDisabled    = "#{mbContabilidad.secBancos}"/>
+                                <f:selectItem                   itemLabel       = "CUENTAS DE BALANCE"
+                                                                itemValue       = "CTAS BALANCE"
+                                                                itemDisabled    = "#{mbContabilidad.secCtasBalance}"/>
+                                <f:selectItem                   itemLabel       = "CUENTAS DE ORDEN"
+                                                                itemValue       = "CTAS ORDEN"
+                                                                itemDisabled    = "#{mbContabilidad.secCtasOrden}"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadCancelaSaldo_SeleccionaSaldo}"
+                                                                update          = ":frmContabilidadCancelaSaldo:dtSaldo,@this,:frmContabilidadCancelaSaldo:bAplica"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    id              ="bAplica"
+                                                                icon            = "ui-icon-gear"
+                                                                value           = "Aplicar"
+                                                                disabled        = "#{mbContabilidad.botonAplica}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaSaldo_Aplica}"
+                                                                update          = ":frmContabilidadCancelaSaldo:dlgPopUpGral"/>
+                        </p:column>
+                    </p:row>                                                
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:column>
+                       <p:commandButton                         icon            = "ui-icon-circle-arrow-e"
+                                                                value           = "Cerrar ventana"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaSaldo_CierraVentana}"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton                        id              ="bReportePDF2"
+                                                                icon            = "ui-icon-gear"
+                                                                value           = "Reporte PDF"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                actionListener  = "#{mbReporte.main(beanCriterioBusqueda.criterioContratoNumero,beanCriterioBusqueda.criterioContratoNombre)}"
+                                                                />
+                    
+                    </p:column>
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                modal           = "true"
+                                                                position        = "600, 150"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion}"
+                                                                update          = ":frmContabilidadCancelaSaldo:dtSaldo,:frmContabilidadCancelaSaldo:bAplica"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

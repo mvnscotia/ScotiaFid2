@@ -1,0 +1,805 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+      <title>scotiaFid.- Entradas y Salidas Físicas</title>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8"/>
+      <meta http-equiv="Conten-Type-Options" content = "nosniff"/>
+      <meta http-equiv="X-XSS-Protection" content = "1"/>
+      <meta http-equiv="Cache-control" content = "No-Store"/>
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv="expires"       content = "43200"/>
+      <link rel       ="stylesheet"    type    = "text/css"
+                                       href    = "../vista/recursos/css/cssGral.css" 
+                                       media   = "screen"/>
+        <style                         type    = "text/css"
+        							   media   = "screen">  
+         .firstColumn { width: 170px; }
+         .secondColumn { width: 200px; } 
+         .thirdColumn { width:380px;}      
+         .ancho{width: 490px !important}
+         .MasAncho{width:550px !important} 
+         .firstColumnCust {width: 170px;}
+         .ColumnButtons { width: 250px;}
+         .firstColumnHead{width: 175px;}
+         .secondColumnHead{width: 200px;} 
+         .thirdColumnHead{width: 740px;} 
+         .firstColumnMoneda {width: 170px; }   
+         .secondColumnMoneda {width: 200px;}    
+         .thirdColumnMoneda {width: 134px; } 
+         .tPosicion{width:16px;text-align:left}
+         .panelGrid{border-style:none !important;} 
+         td.rightColumnContent{text-align: right;} 
+         td.centerColumnContent{text-align: center;}
+         .sixColumn {width: 165px; text-align: center;} 
+         .styleButtons2{ width:155px; ;text-align:center}
+         .firstColumnFoot{width: 350px; text-align: center;} 
+		 .lbRojo {color:#D23D1E; display: block; font-weight: bolder}    
+         .ui-panelgrid td, .ui-panelgrid tr { border-style: none !important }
+         .styleButtons{ width:130px; text-indent: 15px; margin: 5px; text-align:center}
+         .inputForm { width:170px !important; color: black; border:solid 1px !important;}
+		 .TipoMov { display: block; color: black; font-weight: bolder; text-align: center;} 
+         .inputForm2 { width:133px !important;  text-align: right;color: darkgray; border: 1px dashed !important;}
+         .inputNumber { width:490px !important; background-color: #ffffcc !important; color: darkgray; border: 1px dashed !important;}
+         .inputNumber2 { width:134px; background-color: #ffffcc !important; text-align: right; color: darkgray; border: 1px dashed !important;}  
+         .inputEmis { width:134px !important;background-color: #ffffcc !important; text-align: center; color: darkgray; border: 1px dashed !important;}
+		 .inputNumberMon{width: 190px !important; background-color: #ffffcc !important; text-align: left; color: darkgray; border: 1px dashed !important;}
+      </style>
+
+      <script type="text/javascript" >   
+          function convertirDecimal(campo){
+              const numStr = campo.value;
+              const num = Number(numStr)
+              if (!isNaN(num)){
+                  campo.value = num.toFixed(2);
+              } 
+          }
+                      function compruebaValidoEntero(campo){ 
+                          campo.value = campo.value.trim();
+                      };
+			
+                  PrimeFaces.locales['es'] = {
+                  closeText: 'Cerrar',
+                  prevText: 'Anterior',
+                  nextText: 'Siguiente',
+                  monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                  monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                  dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                      dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                  dayNamesMin: ['D','L','M','M','J','V','S'],
+                  weekHeader: 'Semana',
+                      firstDay: 1,
+                  isRTL: false,
+                      showMonthAfterYear: false,
+                      yearSuffix: '',
+                  timeOnlyTitle: 'Sólo hora',
+                      timeText: 'Tiempo',
+                  hourText: 'Hora',
+                      minuteText: 'Minuto',
+                  secondText: 'Segundo',
+                  currentText: 'Fecha actual',
+                      ampm: false,
+                  month: 'Mes',
+                  week: 'Semana',
+                  day: 'Día',
+                  allDayText : 'Todo el día'
+                  };
+      </script>  
+</h:head>
+<h:body>
+    <p:growl autoUpdate = "true" 
+             showDetail = "true" 
+             showSummary = "true" 
+             life = "15000"/>
+             
+      <p:ajaxStatus onstart = "dlgAjaxStatus.show();" 
+                    oncomplete  = "dlgAjaxStatus.hide();"/>
+                    
+      <h:form id="formEntradaSalida" 
+              enctype = "multipart/form-data">
+          <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+		<p:panel id="basic" 
+		         header="Entradas y Salidas Físicas" 
+		         styleClass="panelGrid"> 
+		
+				<p:outputPanel id="panelFecha" 
+				               autoUpdate="true">
+				               
+					<h:panelGrid id="panelGridFecha" 
+					             columns="3" 
+					             styleClass="ui-widget-content" 
+					             columnClasses="firstColumnHead,secondColumnHead,thirdColumnHead">
+					             
+						<p:outputLabel value="Fecha valor (dd/mm/aaaa)" 
+						               styleClass="lbRojo"/>
+						               
+						<p:calendar id="CalendFecMov" 
+						            value="#{mbEntradaSalida.fecValor}" 	                                                       
+						            pattern         = "dd/MM/yyyy"
+                                    navigator       = "true"
+                                    disabledWeekends= "true" 
+                                    validatorMessage= "Tipo de dato no válido"
+                                    readonlyInput   = "true" 
+                                    locale          ="es"
+                                    timeZone        ="America/Mexico_City">
+							<p:ajax event="dateSelect" 
+							        listener="#{mbEntradaSalida.select_FecVal}" 
+							        update=":formEntradaSalida:CalendFecMov,:formEntradaSalida:panelGridMoneda"/>
+						</p:calendar>
+						<h:outputText value="&lt;br/&gt;" escape="false"/>
+					</h:panelGrid>
+				</p:outputPanel> 
+
+			<h:panelGrid id="panelGridBody" 
+				         columns="3" 
+				         cellpadding="3" 
+				         styleClass="ui-widget-content" 
+				         columnClasses="firstColumn, secondColumn, thirdColumn">
+				
+				<p:outputLabel value="Fideicomiso"/>
+				<p:inputText  id="txtFideicomiso" 
+					          value="#{mbEntradaSalida.entradaSalidaBean.fideicomiso}" 
+					          styleClass="inputForm" 
+					          maxlength="10"  
+					          onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;">
+				 <p:ajax event="blur" 
+					  listener="#{mbEntradaSalida.checkFideicomisoCompraVenta}"
+						update=":formEntradaSalida:PanelTipoMov,:formEntradaSalida:rbtnTipoMovimiento, 
+								:formEntradaSalida:panelGridBody,:formEntradaSalida:txtFideicomiso,:formEntradaSalida:selSubFiso, 
+								:formEntradaSalida:selCtoInv,:formEntradaSalida:panelGridContainter,:formEntradaSalida:panelGridInv, 
+              		 		 	:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion,:formEntradaSalida:selTipoValor,
+              		 		 	:formEntradaSalida:selCustodio,:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento,
+              		 		 	:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra,
+              		 		 	:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos,
+              		 		 	:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis,
+              		 		 	:formEntradaSalida:panelGridMoneda,:formEntradaSalida:panelBotones"/>
+				</p:inputText>
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+				<h:outputLabel value="Sub Fiso."/>
+                                <p:selectOneMenu id="selSubFiso" 
+                                                 value="#{mbEntradaSalida.subFiso}" 
+				                 disabled="#{mbEntradaSalida.habilitaTxtSubFiso}" 
+                                                 filter          = "true"
+                                                 filterMatchMode = "contains"
+				                 styleClass="MasAncho">
+                                    <f:selectItems                         value= "#{mbEntradaSalida.listaSubContrato}" /> 
+					<p:ajax event="change" 
+					        listener="#{mbEntradaSalida.checkSubFiso}" 
+					        update=":formEntradaSalida:PanelTipoMov,:formEntradaSalida:rbtnTipoMovimiento, 
+								:formEntradaSalida:panelGridBody,:formEntradaSalida:txtFideicomiso,:formEntradaSalida:selSubFiso, 
+								:formEntradaSalida:selCtoInv,:formEntradaSalida:selTipoValor,:formEntradaSalida:selCustodio,
+								:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,
+								:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie,
+								:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte,
+								:formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis,
+								:formEntradaSalida:panelGridMoneda,:formEntradaSalida:panelBotones"/>
+                                        
+				</p:selectOneMenu>
+                                
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+				<p:outputLabel value="Contrato de Inversión"/>
+				<p:selectOneMenu id="selCtoInv" 
+				                 value="#{mbEntradaSalida.sCtoInver}" 
+				                 disabled="#{mbEntradaSalida.habilitaSelCtoInv!=1}" 
+				                 styleClass="MasAncho">
+					<f:selectItems value="#{mbEntradaSalida.ctoInversion.entrySet()}" 
+					               var="ctoInversion" 
+					               itemLabel="#{ctoInversion.value}" 
+					               itemValue="#{ctoInversion.key}"/>
+					<p:ajax event="change" 
+					     listener="#{mbEntradaSalida.select_CtoInv}"
+							update=":formEntradaSalida:panelGridBody,:formEntradaSalida:panelGridContainter,:formEntradaSalida:panelGridInv, 
+	              		 		 	:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion,:formEntradaSalida:selTipoValor, 
+	              		 		 	:formEntradaSalida:selCustodio,:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento, 
+	              		 		 	:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra, 
+	              		 		 	:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos, 
+	              		 		 	:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis, 
+	              		 		 	:formEntradaSalida:panelGridMoneda"/>
+				</p:selectOneMenu>
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+			</h:panelGrid>
+
+			<h:panelGrid id="PanelTipoMov" 
+			             border="0" 
+			             columns="3" 
+			             styleClass="ui-widget-content" 
+			             columnClasses="firstColumnHead,secondColumnHead,thirdColumnHead">
+			             
+				<p:outputLabel value="Tipo de Movimiento" 
+				               styleClass="TipoMov"/>
+				<p:selectOneRadio id="rbtnTipoMovimiento" 
+				                  value="#{mbEntradaSalida.tipomovimiento}" 
+				                  required="true" >
+					<p:ajax event="valueChange" 
+					        listener="#{mbEntradaSalida.SelectTipoMov}"
+			   			    update=":formEntradaSalida:panelGridBody,:formEntradaSalida:selCtoInv,:formEntradaSalida:panelGridContainter, 
+		       		          		:formEntradaSalida:panelGridInv,:formEntradaSalida:selTipoValor,:formEntradaSalida:txtMercado, 
+		       		          		:formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridPosicion, 
+		       		          		:formEntradaSalida:dtPosicion,:formEntradaSalida:selCustodio,:formEntradaSalida:panelGridValores, 
+		       		          		:formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon, 
+		       		          		:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio, 
+		       		          		:formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda,:formEntradaSalida:txtRedaccion" />
+					<f:selectItem itemValue="E" 
+					              itemLabel="Entrada Física">
+					</f:selectItem>
+					<f:selectItem itemValue="S" 
+					              itemLabel="Salida Física">
+					</f:selectItem>
+				</p:selectOneRadio>
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+			</h:panelGrid>
+				
+			<h:panelGrid id="panelGridContainter">
+				<h:panelGrid id="panelGridInv" 
+				             rendered="#{mbEntradaSalida.habilitaPanelInv}" 
+				             columns="4" 
+				             cellpadding="4"  
+				             columnClasses="firstColumn, secondColumn, thirdColumn, fourColumn">
+				             
+					<h:outputLabel   value="Tipo Valor"/>
+					<p:selectOneMenu id="selTipoValor" 
+					                 value="#{mbEntradaSalida.tipoValor}" 
+					                 disabled="#{mbEntradaSalida.habilitaSelTipoValor!=1}" 
+					                 styleClass="MasAncho" 
+					                 filter="true" 
+					                 filterMatchMode="contains">
+						<f:selectItems value="#{mbEntradaSalida.tipoValores.entrySet()}" 
+						               var="tipoValores" 
+						               itemLabel="#{tipoValores.value}" 
+						               itemValue="#{tipoValores.key}"/>
+						<p:ajax event="change"
+							listener="#{mbEntradaSalida.select_TipoValor}"
+							update=":formEntradaSalida:panelGridBody,:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento, 
+               		  		  		:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra, 
+               		  		  		:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos, 
+               		  		  		:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis, 
+               		  		  		:formEntradaSalida:panelGridMoneda"/>
+					</p:selectOneMenu>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+					<h:outputLabel value="Mercado"/>
+					<p:inputText id="txtMercado" 
+					             value="#{mbEntradaSalida.mercado}" 
+					             readonly="true" 
+					             styleClass="inputNumber" 
+					             maxlength="5" 
+					             onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+					<h:outputLabel value="Instrumento"/>
+					<p:inputText id="txtInstrumento" 
+					             value="#{mbEntradaSalida.instrumento}" 
+					             readonly="true" 
+					             styleClass="inputNumber" 
+					             maxlength="5" 
+					             onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+					<p:outputLabel value="Emisiones"/>
+					<p:selectOneMenu id="selEmisiones" 
+					                 value="#{mbEntradaSalida.sValEmis}" 
+					                 disabled="#{mbEntradaSalida.habilitaSelEmisiones!=1}" 
+					                 styleClass="ancho" 
+					                 filter="true" 
+					                 filterMatchMode="contains">
+						<f:selectItems value="#{mbEntradaSalida.emisiones.entrySet()}" 
+						               var="emisiones" 
+						               itemLabel="#{emisiones.value}" 
+						               itemValue="#{emisiones.key}"/>
+						<p:ajax event="change" 
+						        listener="#{mbEntradaSalida.select_Emisiones}"
+								update=":formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon, 
+		              		         	:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio, 
+		              		         	:formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda"/>
+					</p:selectOneMenu>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+				</h:panelGrid>
+
+				<h:panelGrid id="panelGridPosicion" >
+					<p:dataTable id="dtPosicion" 
+					             rendered="#{mbEntradaSalida.habilitaPanelPosicion!=1}" 
+					             scrollable="true" 
+					             scrollHeight="100"
+					             resizableColumns="true"
+								 value="#{mbEntradaSalida.posicion}" 
+								 var="posicion" 
+								 rowKey="#{posicion}" 
+								 rows="4" 
+								 paginator="true" 
+								 paginatorPosition="bottom"
+								 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+								 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+								 emptyMessage="Sin registros">
+						<p:ajax event="rowSelectRadio" 
+								listener="#{mbEntradaSalida.onRowSelect_Posicion}"
+								update=":formEntradaSalida:panelGridBody,:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento, 
+		        	   		   			:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie, 
+		        	   		   			:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte, 
+		        	   		   			:formEntradaSalida:txtPrecio,:formEntradaSalida:selCustodio,:formEntradaSalida:panelGridMonComis, 
+		        	   		   			:formEntradaSalida:panelGridMoneda"/>
+						<p:column selectionMode="single" 
+						          styleClass="tPosicion"/>
+						<p:column headerText="Pizarra" 
+						          width="90" 
+						          styleClass="centerColumnContent">
+							<h:outputText value="#{posicion.pizarra}"/>
+						</p:column>
+						
+						<p:column headerText="Serie" 
+						          width="90" 
+						          styleClass="centerColumnContent">
+							<h:outputText value="#{posicion.serieEmis}"/>
+						</p:column>
+						
+						<p:column headerText="Cupón" 
+						          width="70" 
+						          styleClass="centerColumnContent">
+							<h:outputText value="#{posicion.cuponVig}"/>
+						</p:column>
+						
+						<p:column headerText="Ventas Mes" 
+						          width="90" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.vtasIniPeriodo}">
+								<f:convertNumber groupingUsed="true" 
+								                 pattern="#,##0"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Compras Mes" 
+						          width="90" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.cpasInicPeriodo}">
+								<f:convertNumber groupingUsed="true" 
+								                 pattern="#,##0"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Posición Actual" 
+						          width="100" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.posActual}">
+								<f:convertNumber groupingUsed="true" 
+								                 pattern="#,##0"/>
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Custodio" 
+						          width="150" 
+						          styleClass="centerColumnContent" >
+							<h:outputText value="#{posicion.nomCustodio}"/>
+						</p:column>
+						
+						<p:column headerText="Mercado" 
+						          width="60" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.tipoMerca}"/>
+						</p:column>
+						
+						<p:column headerText="Instrumento" 
+						          width="80" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.numInstrumento}"/>
+						</p:column>
+						
+						<p:column headerText="Precio" 
+						          width="90" 
+						          styleClass="rightColumnContent">
+							<h:outputText value="#{posicion.posDisp}">
+								<f:convertNumber groupingUsed="true" 
+								                 minFractionDigits="11"/>
+								<f:convertNumber pattern="#,##0.00#########"/>
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelGridMonComis">
+				<h:panelGrid id="panelGridValores" 
+				             columns="6" 
+				             columnClasses="sixColumn, sixColumn, sixColumn, sixColumn, sixColumn, sixColumn">
+				             
+					<p:outputLabel value="Pizarra"/>
+					<p:outputLabel value="Serie"/>
+					<p:outputLabel value="Cupón"/>
+					<p:outputLabel value="No. Títulos"/>
+					<p:outputLabel value="Precio por Título"/>
+					<p:outputLabel value="Importe" style="display:none;"/>
+					
+					<p:inputText id="txtPizarra" 
+					             value="#{mbEntradaSalida.entradaSalidaBean.nomPizarra}" 
+					             readonly="true" 
+					             styleClass="inputEmis">
+					</p:inputText>
+					             
+					<p:inputText id="txtSerie"
+					             value="#{mbEntradaSalida.entradaSalidaBean.serieEmis}" 
+					             readonly="true" 
+					             styleClass="inputEmis">
+					</p:inputText>
+					
+					<p:inputText id="txtCupon" 
+					             value="#{mbEntradaSalida.entradaSalidaBean.cuponVig}" 
+					             readonly="true" 
+					             styleClass="inputEmis">
+					</p:inputText>
+
+					<p:inputText id="txtTitulos" 
+					             value="#{mbEntradaSalida.entradaSalidaBean.titulos}" 
+					             maxlength="17" 
+                                                     onblur="compruebaValidoEntero(this);"
+								 disabled="#{mbEntradaSalida.habilitaTxtTitulos!=1}" 
+								 styleClass="inputForm2" 
+								 onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;">
+					</p:inputText>
+
+
+					<p:inputText id="txtPrecio" 
+					             value="#{mbEntradaSalida.entradaSalidaBean.precioEmis}" 
+					             maxlength="18" 
+                                                     onblur="convertirDecimal(this);"
+                                                     disabled ="#{mbEntradaSalida.habilitaTxtPrecio!=1}"
+					             readonly="#{mbEntradaSalida.habilitaTxtPrecio!=1}"
+								 styleClass="inputForm2" 
+								 onkeypress="if((event.which &lt; 46 || event.which &gt; 57))  return false;">
+					</p:inputText>
+                                        
+                                        
+					<p:inputText id="txtImporte" 
+					             value="#{mbEntradaSalida.entradaSalidaBean.importe}" 
+					             maxlength="21" 
+					             readonly="true" 
+                                                     style="display:none;"
+					             styleClass="inputNumber2">
+						<p:ajax update=":formEntradaSalida:panelGridValores,formEntradaSalida:txtTitulos,:formEntradaSalida:txtPrecio, 
+   				                		:formEntradaSalida:txtImporte"/>
+						<f:convertNumber groupingUsed="true" 
+										 minFractionDigits="2"/>
+						<f:convertNumber pattern="$#,###,###,###,##0.00"/>
+					</p:inputText>
+				</h:panelGrid>
+
+				<h:panelGrid id="panelCustodio" 
+							 columns="4" 
+							 cellpadding="4" 
+							 columnClasses="firstColumnCust, secondColumn, thirdColumn, fourColumn">
+					<p:outputLabel value="Custodio"/>
+					<p:selectOneMenu id="selCustodio" 
+									 value="#{mbEntradaSalida.entradaSalidaBean.custodio}" 
+									 disabled="#{mbEntradaSalida.habilitaSelCustodio!=1}" 
+									 styleClass="ancho">
+						<f:selectItems value="#{mbEntradaSalida.custodio.entrySet()}" 
+									   var="custodio" 
+									   itemLabel="#{custodio.value}" 
+									   itemValue="#{custodio.key}"/>
+						<p:ajax event="change" 
+								listener="#{mbEntradaSalida.select_Custodio}" 
+								update="@this"/>
+					</p:selectOneMenu>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+					<p:outputLabel value="Redacción"/>
+					<p:inputText id="txtRedaccion" 
+								 style="width:490px"
+								 value="#{mbEntradaSalida.sRedaccion}" 
+								 maxlength="50">
+					</p:inputText>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+				</h:panelGrid>
+
+				<h:panelGrid id="panelGridMoneda" 
+							 columns="4" 
+							 cellpadding="4" 
+							 rendered="#{mbEntradaSalida.habilitaPanelMoneda!=1}" 
+							 columnClasses="firstColumnMoneda, secondColumnMoneda, thirdColumnMoneda">
+							 
+					<p:outputLabel value="Moneda"/>
+					<p:inputText id="txtMoneda" 
+								 value="#{mbEntradaSalida.nombreMon}" 
+								 readonly="true" 
+								 styleClass="inputNumberMon" >
+					</p:inputText>
+
+					<p:outputLabel value="Tipo de Cambio"/>
+					<p:inputText value="#{mbEntradaSalida.entradaSalidaBean.tipoCambio}" 
+								 maxlength="18" 
+								 styleClass="inputNumber2" 
+								 readonly="true">
+						<f:convertNumber minFractionDigits="6"/>
+						<f:convertNumber pattern="#,##0.0#"/> 
+					</p:inputText>
+				</h:panelGrid>
+				
+			</h:panelGrid>
+			<p:separator />
+			<h:panelGrid id="panelBotones" 
+						 columns="3" 
+						 styleClass="panelGrid" 
+						 columnClasses="firstColumnFoot, firstColumnFoot, firstColumnFoot ">
+				 <h:outputText value="&lt;br/&gt;" escape="false"/>
+
+				<h:panelGrid columns="3" 
+				             cellpadding="3" 
+				             columnClasses="ColumnButtons, ColumnButtons, ColumnButtons">
+				
+					<p:commandButton id="btnCarga" 
+									 icon="ui-icon-document" 
+									 value="Carga Masiva" 
+									 styleClass="styleButtons" 
+                                                                         actionListener="#{mbEntradaSalida.Start_CargaMasiva}"
+									 update=":formEntradaSalida:dialogCargaMasiva,:formEntradaSalida:txtNomArch,
+                                                                                :formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos,
+                                                                                :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>
+					<p:commandButton id="btnAceptarEntSal" 
+					 				 icon="ui-icon-check"
+								     value="Aceptar" 
+								     styleClass="styleButtons"
+								     actionListener="#{mbEntradaSalida.bAceptaEntSal}"
+									 update=":formEntradaSalida:CalendFecMov,:formEntradaSalida:rbtnTipoMovimiento, 
+			                            :formEntradaSalida:panelGridBody,:formEntradaSalida:txtFideicomiso,:formEntradaSalida:selSubFiso, 
+			                            :formEntradaSalida:selCtoInv,:formEntradaSalida:selTipoValor,:formEntradaSalida:selCustodio, 
+			                            :formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,
+			                            :formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie, 
+			                            :formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte, 
+			                            :formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda, 
+			                            :formEntradaSalida:txtMoneda,:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion, 
+			                            :formEntradaSalida:panelBotones,:formEntradaSalida:panelGridContainter,:formEntradaSalida:panelGridInv">
+					</p:commandButton>
+                                
+					<p:commandButton id="btnCancelarEntSal" 
+									 icon="ui-icon-cancel"  
+									 value="Cancelar" 
+									 styleClass="styleButtons" 
+									 actionListener="#{mbEntradaSalida.bCancelar()}" 
+									 disabled="#{mbEntradaSalida.habilitaBotonCancelar!=1}"
+									 update=":formEntradaSalida:panelGridBody,:formEntradaSalida:selCtoInv,:formEntradaSalida:panelGridContainter, 
+			           	                    :formEntradaSalida:panelGridInv,:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion, 
+			           	                    :formEntradaSalida:selTipoValor,:formEntradaSalida:selCustodio,:formEntradaSalida:txtMercado, 
+			           	                    :formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores, 
+			           	                    :formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon, 
+			           	                    :formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio, 
+			           	                    :formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda,:formEntradaSalida:txtMoneda, 
+			           	                    :formEntradaSalida:txtRedaccion,:formEntradaSalida:panelBotones"/>
+				</h:panelGrid>
+			</h:panelGrid> 
+			 
+			<p:confirmDialog header="Fecha Valor" id="dlgFecVal" widgetVar="dlgFecVal" message="¿Está seguro de querer aplicar contablemente con Fecha Valor?" closable="false">
+				<p:commandButton id="btnAceptar" 
+								 value="Aceptar" 
+								 icon="ui-icon-check" 
+								 actionListener="#{mbEntradaSalida.ConfirmaFecValor}"
+								 update=":formEntradaSalida:panelGridBody,:formEntradaSalida:selCtoInv,:formEntradaSalida:selTipoValor, 
+			           				    :formEntradaSalida:selCustodio,:formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento, 
+			           				    :formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra, 
+			           				    :formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos, 
+			           				    :formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis, 
+			           				    :formEntradaSalida:panelGridMoneda,:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion"/>
+				<p:commandButton id="btnCancelar" 
+								 value="Cancelar" 
+								 icon="ui-icon-close" 
+								 actionListener="#{mbEntradaSalida.NiegaFecValor}"
+								update=":formEntradaSalida:panelGridBody,:formEntradaSalida:CalendFecMov,:formEntradaSalida:selCtoInv, 
+			           				    :formEntradaSalida:selTipoValor,:formEntradaSalida:selCustodio,:formEntradaSalida:txtMercado, 
+			           				    :formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,:formEntradaSalida:panelGridValores, 
+			           				    :formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie,:formEntradaSalida:txtCupon, 
+			           				    :formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte,:formEntradaSalida:txtPrecio, 
+			           				    :formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda, 
+			           				    :formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion"/>
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario Scotiabank Inverlat. Grupo Financiero" id="dlgSuspender" widgetVar="dlgSuspender" message="¿Desea suspender la captura?" closable="false">
+				<p:commandButton id="btnAceptaSusp" 
+								 value ="Aceptar" 
+								 icon="ui-icon-check" 
+								 actionListener="#{mbEntradaSalida.bConfirmaCancelacion}" 
+								 oncomplete="dlgSuspender.hide()"
+								 update=":formEntradaSalida:CalendFecMov,:formEntradaSalida:rbtnTipoMovimiento, 
+			                            :formEntradaSalida:panelGridBody,:formEntradaSalida:txtFideicomiso,:formEntradaSalida:selSubFiso, 
+			                            :formEntradaSalida:selCtoInv,:formEntradaSalida:selTipoValor,:formEntradaSalida:selCustodio, 
+			                            :formEntradaSalida:txtMercado,:formEntradaSalida:txtInstrumento,:formEntradaSalida:selEmisiones,
+			                            :formEntradaSalida:panelGridValores,:formEntradaSalida:txtPizarra,:formEntradaSalida:txtSerie, 
+			                            :formEntradaSalida:txtCupon,:formEntradaSalida:txtTitulos,:formEntradaSalida:txtImporte, 
+			                            :formEntradaSalida:txtPrecio,:formEntradaSalida:panelGridMonComis,:formEntradaSalida:panelGridMoneda, 
+			                            :formEntradaSalida:txtMoneda,:formEntradaSalida:panelGridPosicion,:formEntradaSalida:dtPosicion, 
+			                            :formEntradaSalida:panelBotones,:formEntradaSalida:panelGridContainter,:formEntradaSalida:panelGridInv"/>
+				<p:commandButton id="btnCancelaSusp" 
+								 value="Cancelar"
+								 icon="ui-icon-close" 
+								 oncomplete="dlgSuspender.hide()"/>
+			</p:confirmDialog>
+			<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+			<p:dialog id="dialogCargaMasiva" 
+			          widgetVar="dialogCargaMasiva" 
+			          header="Carga Masiva Entradas/Salidas Físicas" 
+			          modal="true" 
+			          resizable="false"  
+                                dynamic="true" 
+                                showEffect="fade" 
+                                hideEffect="fade" 
+                                width="95%" 
+                                height="450"> 
+                        
+			 <p:outputPanel> 
+			 <p:fileUpload fileUploadListener= "#{mbEntradaSalida.CargaArchivo}" 
+			 			   invalidSizeMessage= "Error, el tamaño máximo del archivo debe de ser de 1024Kb ( 1MB )"
+	                       invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt) 10MB" 
+	                       showButtons  = "false"
+	                       allowTypes = "/(\.|\/)(txt)$/"  
+	                       mode = "advanced" 
+	                       sizeLimit = "10000024"  
+	                       label = "Archivo"
+	                       uploadLabel = "Carga de archivo E/S"  
+	                       update="@this,:formEntradaSalida:txtNomArch,:formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos,
+                                       :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>  
+	                       
+	            <center>           
+			  	  <p:panelGrid columns="5" columnClasses="firstColumn, firstColumn">
+			  	  			   
+			  	    <p:outputLabel value="Nombre Archivo"/>
+					<p:inputText id="txtNomArch"  
+								 value="#{mbEntradaSalida.sNomArchivo}" 
+								 styleClass="inputForm2" 
+								 style="width:170px !important"
+                                                                 readonly="true" />
+                                        
+                                        <p:commandButton id="btnValidar"
+									 value="Validar" 
+									 actionListener="#{mbEntradaSalida.ValidaArchivo_CargaMasiva}" 
+									 icon="ui-icon-pencil" 
+									 styleClass="styleButtons2"
+									 update=":formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos, 
+									 :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>
+								  	  
+			  	  	<p:outputLabel value="Registros Correctos"/>
+					<p:inputText id="txtCorrectos" 
+								 value="#{mbEntradaSalida.dCorrectos}" 
+								 readonly="true" 
+								 styleClass="inputNumber2">
+						<f:convertNumber pattern="#,###,##0"/>
+					</p:inputText>
+					
+			  	  	<p:outputLabel value="Registros"/>
+					<p:inputText id="txtRegist" 
+								 value="#{mbEntradaSalida.iRegistros}" 
+								 readonly="true" 
+								 styleClass="inputNumber2">
+						<f:convertNumber pattern="#,###,##0"/>
+					</p:inputText>	
+						 	           
+					
+					
+					<p:commandButton id="btnAplicaArch" 
+									 value="Aplicar Archivo" 
+									 actionListener="#{mbEntradaSalida.Invoca_CargaMasiva}" 
+									 icon="ui-icon-folder-open" 
+									 styleClass="styleButtons2"
+									 update=":formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos, 
+									 :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>
+					
+			  	  	<p:outputLabel value="Registros Incorrectos"/>
+					<p:inputText id="txtInconrrectos" 
+								 value="#{mbEntradaSalida.iIncorrectos}" 
+								 readonly="true" 
+								 styleClass="inputNumber2" >
+						<f:convertNumber pattern="#,###,##0"/>
+					</p:inputText> 
+					
+					<p:commandButton id="btnConsultar" 
+									 value="Consultar Archivo" 
+									 actionListener="#{mbEntradaSalida.ConsultaArchivo}" 
+									 icon="ui-icon-search"
+                                                                         style="display:none"
+									 styleClass="styleButtons2"
+									 update=":formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos, 
+									 :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>
+			 	</p:panelGrid> 
+			 </center> 
+			 
+			 <p:separator />
+			 <h:outputText value="&lt;br/&gt;" escape="false"/>
+			 
+			 <h:panelGrid id="panelGridCarga" >
+					<p:dataTable id="dtCargaMasiva" 
+								 resizableColumns="true"
+								 value="#{mbEntradaSalida.cargaInterfaz}" 
+								 var="cargaMasiva" 
+								 rowKey="#{cargaMasiva.secuencial}" 
+								 rows="10" 
+								 paginator="true" 
+								 paginatorPosition="bottom"
+								 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+								 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+								 emptyMessage="Sin registros"
+                                                                 liveResize= "true"
+                                                                 scrollable="true"
+                                                                 liveScroll="true">
+						
+						<p:column headerText="No.Arch" 
+								  width="30" 
+								  styleClass="rightColumnContent">
+                                                    <h:outputText value="#{cargaMasiva.secuencialArchivo}" title="#{cargaMasiva.secuencialArchivo}"/>
+						</p:column>
+						
+						<p:column headerText="Sec." 
+								  width="30" 
+								  styleClass="rightColumnContent">
+							<h:outputText value="#{cargaMasiva.secuencial}" title="#{cargaMasiva.secuencial}" />
+						</p:column>
+						
+						<p:column headerText="Registro" 
+								  width="350"
+                                                                  style="text-align: left;">
+							<h:outputText value="#{cargaMasiva.cadena}" title="#{cargaMasiva.cadena}" style="text-align: left;"/>
+						</p:column>
+						
+						<p:column headerText="Estatus" 
+								  width="70" 
+								  style="text-align: center;">
+							<h:outputText value="#{cargaMasiva.estatus == 'A' ? 'ACTIVO' : cargaMasiva.estatus == 'V' ? 'VALIDADO' : cargaMasiva.estatus == 'E' ? 'ERROR' : 'PROCESADO'}" title="#{cargaMasiva.estatus == 'A' ? 'ACTIVO' : cargaMasiva.estatus == 'V' ? 'VALIDADO' : cargaMasiva.estatus == 'E' ? 'ERROR' : 'PROCESADO'}" style="text-align: center;"/>
+						</p:column>
+						
+						<p:column headerText="Mensaje" 
+								  width="350" 
+                                                                  style="text-align: left;">
+                                                    <h:outputText value="#{cargaMasiva.mensaje}" title="#{cargaMasiva.mensaje}" style="text-align: left;"/>
+						</p:column>
+
+						<p:column headerText="Archivo" 
+						          width="90" 
+						          style="text-align: left;">
+							<h:outputText value="#{cargaMasiva.nombreArchivo}" title="#{cargaMasiva.nombreArchivo}" style="text-align: left;"/>
+						</p:column>
+
+					</p:dataTable>
+				</h:panelGrid>
+				
+			 	<h:outputText value="&lt;br/&gt;" escape="false"/>
+				<center>
+				<p:commandButton id="btnCerrar" 
+								 value="Cerrar" 
+								 icon="ui-icon-close" 
+								 styleClass="styleButtons2" 
+								 actionListener="#{mbEntradaSalida.Limpia_CargaMasiva}" 
+								 update=":formEntradaSalida:dialogCargaMasiva,:formEntradaSalida:txtNomArch,
+		           				 :formEntradaSalida:txtRegist,:formEntradaSalida:txtCorrectos,
+		           				 :formEntradaSalida:txtInconrrectos,:formEntradaSalida:dtCargaMasiva"/>
+				</center>
+			 </p:outputPanel>   
+    		</p:dialog>	
+
+			<p:dialog  id        = "dlgAjaxStatus"  
+					   closable  = "false"
+                       header    = "Espere" 		
+                       modal     = "true"
+                       resizable = "false"          
+                       style     = "background-color: #eee;
+					   height: auto;                
+					   width: auto;"
+					   widgetVar = "dlgAjaxStatus">
+                <center> 
+                	<p:graphicImage value = "../vista/recursos/img/gif/000.gif"/> 
+                </center>
+            </p:dialog>	
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

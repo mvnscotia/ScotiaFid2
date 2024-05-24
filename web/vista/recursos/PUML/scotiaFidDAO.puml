@@ -1,0 +1,325 @@
+@startuml
+    package scotiaFid.dao <<Folder>>{
+        class scotiaFid.dao.CClave{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onClave_Consulta()
+            +onClave_ObtenDesc()
+            +onClave_ObtenListadoElementos()
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CMoneda{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onMonedaTC_AdministraTC()
+            +onMonedaTC_ObtenTipoCambio()
+            +onMonedaTC_VerificaSiHayTipoDeCambio()
+            +onMoneda_ObtenListadoMonedas()
+            +onMoneda_ObtenListadoMonedasSinCierre()
+            +onMoneda_ObtenMonedaId()
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CContabilidad{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+            -formatoDecimal2D;
+            -formatoDecimal4D;
+            -formatoFecha;
+            -mensajeError
+            +getMensajeError
+            +onCancelaSaldo_ConsultaBienesFideicomitidos(long contratoNumero)
+            +onCancelaSaldo_ConsultaBienesGarantia(long contratoNumero)
+            +onCancelaSaldo_ConsultaCtaCheques(long contratoNumero)
+            +onCancelaSaldo_ConsultaCtoInv(long contratoNumero)
+            +onCancelaSaldo_ConsultaFianzas(long contratoNumero)
+            +onCancelaSaldo_ConsultaHonorarios(long contratoNumero)
+            +onCancelaSaldo_ConsultaInversionesDirecto(long contratoNumero)
+            +onCancelaSaldo_ConsultaInversionesPlazo(long contratoNumero)
+            +onCancelaSaldo_Consulta(long contratoNumero, String filtro) 
+            +onCancelaSaldo_Ejecuta(ContabilidadCancelaSaldoBean cs) 
+            +onBienFideIndiv_AdministraUnidadIndiv(ContabilidadBienFideUnidadIndivBean bfui) 
+            +onBienFideIndiv_AdministraUnidadLiq(ContabilidadBienFideUnidadLiqBean bful)
+            +onBienFideIndiv_AdministraUnidad(ContabilidadBienFideUnidadBean bfu)
+            +onBienFideIndiv_ObtenUnidadLiq(ContabilidadBienFideUnidadLiqBean bful) 
+            +onBienFideIndiv_ConsultaUnidadIndiv(long contratoNumero, int contratoNumeroSub, String bienFideTipo, int bienFideUnidadSec) 
+            +onBienFideIndiv_ConsultaUnidad(long contratoNum, long contratoSubNum, String bienTipo, int bienId) 
+            +onBienFideIndiv_Consulta(CriterioBusquedaContaBean cb)
+            +onBienFideIndiv_IndivMasivoAplica(int paramUsuarioNumero, java.sql.Date fechaSistema, String paramTipoProceso, List<String> listaProceso)
+            +onBienFideIndiv_IndivMasivoLimpiaTablas(int paramUsuarioNumero, String paramProcesoTipo)
+            +onBienFideIndiv_IndivMasivoValidaDuplicado(ContabilidadBienFideUnidadIndivMasivoBean cbfuim) 
+            +onBienFide_Consulta(CriterioBusquedaContaBean cbc) 
+            +onBienFide_ObtenBienId(long contratoNumero, int contratoNumeroSub, String bienFideTipo) 
+            +onBienFide_Administra(ContabilidadBienFideBean bf)
+            +onGarantia_ObtenMaxBienId(ContabilidadGarantiaBienBean cgb) 
+            +onGarantia_AdministraBien(ContabilidadGarantiaBienBean garBien)
+            +onGarantia_Administra(ContabilidadGarantiaGralBean gar) 
+            +onGarantia_ConsultaBien(long contratoNumero, int contratoNumeroSub)
+            +onGarantia_Consulta(CriterioBusquedaContaBean cb) 
+            +onPolizaMan_Consulta(CriterioBusquedaContaBean cbc) 
+            +onPolizaMan_ObtenTipo(String operacionId) 
+            +onPolizaMan_Aplica(ContabilidadPolizaManBean pm)
+            +onPolizaMan_CargaCampos(ContabilidadPolizaManBean pm)
+            +onPolizaMan_CargaCamposConDatos(ContabilidadPolizaManBean pm) 
+            +onConsAsiento_ConsultaPorRangoFechas(CriterioBusquedaContaAsienBean cba) 
+            +onConsAsiento_Consulta(CriterioBusquedaContaAsienBean cba) 
+            +onConsMovto_ConsultaDetalle(long asientoFolio, String transacionId) 
+            +onConsMovto_ConsultaPolizaMan(CriterioBusquedaContaBean cbc) 
+            +onConsMovto_Consulta(CriterioBusquedaContaBean cbc) 
+            +onConsSaldo_ConsultaHistorico(CriterioBusquedaContaSaldoBean cbs) 
+            +onConsSaldo_Consulta(CriterioBusquedaContaSaldoBean cbs) 
+            +onConsSaldoProm_Consulta(CriterioBusquedaBean cb)
+            +onCancelaOper_ConsultaMovtos(CriterioBusquedaContaBean cbc) 
+            +onParamOperacion_ObtenInfo(ContabilidadOperacionBean oper)
+            +onDetVal_ObtenInformacion(ContabilidadDetValorBean detVal) 
+            +onDatoMov_ObtenInformacion(Long folioContable)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CContrato{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onContrato_ObtenNegocio(long contratoNumero)
+            +onContrato_ObtenProducto(long contratoNumero)
+            +onContrato_ObtenNombre(long contratoNumero)
+            +onContrato_VerificaAtencion(List<String> listaContratoFiltro, long contratoNumeroSolicitado)
+            +onContrato_VerificaExistencia(long contratoNumero)
+            +onContrato_VerificaExistenciaSubContrato(long contratoNumero, int contratoSub)
+            +onContrato_VerificaSiEstaActivo(long contratoNumero)
+            +onContrato_VerificaSiTieneSubFisos(long contratoNumero)
+            +onContrato_ObtenListadoContratoNumeroNombreActivo(int usuarioNumero)
+            +onContrato_ObtenListadoContratoSub(long contratoNumero, String contratoSubStatus)
+            +onContratoInver_VerificaExistencia(long contratoNum, int contratoNumSub, long contratoInver)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CContratoSub{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onContratoSub_ObtenNombre(Long contratoNumero, int contratoNumeroSub)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CControles{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onControles_Adminsitra(AdminControlesBean ctrl)
+            +onControles_Consulta()
+            +onControles_Ejecuta(String sqlControl, String[][]arrParams, String controlNombre)
+            +onControles_CargaCtrls()
+            +onControles_ObtenControl(int controlSec)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CFecha{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onFecha_ObtenFechaSistema()
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CFeriado{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onFeriado_VerificaSiEsDiaFeriado(int dia, int mes, int paisId)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CPersonaFid{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onCuenta_VerificaExistencia(long contratoNumero, String personaRolFid, short personaRolFidSec, String personaCuenta)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CReportes{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onReporte_ConsultaReporte(int contratoNumero, int reporteNumero, int usuarioNumero)
+            +onReporte_CargaListaReportes()
+            +onReporte_ObtenEstructuraColumnas(int reporteNumero)
+            +onReporte_GeneraInformacion(CriterioBusquedaReporte reporte)
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CSegurtidad{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onSeguridad_ObtenCatalogoMenu()
+            +onSeguridad_ObtenCatalogoPantallaPorMenu(Short menuId)
+            +onSeguridad_ObtenCatalogoPantalla()        
+
+            ~onCierraConexion()
+        }
+        class scotiaFid.dao.CUsuario{
+            -valorRetorno
+            -paramSec
+            -sqlComando
+            -sqlFiltro
+            -nombreObjeto
+            -mensajeErrorSP
+
+            -cstmt
+            -conexion
+            -pstmt
+            -rs
+
+            -mensajeError
+
+            +getMensajeError
+
+            +onUsuario_ObtenInformacion(Integer usuarioNumero)
+
+            ~onCierraConexion()
+        }
+    }    
+@enduml

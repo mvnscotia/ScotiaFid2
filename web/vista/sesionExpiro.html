@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Sesi&oacute;n Expirada</title>
+        <meta http-equiv="refresh"                              content         = "2; url=/scotiaFid/sesionExpiro.html"/> <!-- 300 segundos = 5 min -->
+        <style                                                  type            = "text/css" 
+                                                                media           = "screen">
+            html, body{
+                height          : 100%;
+                margin          : 0;
+                padding         : 0;
+            }
+            footer{
+                background-color: #EC121F;
+                height          : 100px;
+            }
+            header{
+                background-color: #ffffff;
+                height          : 10px; 
+            }
+            section{
+                min-height      : calc(100% - 300px); 
+            }
+        </style>
+    </head>
+    <body onload="window.parent.location.href = '/scotiaFid/sesionExpiro.html'">
+        <section>
+            <table style=" border-style: none; margin-left: auto; margin-right: auto;">
+
+                <tr>
+                    <td>
+                        <img                                    src             = "recursos/img/png/000.png" 
+                                                                alt             = "ScotiaFid"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td                                         style           = "color      : #004276;
+                                                                                   font-family: Arial; 
+                                                                                   font-weight: bolder;
+                                                                                   font-size  : 20px;
+                                                                                   text-transform: uppercase">
+
+                        <center>
+                            <label> La sesi&oacute;n ha expirado </label>
+                        </center>
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    <td                                         style           = "font-family: Arial; 
+                                                                                   font-weight: bolder;">
+                        <br/>
+                        <center>
+                            <a href="/scotiaFid/inicio.sb" target="_parent"> Ir a p&aacute;gina principal </a> 
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <footer>
+            
+        </footer>
+    </body>
+</html>

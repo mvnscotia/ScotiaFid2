@@ -1,0 +1,644 @@
+@startuml
+    class scotiaFid.bean.ContabilidadDatoMovBean{
+        -datoMovFolio
+        -datoMovSec
+        -datoMovConcepto
+        -datoMovValor
+    
+    
+        +getDatoMovFolio
+        +setDatoMovFolio(Long datoMovFolio)
+        +getDatoMovSec
+        +setDatoMovSec(Short datoMovSec)
+        +getDatoMovConcepto
+        +setDatoMovConcepto(String datoMovConcepto)
+        +getDatoMovValor
+        +setDatoMovValor(String datoMovValor)
+      
+        +ContabilidadDatoMovBean()
+    }
+    class scotiaFid.bean.AdminContratoBean{
+        -contratoNumero
+        -contratoNombre
+        -contratoTipoNegocio
+        -contratoTipoProd
+        -contratoFechaApertura
+        -contratoFechaExtingue
+        -contratoStatus
+
+        +getContratoNumero
+        +setContratoNumero(Long contratoNumero)
+        +getContratoNombre
+        +setContratoNombre(String contratoNombre)
+        +getContratoTipoNegocio
+        +setContratoTipoNegocio(String contratoTipoNegocio)
+        +getContratoTipoProd+
+        +setContratoTipoProd(String contratoTipoProd)
+        +getContratoFechaApertura+
+        +setContratoFechaApertura(Date contratoFechaApertura)
+        +getContratoFechaExtingue
+        +setContratoFechaExtingue(Date contratoFechaExtingue)
+        +getContratoStatus
+        +setContratoStatus(String contratoStatus)
+
+        +AdminContratoBean()
+    }
+    
+    class scotiaFid.bean.AdminControlesBean{
+        -controlTipo
+        -controlSec
+        -controlNombre
+        -controlTexto
+        -controlFechaReg
+        -controlFechaMod
+        -controlStatus
+        -controlOperacionTipo
+
+        +getControlTipo
+        +setControlTipo(String controlTipo)
+        +getControlSec
+        +setControlSec(Short controlSec)
+        +getControlNombre
+        +setControlNombre(String controlNombre)
+
+        +getControlTexto
+        +setControlTexto(String controlTexto)+
+        +getControlFechaReg
+        +setControlFechaReg(Date controlFechaReg)
+        +getControlFechaMod
+        +setControlFechaMod(Date controlFechaMod)
+        +getControlStatus
+        +setControlStatus(String controlStatus)
+        +getControlOperacionTipo
+        +setControlOperacionTipo(String controlOperacionTipo)
+
+        +AdminControlesBean()
+    }
+    class scotiaFid.bean.ClaveBean{
+        -claveNumero
+        -claveSec
+        -claveDesc
+        -claveLimInf
+        -claveLimSup
+        -claveFormaEmp
+        -claveFechaReg
+        -claveFechaMod
+        -claveStatus
+
+        +getClaveNumero
+        +setClaveNumero(Integer claveNumero)
+        +getClaveSec
+        +setClaveSec(Integer claveSec)
+        +getClaveDesc
+        +setClaveDesc(String claveDesc)
+        +getClaveLimInf
+        +setClaveLimInf(Double claveLimInf)
+        +getClaveLimSup
+        +setClaveLimSup(Double claveLimSup)
+        +getClaveFormaEmp
+        +setClaveFormaEmp(String claveFormaEmp)
+        +getClaveFechaReg
+        +setClaveFechaReg(Date claveFechaReg)
+        +getClaveFechaMod
+        +setClaveFechaMod(Date claveFechaMod)
+        +getClaveStatus
+        +setClaveStatus(String claveStatus)
+
+        +ClaveBean()
+    }
+    class scotiaFid.bean.ContabilidadAsientoBean{
+        -asientoFolio
+        -asientoOperacion
+        -asientoTransaccion
+        -asientoSecuencial
+        -asientoCTAM
+        -asiento1SCTA
+        -asiento2SCTA
+        -asiento3SCTA
+        -asiento4SCTA
+        -asientoMdaId
+        -asientoMdaNomLrg
+        -asientoMdaNomCrt
+        -asientoCuentaNombre
+        -asientoAX1
+        -asientoAX2
+        -asientoAX3
+        -asientoCveCarAbo
+        -asientoImporte
+        -asientoDescripcion
+        -asientoFecReg
+        -asientoFecUltMod
+        -asientoFecMov
+        -asientoStatus
+        -asientoUsuCancelo
+
+        +getAsientoFolio
+        +setAsientoFolio(Long asientoFolio)
+        +getAsientoOperacion
+        +setAsientoOperacion(String asientoOperacion)
+        +getAsientoTransaccion
+        +setAsientoTransaccion(String asientoTransaccion)
+        +getAsientoSecuencial
+        +setAsientoSecuencial(Integer asientoSecuencial)
+        +getAsientoCTAM
+        +setAsientoCTAM(Short asientoCTAM)
+        +getAsiento1SCTA
+        +setAsiento1SCTA(Short asiento1SCTA)
+        +getAsiento2SCTA
+        +setAsiento2SCTA(Short asiento2SCTA)
+        +getAsiento3SCTA
+        +setAsiento3SCTA(Short asiento3SCTA)
+        +getAsiento4SCTA
+        +setAsiento4SCTA(Short asiento4SCTA)
+        +getAsientoMdaId
+        +setAsientoMdaId(Short asientoMdaId)
+        +getAsientoMdaNomLrg
+        +setAsientoMdaNomLrg(String asientoMdaNomLrg)
+        +getAsientoMdaNomCrt
+        +setAsientoMdaNomCrt(String asientoMdaNomCrt)
+        +getAsientoCuentaNombre
+        +setAsientoCuentaNombre(String asientoCuentaNombre)
+        +getAsientoAX1
+        +setAsientoAX1(Long asientoAX1)
+        +getAsientoAX2
+        +setAsientoAX2(Long asientoAX2)
+        +getAsientoAX3
+        +setAsientoAX3(Long asientoAX3)
+        +getAsientoCveCarAbo
+        +setAsientoCveCarAbo(String asientoCveCarAbo)
+        +getAsientoImporte
+        +setAsientoImporte(Double asientoImporte)
+        +getAsientoDescripcion
+        +setAsientoDescripcion(String asientoDescripcion)
+        +getAsientoFecReg
+        +setAsientoFecReg(Date asientoFecReg)
+        +getAsientoFecUltMod
+        +setAsientoFecUltMod(Date asientoFecUltMod)
+        +getAsientoFecMov
+        +setAsientoFecMov(Date asientoFecMov)
+        +getAsientoStatus
+        +setAsientoStatus(String asientoStatus)
+        +getAsientoUsuCancelo
+        +setAsientoUsuCancelo(Integer asientoUsuCancelo)
+
+        +ContabilidadAsientoBean()
+    }
+    class scotiaFid.bean.ContabilidadBienFideUnidadBean extends scotiaFid.bean.ContabilidadBienFideBean{
+        -bienFideUnidadSec
+        -bienFideUnidadNombre
+        -bienFideUnidadDomicilio
+        -bienFideUnidadTipo
+        -bienFideUnidadEscrituraIni
+        -bienFideUnidadFechaCto
+        -bienFideUnidadNotarioLista
+        -bienFideUnidadNotarioLocalidad
+        -bienFideUnidadNotarioNom
+        -bienFideUnidadNotarioNum
+        -bienFideUnidadValor
+        -bienFideUnidadMonedaNom
+        -bienFideUnidadMonedaNum
+        -bienFideUnidadSuperficie
+        -bienFideUnidadObservacion
+        -bienFideUnidadStatus
+        -bienFideUnidadAcumRegContable
+
+        +getBienFideUnidadSec
+        +setBienFideUnidadSec(Integer bienFideUnidadSec) 
+        +getBienFideUnidadNombre 
+        +setBienFideUnidadNombre(String bienFideUnidadNombre) 
+        +getBienFideUnidadDomicilio 
+        +setBienFideUnidadDomicilio(String bienFideUnidadDomicilio)
+        +getBienFideUnidadTipo 
+        +setBienFideUnidadTipo(String bienFideUnidadTipo) 
+        +getBienFideUnidadEscrituraIni 
+        +setBienFideUnidadEscrituraIni(String bienFideUnidadEscrituraIni) 
+        +getBienFideUnidadFechaCto
+        +setBienFideUnidadFechaCto(Date bienFideUnidadFechaCto) 
+        +getBienFideUnidadNotarioLista 
+        +setBienFideUnidadNotarioLista(String bienFideUnidadNotarioLista) 
+        +getBienFideUnidadNotarioLocalidad 
+        +setBienFideUnidadNotarioLocalidad(String bienFideUnidadNotarioLocalidad) 
+        +getBienFideUnidadNotarioNom 
+        +setBienFideUnidadNotarioNom(String bienFideUnidadNotarioNom) 
+        +getBienFideUnidadNotarioNum 
+        +setBienFideUnidadNotarioNum(Integer bienFideUnidadNotarioNum) 
+        +getBienFideUnidadValor 
+        +setBienFideUnidadValor(Double bienFideUnidadValor) 
+        +getBienFideUnidadMonedaNom 
+        +setBienFideUnidadMonedaNom(String bienFideUnidadMonedaNom) 
+        +getBienFideUnidadMonedaNum 
+        +setBienFideUnidadMonedaNum(Integer bienFideUnidadMonedaNum) 
+        +getBienFideUnidadSuperficie 
+        +setBienFideUnidadSuperficie(Double bienFideUnidadSuperficie) 
+        +getBienFideUnidadObservacion 
+        +setBienFideUnidadObservacion(String bienFideUnidadObservacion) 
+        +getBienFideUnidadStatus 
+        +getBienFideUnidadAcumRegContable 
+        +setBienFideUnidadAcumRegContable(Double bienFideUnidadAcumRegContable) 
+
+        +ContabilidadBienFideUnidadBean()
+    }
+    class scotiaFid.bean.ContabilidadBienFideBean{
+        -bienFideContratoNum
+        -bienFideContratoNumSub
+        -bienFideContratoNom
+        -bienFideTipo
+        -bienFideClasificacion
+        -bienFideId
+        -bienFideImporte
+        -bienFideImporteNvo
+        -bienFideImporteTC
+        -bienFideImporteUltVal
+        -bienFidePeriodicidadRev
+        -bienFideMonedaNom
+        -bienFideMonedaNum
+        -bienFideFechaValor
+        -bienFideFechaValUlt
+        -bienFideFechaValProx
+        -bienFideDescripcion
+        -bienFideComentario
+        -bienFideFechaReg
+        -bienFideFechaMod
+        -bienFideStatus
+        -bienFideBitTipoOperacion
+        -bienFideBitPantalla
+        -bienFideBitTerminal
+        -bienFideBitUsuario
+
+        +getBienFideContratoNum
+        +setBienFideContratoNum(Long bienFideContratoNum)
+        +getBienFideContratoNumSub
+        +setBienFideContratoNumSub(Integer bienFideContratoNumSub)
+        +getBienFideContratoNom
+        +setBienFideContratoNom(String bienFideContratoNom)
+        +getBienFideTipo
+        +setBienFideTipo(String bienFideTipo)
+        +getBienFideClasificacion
+        +setBienFideClasificacion(String bienFideClasificacion)
+        +getBienFideId
+        +setBienFideId(Integer bienFideId)
+        +getBienFideImporte
+        +setBienFideImporte(Double bienFideImporte)
+        +getBienFideImporteNvo
+        +setBienFideImporteNvo(Double bienFideImporteNvo)
+        +getBienFideImporteTC
+        +setBienFideImporteTC(Double bienFideImporteTC)
+        +getBienFideImporteUltVal
+        +setBienFideImporteUltVal(Double bienFideImporteUltVal)
+        +getBienFidePeriodicidadRev
+        +setBienFidePeriodicidadRev(String bienFidePeriodicidadRev) 
+        +getBienFideMonedaNom
+        +setBienFideMonedaNom(String bienFideMonedaNom)
+        +getBienFideMonedaNum
+        +setBienFideMonedaNum(Integer bienFideMonedaNum)
+        +getBienFideFechaValor
+        +setBienFideFechaValor(Date bienFideFechaValor)
+        +getBienFideFechaValUlt
+        +setBienFideFechaValUlt(Date bienFideFechaValUlt)
+        +getBienFideFechaValProx
+        +setBienFideFechaValProx(Date bienFideFechaValProx)
+        +getBienFideDescripcion
+        +setBienFideDescripcion(String bienFideDescripcion)
+        +getBienFideComentario
+        +setBienFideComentario(String bienFideComentario)
+        +getBienFideFechaReg
+        +setBienFideFechaReg(Date bienFideFechaReg)
+        +getBienFideFechaMod
+        +setBienFideFechaMod(Date bienFideFechaMod)
+        +getBienFideStatus
+        +setBienFideStatus(String bienFideStatus)
+        +getBienFideBitTipoOperacion
+        +setBienFideBitTipoOperacion(String bienFideBitTipoOperacion)
+        +getBienFideBitPantalla
+        +setBienFideBitPantalla(String bienFideBitPantalla)
+        +getBienFideBitTerminal
+        +setBienFideBitTerminal(String bienFideBitTerminal)
+        +getBienFideBitUsuario
+        +setBienFideBitUsuario(Integer bienFideBitUsuario)
+  
+        +ContabilidadBienFideBean()
+    }
+    
+    class scotiaFid.bean.ContabilidadBienFideUnidadIndivBean extends scotiaFid.bean.ContabilidadBienFideUnidadBean{
+        -bienFideUnidadIndivSec
+        -bienFideUnidadIndivDeptoNum
+        -bienFideUnidadIndivTipo
+        -bienFideUnidadIndivUbicacion
+        -bienFideUnidadIndivSuperficieM2
+        -bienFideUnidadIndivIndiviso
+        -bienFideUnidadIndivNiveles
+        -bienFideUnidadIndivPrecio
+        -bienFideUnidadIndivMedidas
+        -bienFideUnidadIndivUltAvaluoValor
+        -bienFideUnidadindivUlAvaluoFecha
+        -bienFideUnidadIndivMonedaNom
+        -bienFideUnidadIndivMonedaNum
+        -bienFideUnidadIndivStatusInmueble
+        -bienFideUnidadIndivStatus
+        -bienFideUnidadIndivCveLiq
+        
+        +getBienFideUnidadIndivSec
+        +setBienFideUnidadIndivSec(Integer bienFideUnidadIndivSec)
+        +getBienFideUnidadIndivDeptoNum
+        +getBienFideUnidadIndivTipo
+        +setBienFideUnidadIndivTipo(String bienFideUnidadIndivTipo)
+        +getBienFideUnidadIndivUbicacion
+        +setBienFideUnidadIndivUbicacion(String bienFideUnidadIndivUbicacion)
+        +getBienFideUnidadIndivSuperficieM2
+        +setBienFideUnidadIndivSuperficieM2(String bienFideUnidadIndivSuperficieM2)
+        +getBienFideUnidadIndivIndiviso
+        +setBienFideUnidadIndivIndiviso(String bienFideUnidadIndivIndiviso)
+        +getBienFideUnidadIndivNiveles
+        +setBienFideUnidadIndivNiveles(String bienFideUnidadIndivNiveles)
+        +getBienFideUnidadIndivPrecio
+        +setBienFideUnidadIndivPrecio(Double bienFideUnidadIndivPrecio)
+        +getBienFideUnidadIndivMedidas
+        +setBienFideUnidadIndivMedidas(String bienFideUnidadIndivMedidas)
+        +getBienFideUnidadIndivUltAvaluoValor
+        +setBienFideUnidadIndivUltAvaluoValor(Double bienFideUnidadIndivUltAvaluoValor)
+        +getBienFideUnidadindivUlAvaluoFecha
+        +setBienFideUnidadindivUlAvaluoFecha(Date bienFideUnidadindivUlAvaluoFecha)
+        +getBienFideUnidadIndivMonedaNom
+        +setBienFideUnidadIndivMonedaNom(String bienFideUnidadIndivMonedaNom)
+        +getBienFideUnidadIndivMonedaNum
+        +setBienFideUnidadIndivMonedaNum(Short bienFideUnidadIndivMonedaNum)
+        +getBienFideUnidadIndivStatusInmueble
+        +setBienFideUnidadIndivStatusInmueble(String bienFideUnidadIndivStatusInmueble)
+        +getBienFideUnidadIndivStatus
+        +setBienFideUnidadIndivStatus(String bienFideUnidadIndivStatus)
+        +getBienFideUnidadIndivCveLiq
+        +setBienFideUnidadIndivCveLiq(String bienFideUnidadIndivCveLiq)
+      
+        +ContabilidadBienFideUnidadIndivBean()
+    }
+    class scotiaFid.bean.ContabilidadBienFideUnidadIndivMasivoBean{
+        -bienFideUnidadIndivMasivoProceso
+        -bienFideUnidadIndivMasivoContrato
+        -bienFideUnidadIndivMasivoContratoSub
+        -bienFideUnidadIndivMasivoBienTipo
+        -bienFideUnidadIndivMasivoBienId
+        -bienFideUnidadIndivMasivoBienUniId
+        -bienFideUnidadIndivMasivoBienUniIndivId
+        -bienFideUnidadIndivMasivoBienUniIndivIndiviso
+        -bienFideUnidadIndivMasivoBienUniIndivFechaSolicitud
+        -bienFideUnidadIndivMasivoBienUniIndivFechaInstruccion
+        -bienFideUnidadIndivMasivoBienUniIndivFechaFirma
+        -bienFideUnidadIndivMasivoBienUniIndivFechaDominio
+        -bienFideUnidadIndivMasivoBienUniIndivEscritura
+        -bienFideUnidadIndivMasivoBienUniIndivNotario
+        -bienFideUnidadIndivMasivoBienUniIndivAdquiriente
+        -bienFideUnidadIndivMasivoBienUniIndivStatus
+        -bienFideUnidadIndivMasivoBienUniIndivStatusLiq
+        -bienFideUnidadIndivMasivoBienUniIndivFolioOp
+        -bienFideUnidadIndivMasivoBienUniIndivLineaSec
+        -bienFideUnidadIndivMasivoBienUsuarioNum
+
+         +getBienFideUnidadIndivMasivoProceso
+        +setBienFideUnidadIndivMasivoProceso(String bienFideUnidadIndivMasivoProceso) {
+        +getBienFideUnidadIndivMasivoContrato
+        +setBienFideUnidadIndivMasivoContrato(Long bienFideUnidadIndivMasivoContrato)
+        +getBienFideUnidadIndivMasivoContratoSub
+        +setBienFideUnidadIndivMasivoContratoSub(Integer bienFideUnidadIndivMasivoContratoSub)
+        +getBienFideUnidadIndivMasivoBienTipo
+        +setBienFideUnidadIndivMasivoBienTipo(String bienFideUnidadIndivMasivoBienTipo)
+        +getBienFideUnidadIndivMasivoBienId
+        +setBienFideUnidadIndivMasivoBienId(Integer bienFideUnidadIndivMasivoBienId)
+        +getBienFideUnidadIndivMasivoBienUniId
+        +setBienFideUnidadIndivMasivoBienUniId(Integer bienFideUnidadIndivMasivoBienUniId)
+        +getBienFideUnidadIndivMasivoBienUniIndivId
+        +setBienFideUnidadIndivMasivoBienUniIndivId(Integer bienFideUnidadIndivMasivoBienUniIndivId)
+        +getBienFideUnidadIndivMasivoBienUniIndivIndiviso
+        +setBienFideUnidadIndivMasivoBienUniIndivIndiviso(Double bienFideUnidadIndivMasivoBienUniIndivIndiviso)
+        +getBienFideUnidadIndivMasivoBienUniIndivFechaSolicitud
+        +setBienFideUnidadIndivMasivoBienUniIndivFechaSolicitud(Date bienFideUnidadIndivMasivoBienUniIndivFechaSolicitud)
+        +getBienFideUnidadIndivMasivoBienUniIndivFechaInstruccion
+        +setBienFideUnidadIndivMasivoBienUniIndivFechaInstruccion(Date bienFideUnidadIndivMasivoBienUniIndivFechaInstruccion)
+        +getBienFideUnidadIndivMasivoBienUniIndivFechaFirma
+        +setBienFideUnidadIndivMasivoBienUniIndivFechaFirma(Date bienFideUnidadIndivMasivoBienUniIndivFechaFirma)
+        +getBienFideUnidadIndivMasivoBienUniIndivFechaDominio
+        +setBienFideUnidadIndivMasivoBienUniIndivFechaDominio(Date bienFideUnidadIndivMasivoBienUniIndivFechaDominio)
+        +getBienFideUnidadIndivMasivoBienUniIndivEscritura
+        +setBienFideUnidadIndivMasivoBienUniIndivEscritura(String bienFideUnidadIndivMasivoBienUniIndivEscritura)
+        +getBienFideUnidadIndivMasivoBienUniIndivNotario
+        +setBienFideUnidadIndivMasivoBienUniIndivNotario(String bienFideUnidadIndivMasivoBienUniIndivNotario)
+        +getBienFideUnidadIndivMasivoBienUniIndivAdquiriente
+        +setBienFideUnidadIndivMasivoBienUniIndivAdquiriente(String bienFideUnidadIndivMasivoBienUniIndivAdquiriente)
+        +getBienFideUnidadIndivMasivoBienUniIndivStatus
+        +setBienFideUnidadIndivMasivoBienUniIndivStatus(String bienFideUnidadIndivMasivoBienUniIndivStatus)
+        +getBienFideUnidadIndivMasivoBienUniIndivStatusLiq
+        +setBienFideUnidadIndivMasivoBienUniIndivStatusLiq(String bienFideUnidadIndivMasivoBienUniIndivStatusLiq)
+        +getBienFideUnidadIndivMasivoBienUniIndivFolioOp
+        +setBienFideUnidadIndivMasivoBienUniIndivFolioOp(Long bienFideUnidadIndivMasivoBienUniIndivFolioOp)
+        +getBienFideUnidadIndivMasivoBienUniIndivLineaSec
+        +setBienFideUnidadIndivMasivoBienUniIndivLineaSec(Short bienFideUnidadIndivMasivoBienUniIndivLineaSec)
+        +getBienFideUnidadIndivMasivoBienUsuarioNum
+        +setBienFideUnidadIndivMasivoBienUsuarioNum(Integer bienFideUnidadIndivMasivoBienUsuarioNum)
+      
+        ContabilidadBienFideUnidadIndivMasivoBean()
+    }
+    class scotiaFid.bean.ContabilidadBienFideUnidadLiqBean extends scotiaFid.bean.ContabilidadBienFideUnidadBean{
+        -bienFideUnidadLiqSec
+        -bienFideUnidadLiqDeptoNum
+        -bienFideUnidadLiqFechaSol
+        -bienFideUnidadLiqFechaInstr
+        -bienFideUnidadLiqFechaFirma
+        -bienFideUnidadLiqFechaTrasDom
+        -bienFideUnidadLiqEscritura
+        -bienFideUnidadLiqNotarioNum
+        -bienFideUnidadLiqNotarioLoc
+        -bienFideUnidadLiqNotarioNom
+        -bienFideUnidadLiqAquiere
+        -bienFideUnidadLiqTC
+        -bienFideUnidadLiqStatus
+
+        +getBienFideUnidadLiqSec
+        +setBienFideUnidadLiqSec(Integer bienFideUnidadLiqSec)
+        +getBienFideUnidadLiqDeptoNum
+        +setBienFideUnidadLiqDeptoNum(String bienFideUnidadLiqDeptoNum) 
+        +getBienFideUnidadLiqFechaSol
+        +setBienFideUnidadLiqFechaSol(Date bienFideUnidadLiqFechaSol)
+        +getBienFideUnidadLiqFechaInstr
+        +setBienFideUnidadLiqFechaInstr(Date bienFideUnidadLiqFechaInstr)
+        +getBienFideUnidadLiqFechaFirma
+        +setBienFideUnidadLiqFechaFirma(Date bienFideUnidadLiqFechaFirma)
+        +getBienFideUnidadLiqFechaTrasDom
+        +setBienFideUnidadLiqFechaTrasDom(Date bienFideUnidadLiqFechaTrasDom)
+        +getBienFideUnidadLiqEscritura
+        +setBienFideUnidadLiqEscritura(String bienFideUnidadLiqEscritura)
+        +getBienFideUnidadLiqNotarioNum
+        +setBienFideUnidadLiqNotarioNum(Integer bienFideUnidadLiqNotarioNum)
+        +getBienFideUnidadLiqNotarioLoc
+        +setBienFideUnidadLiqNotarioLoc(String bienFideUnidadLiqNotarioLoc)
+        +getBienFideUnidadLiqNotarioNom
+        +setBienFideUnidadLiqNotarioNom(String bienFideUnidadLiqNotarioNom)
+        +getBienFideUnidadLiqAquiere
+        +setBienFideUnidadLiqAquiere(String bienFideUnidadLiqAquiere)
+        +getBienFideUnidadLiqTC
+        +setBienFideUnidadLiqTC(Double bienFideUnidadLiqTC)
+        +getBienFideUnidadLiqStatus
+        +setBienFideUnidadLiqStatus(String bienFideUnidadLiqStatus) 
+
+        +ContabilidadBienFideUnidadLiqBean()
+    }
+    class scotiaFid.bean.ContabilidadCancelaSaldoBean{
+        -csContratoNum
+        -csOpcion
+        -csOperacion
+        -csFecha
+        -csBitUsuario
+        -csBitPantalla
+        -csBitTerminal
+
+        +getCsContratoNum
+        +setCsContratoNum(Long csContratoNum)
+        +getCsOpcion
+        +setCsOpcion(String csOpcion)
+        +getCsOperacion
+        +setCsOperacion(String csOperacion)
+        +getCsFecha
+        +setCsFecha(Date csFecha)
+        +getCsBitUsuario
+        +setCsBitUsuario(Integer csBitUsuario)
+        +getCsBitPantalla
+        +setCsBitPantalla(String csBitPantalla)
+        +getCsBitTerminal
+        +setCsBitTerminal(String csBitTerminal)
+        
+        +ContabilidadCancelaSaldoBean()
+    }
+    
+    class scotiaFid.bean.ContabilidadDetValorBean{
+        -detValContratoNumero
+        -detValContratoNumeroSub
+        -detValContratoNombre
+        -detValContratoNombreSub
+        -detValContratoInver
+        -detValOperacionId
+        -detValOperacionNombre
+        -detValTransaccionId
+        -detValTransaccionNombre
+        -detValFolio
+        -detValSec
+        -detValHoraReg
+        -detValIntermedSec
+        -detValIntermedNom
+        -detValPizarra
+        -detValSerie
+        -detValCupon
+        -detValTituloPrecio
+        -detValTituloNum
+        -detValTituloImp
+        -detValTasaDesc
+        -detValTasaRend
+        -detValImpUtilidad
+        -detValImpPerdida
+        -detValRepIntermedSec
+        -detValRepIntermedNom
+        -detValRepFolio
+        -detValRepInstrume
+        -detValRepPlazo
+        -detValRepTasa
+        -detValRepPremio
+        -detValRepInteres
+        -detValRepISR
+        -detValRepMdaSec
+        -detValRepMdaNom
+        -detValRepImporte
+        -detValRepImporteME
+        -detValRepImporteTC
+        -detValDereTipo
+        -detValDereFactor
+        -detValDerePizarra
+        -detValDereSerieAnt
+        -detValDereCupon
+        
+        +getDetValContratoNumero
+        +setDetValContratoNumero(Long detValContratoNumero)
+        +getDetValContratoNumeroSub
+        +setDetValContratoNumeroSub(Integer detValContratoNumeroSub)
+        +getDetValContratoNombre
+        +setDetValContratoNombre(String detValContratoNombre)
+        +getDetValContratoNombreSub
+        +setDetValContratoNombreSub(String detValContratoNombreSub)
+        +getDetValContratoInver
+        +setDetValContratoInver(String detValContratoInver)
+        +getDetValOperacionId
+        +setDetValOperacionId(String detValOperacionId)
+        +getDetValOperacionNombre
+        +setDetValOperacionNombre(String detValOperacionNombre)
+        +getDetValTransaccionId
+        +setDetValTransaccionId(String detValTransaccionId)
+        +getDetValTransaccionNombre
+        +setDetValTransaccionNombre(String detValTransaccionNombre)
+        +getDetValFolio
+        +setDetValFolio(Long detValFolio)
+        +getDetValSec
+        +setDetValSec(Short detValSec)
+        +getDetValHoraReg
+        +setDetValHoraReg(String detValHoraReg)
+        +getDetValIntermedSec
+        +setDetValIntermedSec(Short detValIntermedSec)
+        +getDetValIntermedNom
+        +setDetValIntermedNom
+        +getDetValPizarra
+        +setDetValPizarra(String detValPizarra)
+        +getDetValSerie
+        +setDetValSerie(String detValSerie)
+        +getDetValCupon
+        +setDetValCupon(String detValCupon)
+        +getDetValTituloPrecio
+        +setDetValTituloPrecio(Double detValTituloPrecio)
+        +getDetValTituloNum
+        +setDetValTituloNum(Short detValTituloNum)
+        +getDetValTituloImp
+        +setDetValTituloImp(Double detValTituloImp)
+        +getDetValTasaDesc
+        +setDetValTasaDesc(Double detValTasaDesc)
+        +getDetValTasaRend
+        +setDetValTasaRend(Double detValTasaRend)
+        +getDetValImpUtilidad
+        +setDetValImpUtilidad(Double detValImpUtilidad)
+        +getDetValImpPerdida
+        +setDetValImpPerdida(Double detValImpPerdida)
+        +getDetValRepIntermedSec
+        +setDetValRepIntermedSec(Short detValRepIntermedSec)
+        +getDetValRepIntermedNom
+        +setDetValRepIntermedNom(String detValRepIntermedNom)
+        +getDetValRepFolio
+        +setDetValRepFolio(Long detValRepFolio)
+        +getDetValRepInstrume
+        +setDetValRepInstrume(String detValRepInstrume)
+        +getDetValRepPlazo
+        +setDetValRepPlazo(Short detValRepPlazo)
+        +getDetValRepTasa
+        +setDetValRepTasa(Double detValRepTasa)
+        +getDetValRepPremio
+        +setDetValRepPremio(Double detValRepPremio)
+        +getDetValRepInteres
+        +setDetValRepInteres(Double detValRepInteres)
+        +getDetValRepISR
+        +setDetValRepISR(Double detValRepISR)
+        +getDetValRepMdaSec
+        +setDetValRepMdaSec(Short detValRepMdaSec)
+        +getDetValRepMdaNom
+        +setDetValRepMdaNom(String detValRepMdaNom)
+        +getDetValRepImporte
+        +setDetValRepImporte(Double detValRepImporte)
+        +getDetValRepImporteME
+        +setDetValRepImporteME(Double detValRepImporteME)
+        +getDetValRepImporteTC
+        +setDetValRepImporteTC(Double detValRepImporteTC)
+        +getDetValDereTipo
+        +setDetValDereTipo(String detValDereTipo)
+        +getDetValDereFactor
+        +setDetValDereFactor(String detValDereFactor)
+        +getDetValDerePizarra
+        +setDetValDerePizarra(String detValDerePizarra)
+        +getDetValDereSerieAnt
+        +setDetValDereSerieAnt(String detValDereSerieAnt)
+        +getDetValDereCupon
+        +setDetValDereCupon(String detValDereCupon)
+
+        +ContabilidadDetValorBean()¡
+    }
+@enduml

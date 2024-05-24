@@ -1,0 +1,81 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * G E N E R A L E S
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+*{
+    font-family   : verdana, sans-serif;
+    font-size     : x-small; 
+ }
+.bordePanel tr, bordePanel td{
+    border: 1px solid #ffffff;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * D E G R A D A D O S
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.degradadoOrigenCentro{
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(236,18,31,1) 50%, rgba(255,255,255,1) 100%);
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * B O T O N E S
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.estiloBoton00{
+    background-color   : #ffffff;
+    border-style       : none;
+    border-bottom-color: #EC121F!important;
+    border-bottom-style: solid!important;
+    border-right-color : #EC121F!important;
+    border-right-style : solid!important;
+    border-bottom-right-radius: 5px; 
+    height             : 50px; 
+    width              : 120px;
+}
+.estiloBoton00:hover{
+    background-color   : #ffffff;
+    border-style       : solid;
+    border-color       : #F2F5F9!important;
+    color              : #EC121F!important;
+    font-weight        : bolder; 
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * C A J A S   D E   T E X T O
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+ textArea, input[type="text"]{
+     border-color      : darkgray;
+     border-style      : dotted!important;
+     border-radius     : 0px!important;
+     box-shadow        : none!important; 
+     padding           : 7px; 
+     width             : 100%;
+     -webkit-box-sizing: border-box;
+     -moz-box-sizing   : border-box;
+     box-sizing        : border-box;
+ }
+ textArea:hover, input[type="text"]:hover{
+     border-style      : solid!important;
+     border-color      : #F2F5F9!important; 
+ }
+ textArea:focus, input[type="text"]:focus{
+     border-color      : orange!important; 
+     border-style      : solid!important;
+     border-width      : 3px;
+     box-shadow        : none!important; 
+ }
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * L I S T A   D E S P L E G A B L E
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ select{
+     border-color      : darkgray!important;
+     border-radius     : 0px!important;
+     border-style      : dotted!important; 
+     padding           : 7px; 
+     width             : 100%;
+     -webkit-box-sizing: border-box;
+ }
+ select:hover{
+     border-color      : darkgray!important;
+     border-style      : solid!important;
+ }
+ select:focus{
+     border-color      : orange!important;
+     border-style      : solid!important;
+ } 

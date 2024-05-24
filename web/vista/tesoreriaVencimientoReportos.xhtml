@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8" />
+        <meta http-equiv="Conten-Type-Options" content = "nosniff" />
+        <meta http-equiv="X-XSS-Protection" content = "1" />
+        <meta http-equiv="Cache-control" content = "No-Store" />
+        <meta http-equiv="Cache-control" content = "No-Cache"/>
+        <meta http-equiv = "expires" content = "43200"/> 
+        <title>Sistema_Fiduciario</title>
+        <link                                   rel  = "stylesheet" 
+                                                type = "text/css"		
+                                                href = "../vista/recursos/css/cssGral.css"
+                                                media= "screen"/>
+        <style                         type    = "text/css"
+                                       media   = "screen"> 
+            .firstColumn { width:160px; }         
+            .secondColumn {width:1050px; }  
+            .MasAncho{width:550px !important}
+            .AnchoMon{width:250px !important}
+            .firstColumnHead{ width: 400px;} 
+            .secondColumnHead{width: 190px; text-align: right;}  
+            .thirdColumnHead{width: 600px;}
+            .firstColumnCalend{width: 145px;}
+            .firstColumnPremio{width: 155px; }   
+            .secondColumnPremio{width: 215px; } 
+            .firstColumnMoneda {width:150px;} 
+            .secondColumnMoneda {width:250px;}      
+            .thirdColumnMoneda{width:120px;text-align: center;}       
+            .lbRojo {color:#D23D1E; display: block; font-weight: bolder} 
+            .firstColumnFoot{ width: 400px; text-align: center; margin: center; }
+            .inputForm { width:170px !important; color: black; border:solid 1px !important;}
+            .styleButtons{ display: block; text-aling: center; margin: 5px; text-indent: 60px; }
+            .inputNumber { width:170px !important; background-color: #ffffcc !important;color: darkgray; border: 1px dashed !important;}
+            .inputForm2 { width:133px !important; text-transform: uppercase; text-align: right;color: darkgray; border: 1px dashed !important;} 
+            .inputNumber2 { width:134px !important; background-color: #ffffcc !important; text-align: right;color: darkgray; border: 1px dashed !important;}
+        </style>
+
+        <script type="text/javascript" >
+            function compruebaValidoEntero(campo) {
+                if (isNaN(campo.value)) {
+                    campo.value = -1;
+                    campo.focus();
+                }
+            }
+            ;
+
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+        </script>
+    </h:head>
+    <h:body>
+        <p:growl autoUpdate="true" showDetail="true" showSummary="true" life="15000" />
+        <p:ajaxStatus onstart="dlgAjaxStatus.show();" oncomplete="dlgAjaxStatus.hide();" />
+
+        <h:form id="formVencimientoReportos">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            <p:panel                                            header          = "Vencimiento de Reportos">
+                <br />
+                <br />
+                <center>
+                    <h:panelGrid border="0" columns="4" cellpadding="4" styleClass="ui-widget-content" columnClasses="first, second, third, fourth">
+                        <h:outputLabel value = "Folio Reporto:" style = "display : block; color : black;  font-weight: bolder; margin-left: 15px;"/>
+                        <p:inputText id="txtFolioReporto" readonly="true" value="#{mbReportos.folioReporto}" styleClass="inputForm"  maxlength="15" style="background-color: #ffffcc;"></p:inputText>
+                        <p:commandButton id="btnAmortizar" icon="ui-icon-check" value="Amortizar" actionListener="#{mbReportos.confirmarAmortizarReporto}" disabled="#{mbReportos.habilitaBotonAmortizar!=1}" update=":formVencimientoReportos:dlgPopUpGral" />
+                        <p:commandButton id="btnAmortizarAll" icon="ui-icon-document" value="Todos" actionListener="#{mbReportos.confirmarAmortizarAllReportos}" disabled="#{mbReportos.habilitaBotonAmortizarAll!=1}" update=":formVencimientoReportos:dlgPopUpGral" />
+                    </h:panelGrid>
+                </center>
+                <br /><br />
+                <p:dataTable id="dtReportos" widgetVar="dtReportos" scrollHeight="350" selectionMode="single" scrollable="true"
+                             value="#{mbReportos.reportos}" var="reporto" rowKey="#{reporto}" rows="10" paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" emptyMessage="Sin registros" liveResize= "true" resizableColumns= "true">
+                    <p:ajax event="rowSelect" listener="#{mbReportos.onRowSelect_ReportoVenc}" update=":formVencimientoReportos:txtFolioReporto,:formVencimientoReportos:btnAmortizar,:formVencimientoReportos:btnAmortizarAll" />
+                    <p:column headerText="Tipo" width="60"><h:outputText value="#{reporto.tipoReporto}"/></p:column>
+                    <p:column headerText="Fideicomiso" width="80"><h:outputText value="#{reporto.fideicomiso}"/></p:column>
+                    <p:column headerText="Sub Fiso." width="40" style="text-align: center;"><h:outputText value="#{reporto.subFiso}" /></p:column>
+                    <p:column headerText="Negocio" width="280"><h:outputText value="#{reporto.negocioReporto}"/></p:column>
+                    <p:column headerText="Intermed." width="60"><h:outputText value="#{reporto.intermediarioReporto}"/></p:column>
+                    <p:column headerText="Cto. Intermed." width="80"><h:outputText value="#{reporto.ctoIntervencion}"/></p:column>
+                    <p:column headerText="Cta. Cheques"  width="80"><h:outputText value="#{reporto.cuentaCheques}"/></p:column>
+                    <p:column headerText="Fecha Inicio" width="90">
+                        <h:outputText value="#{reporto.fechaInicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Vencimiento" width="90">
+                        <h:outputText value="#{reporto.fechaVencimiento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Tasa" width="50" style="text-align: right !important"><h:outputText id="txtTasa" value="#{reporto.tasa}" /></p:column>
+                    <p:column headerText="Plazo" width="50" style="text-align: right !important"><h:outputText id="txtPlazo" value="#{reporto.plazo}" /></p:column>
+                    <p:column headerText="Importe" width="90" style="text-align: right !important">
+                        <h:outputText id="txtImporte" value="#{reporto.importe}">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2" />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Premio/Intéres" width="90" style="text-align: right !important">
+                        <h:outputText value="#{reporto.premio}">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2" />
+                            <f:convertNumber                   pattern        = "$####,###,###,###,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Moneda" width="100"><h:outputText id="txtMoneda" value="#{reporto.nomMoneda}" /></p:column>
+                    <p:column headerText="Número de Cuenta" width="100" style="text-align: right !important"><h:outputText id="txtNumCuenta" value="#{reporto.numeroCuenta}"  /></p:column>                   
+                </p:dataTable>    
+                <h:outputText value="&lt;br/&gt;" escape="false" />
+
+                <p:dialog                                           id              = "dlgPopUpGral"
+                                                                    closable        = "true"
+                                                                    closeOnEscape   = "true"
+                                                                    header          = "Sistema Fiduciario.- Confirmación de vencimiento de reportos"
+                                                                    modal           = "true"
+                                                                    position        = "600, 40"
+                                                                    resizable       = "false"
+                                                                    style           = "background-color: #ffffff;
+                                                                    height          : auto;
+                                                                    width           : auto;"
+                                                                    widgetVar       = "dlgPopUpGral">
+                    <br/>
+                    <center>
+                        <h:outputLabel                              value           = "#{mbReportos.mensajeConfirmaUsuario}"
+                                                                    style           = "color      : orange;
+                                                                    font-weight: bolder;"/>
+                        <br/>
+                        <br/>
+                        <h:outputLabel                              value           = "#{mbReportos.mensajeConfirmaMensaje1}"
+                                                                    style           = "color      : #000000;
+                                                                    font-weight: bolder;"/>
+                        <br/>
+                        <br/>
+                        <h:outputLabel                              value           = "#{mbReportos.mensajeConfirmaMensaje2}"
+                                                                    style           = "color      : red;
+                                                                    font-weight: bolder;"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <p:commandButton                            value           = "Aceptar"
+                                                                    icon            = "ui-icon-check"
+                                                                    actionListener  = "#{mbReportos.amortizarReportos}"
+                                                                    update          = ":formVencimientoReportos:dtReportos,:formVencimientoReportos:txtFolioReporto,:formVencimientoReportos:btnAmortizar,:formVencimientoReportos:btnAmortizarAll"/>
+                    </center>
+                    <br/>
+                </p:dialog>
+
+                <p:dialog  id        = "dlgAjaxStatus"  closable  = "false"
+                           header    = "Espere" 		modal     = "true"
+                           resizable = "false"          style     = "background-color: #eee;
+                           height: auto;                width: auto;"
+                           widgetVar = "dlgAjaxStatus">
+                    <center> <p:graphicImage value = "../vista/recursos/img/gif/000.gif" /> </center>
+                </p:dialog>	
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

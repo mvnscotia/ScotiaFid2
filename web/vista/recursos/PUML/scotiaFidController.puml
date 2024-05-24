@@ -1,0 +1,8 @@
+@startuml
+    class scotiaFid.controller.MBAdministracion
+    class scotiaFid.controller.MBContabilidad
+    class scotiaFid.controller.MBLogin
+    class scotiaFid.controller.MBMenu
+    class scotiaFid.controller.MBOperacion
+    class scotiaFid.controller.MBReportes
+@enduml

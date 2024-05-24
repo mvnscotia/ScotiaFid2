@@ -1,0 +1,10 @@
+@startuml
+    scotiaFid.dao.CClave ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CComunes ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CContabilidad ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CContrato ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CContratoSub ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CFeriado ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CMoneda ..> scotiaFid.controller.MBContabilidad
+    scotiaFid.dao.CPersonaFid ..> scotiaFid.controller.MBContabilidad
+@enduml

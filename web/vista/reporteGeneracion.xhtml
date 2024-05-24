@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/> 
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <style                                                  type            = "text/css"
+                                                                media           = "screen">
+            .ui-widget-content .ui-inputfield{
+                text-align:  left;
+                width     :  80px;
+            }
+        </style>
+        <script type="text/javascript">  
+	    PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+	   </script>        
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmReportes">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            <p:growl                                            id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                life            = "15000"
+                                                                showSummary     = "true"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Generación de Reportes">
+                <br/>
+                <br/>
+                <p:panelGrid                                    id              = "panelCriterios"
+                                                                style           = "margin-left : auto;
+                                                                                   margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "6"
+                                                                style           = "background-color: #F2F5F9;
+                                                                                   color      : #000000;
+                                                                                   font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Criterios de Búsqueda"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                        <p:column                               style           = "width: 90px;">
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Reporte:"/>
+                        </p:column>
+                        <p:column                               colspan         = "2">
+                            <h:selectOneMenu                    value           = "#{beanCriterioBusquedaRep.criterioRepReporteSel}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbReportes.listaReporte}"/> 
+                                <p:ajax                         listener        = "#{mbReportes.onReporteGenera_VerificaFormatoReporte}"
+                                                                update          = ":frmReportes:panelCriterios,:frmReportes:bottonVisiblePDF,:frmReportes:bottonVisibleTXT,:frmReportes:txtCto"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtReporteFmto"
+                                                                readonly        = "true"
+                                                                value           = "#{beanCriterioBusquedaRep.criterioRepFmto}"
+                                                                style           = "background-color: #ffffcc;
+                                                                                   text-align      : center;
+                                                                                   width           : 100px;"/>
+                           
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Fecha:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              ="dtpDate"
+                                                                value           = "#{beanGenericoFecha.genericoFecha00}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepContratoNum}"
+                                                                autocomplete    = "off"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                id              = "txtCto"
+                                                                maxlength       = "10"
+                                                                style           = "text-align: center;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                            </p:inputText>
+                        </p:column>
+                        <p:column                               colspan         = "4">
+                            
+                        </p:column>     
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SubFiso(A2):"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepContratoNumSub}"
+                                                                autocomplete    = "off"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                id              = "txtCtoSub"
+                                                                maxlength       = "5"
+                                                                style           = "text-align: center;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Moneda:"/>
+                        </p:column>
+                        <p:column                               colspan         = "2">
+                            <h:selectOneMenu                    value           = "#{beanCriterioBusquedaRep.criterioRepMonedaNom}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbReportes.listaMoneda}"/> 
+                            </h:selectOneMenu> 
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column                               style           = "font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Del/Al:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              = "dtpFechaDel"
+                                                                autocomplete    = "off"
+                                                                value           = "#{beanGenericoFecha.genericoFecha01}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              = "dtpFechaAl"
+                                                                autocomplete    = "off"
+                                                                value           = "#{beanGenericoFecha.genericoFecha02}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;
+                                                                                   display: #{mbReportes.visibleAnoMes}">
+                            <h:outputLabel                      value           = "Año:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              ="dtpYear"
+                                                                autocomplete    = "off"
+                                                                value           = "#{beanCriterioBusquedaRep.txtcriterioRepAño}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado04}"
+                                                                maxlength       = "4"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;
+                                                                                   display: #{mbReportes.visibleAnoMes};
+                                                                                   width     : 50px;">
+                                </h:inputText>
+                        </p:column>
+                        <p:column                               colspan         = "4">
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "font-weight     : bolder;
+                                                                                    display: #{mbReportes.visibleAnoMes};">
+                            <h:outputLabel                      value           = "Mes:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              ="dtpMonth"
+                                                                autocomplete    = "off"
+                                                                value           = "#{beanCriterioBusquedaRep.txtcriterioRepMes}"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado05}"
+                                                                maxlength       = "2"
+                                                                style           = "text-align: center;
+                                                                                   width     : 50px;
+                                                                                   display: #{mbReportes.visibleAnoMes};">
+                                </h:inputText>
+                        </p:column>
+                        <p:column                               colspan         = "4">
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "CTAM:"/>
+                        </p:column>
+                        <p:column                               colspan         = "5">
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepCTAM}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                maxlength       = "4"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   margin-right: 10px; 
+                                                                                   width       : 50px;">
+                             </h:inputText>   
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SC1 "/>
+                        </p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepSC1}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   margin-right: 10px; 
+                                                                                   width       : 30px;">
+                                </h:inputText>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SC2 "/>
+                        </p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepSC2}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   margin-right: 10px; 
+                                                                                   width       : 30px;">
+                                </h:inputText>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SC3 "/>
+                        </p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepSC3}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   margin-right: 10px; 
+                                                                                   width       : 30px;">
+                                </h:inputText>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "SC4 "/>
+                        </p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepSC4}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   margin-right: 10px; 
+                                                                                   width       : 30px;">
+                                </h:inputText>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                                   font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Auxiliar(A3):"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaRep.txtcriterioRepCtoInv}"
+                                                                autocomplete    = "off"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado08}"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align  : center;
+                                                                                   width       : 88px;">
+                                </h:inputText>
+                        </p:column>
+                        <p:column                               colspan         = "4">
+                            
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+                <br/>
+                <br/>
+                <center>
+                        <p:commandButton                        icon            = "ui-icon-gear"
+                                                                value           = "Generar reporte PDF"
+                                                                disabled        = "#{mbReportes.visiblePDF}"
+                                                                actionListener  = "#{mbReportes.onReporteGenera_Genera('PDF')}"
+                                                                style           = "margin-right: 30px;"
+                                                                id              = "bottonVisiblePDF"
+                                                                ajax ="true"
+                                                                update          = ":frmReportes:panelCriterios"
+                                                                />
+                    <p:commandButton                            icon            = "ui-icon-gear"
+                                                                value           = "Generar reporte TXT"
+                                                                disabled        = "#{mbReportes.visibleTXT}"
+                                                                actionListener  = "#{mbReportes.onReporteGenera_Genera('TXT')}"
+                                                                style           = "margin-right: 30px;"
+                                                                id              = "bottonVisibleTXT"
+                                                                update          = ":frmReportes:panelCriterios"
+                                                                />
+                    <p:commandButton                            icon            = "ui-icon-refresh"
+                                                                value           = "Limpiar"
+                                                                title           = "Limpia el contenido de la pantalla"
+                                                                actionListener  = "#{mbReportes.onReporteGenera_Inicializa}"
+                                                                style           = "margin-right: 30px;"
+                                                                update          = ":frmReportes:panelCriterios,:frmReportes:bottonVisiblePDF,:frmReportes:bottonVisibleTXT"/>
+                </center>
+                <br/>
+            </p:panel>
+            
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                modal           = "true"
+                                                                position        = "450, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           ="../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

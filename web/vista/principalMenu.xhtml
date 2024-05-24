@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Sistema Fiduciario</title>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <style                                                  type            = "text/css"
+                                                                media           = "screen">
+            input[type="submit"]{
+                background   : #EC121F!important;
+                border-color : #ffffff!important; 
+                border-radius: 5px!important;
+                border-style : solid!important; 
+                color        : #ffffff;
+                font-weight  : bolder; 
+                height       : 30px;
+                margin-left  : auto;
+                margin-right : auto; 
+                width        : 130px;
+            }
+            input[type="submit"]:hover{
+                background   : #FFFFFF!important;
+                border-color : #EC121F!important; 
+                color        : #EC121F!important;
+                font-weight  : bolder; 
+                height       : 35px;
+                width        : 135px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmMenuPrincipal">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:growl                                            id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"/>
+            <p></p>
+            
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "recursos/img/gif/000.gif"/>
+                </center>
+            </p:dialog>
+            
+        </h:form>
+    </h:body>
+</html>

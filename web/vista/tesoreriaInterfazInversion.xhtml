@@ -1,0 +1,1614 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+      <title>scotiaFid.- Interfaces de Inversiones</title>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8"/>
+      <meta http-equiv="Conten-Type-Options" content = "nosniff"/>
+      <meta http-equiv="X-XSS-Protection" content = "1"/>
+      <meta http-equiv="Cache-control" content = "No-Store"/>
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv="expires"                              content         = "43200"/>
+        <link rel       ="stylesheet"                         type            = "text/css"
+                                                              href            = "../vista/recursos/css/cssGral.css"
+                                                              media           = "screen"/>
+        <style                                                type            = "text/css"
+                                                              media           = "screen">  
+         .selServ{width:395px !important;}
+         .SelForma{width:140px !important;}   
+         .firstColumn { width: 250px;}
+         .secondColumn { width: 40px;}
+         .thirdColumn { width: 50px;}       
+         .fourColumn { min-width: 30px;}
+         .fiveColumn { width: 50px;}
+         .sixColumn { min-width: 50px;}  
+         .ColumnAsigna { width: 110px;}      
+         .firstColumnDialog { width:150px; }  
+         .secondColumnDialog { width:130px; }     
+         .firstColumnGridOtros { width: 500px;}
+         .secondColumnGridOtros { width: 90px;}          
+         td.rightColumnContent{text-align: right;} 
+         td.centerColumnContent{text-align: center;}            
+         .firstColumnFoot{width: 250px; text-align: center; }         
+         .buttons{width:180px; height:30px; text-align:center}  
+         .firstColumnButton { width: 50px; text-align: right; }
+         .secondColumnButton { width: 40px; text-align: right; }
+         .buttonsCto{width:35px; height:20px; text-align:center;}  
+         .lbRojo{color:#D23D1E; display: block; font-weight: bolder}  
+         .firstColumnGrid {width: 900px; text-align: right !important;}
+         .secondColumnGrid{ width: 600px; text-align: right !important;}        
+         .styleButtons2{ width:100px; height:40px ;text-align:center; display:block; }   
+         .gridDialog{display:block; text-align:left; border: 2px solid black !important;}        
+         .styleButtons{ display: block; text-aling: center; margin : 5px; text-indent: 20px; } 
+         .ui-filter-column .ui-column-customfilter .custom-filter { width: 100%;  box-sizing: border-box;} 
+         .inputForm2{ width:150px !important; text-transform: uppercase; text-align: right;color: darkgray; border: 1px dashed !important;}
+         .inputNumber2{ width:150px !important; background-color: #ffffcc !important; text-align: right; color: darkgray; border: 1px dashed !important;}
+         .inputNumberPje{ width:90px !important; background-color: #ffffcc !important; text-align: right;color: darkgray; border: 1px dashed !important;}
+      </style>
+      
+      <script type = "text/javascript" >    
+      function keypress(pEvent) {
+		  var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+		  var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+		  if (!regex.test(key)) {
+		    event.preventDefault();
+		    return false;
+		 }
+		};
+         function compruebaValidoEntero(campo){ 
+                campo.value = campo.value.trim();
+            };
+      </script>  
+</h:head>
+<h:body>
+    <p:growl autoUpdate = "true" showDetail = "true" showSummary = "true" life = "15000"/>
+      <p:ajaxStatus onstart = "dlgAjaxStatus.show();" oncomplete  = "dlgAjaxStatus.hide();"/>
+      <h:form id="formInterfazInversion" enctype = "multipart/form-data">
+          <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+		<p:panel id="basic" header="Interfaces de Inversiones" >
+
+			<p:tabView id="ViewCtoInv" >
+                            <p:ajax event="tabChange" listener="#{mbInterfazInversion.onTabChange}" update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,:formInterfazInversion:ViewCtoInv:dtFiltrosNoIdent,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones" />
+				<p:tab id="tabCtosInv" 
+				       title="Contratos de Inversión no Identificados">
+				<h:panelGrid id="panelGridCtoInv" 
+				             columns="2" 
+				             columnClasses="firstColumnGrid, secondColumnGrid" >
+							
+							<p:dataTable id="dtNoIdentif" 
+										value="#{mbInterfazInversion.noIdentificados}" 
+										var="noIdentificados" 
+										widgetVar="carsTable1"
+										rowKey="#{noIdentificados}"
+										filteredValue="#{mbInterfazInversion.filteredNoIdentif}"
+										scrollable="true" 
+										scrollHeight="160" 
+										selectionMode="single"
+										resizableColumns="true" 										
+										emptyMessage="Sin registros" >
+															
+							<p:ajax event="rowUnselect" 
+							        listener="#{mbInterfazInversion.onRowSelectDesAsignaPertenece}" 
+							        update=":formInterfazInversion:ViewCtoInv:dtButtonAsignaPertenece,:formInterfazInversion:ViewCtoInv:btnAsignar,
+							        		:formInterfazInversion:ViewCtoInv:btnNoPertenece"/>
+							<p:ajax event="rowSelect" 
+							        listener="#{mbInterfazInversion.onRowSelect_CtoInvNoIdentif}" 
+									update=":formInterfazInversion:txtCtoInvers,:formInterfazInversion:ViewCtoInv:dtButtonAsignaPertenece,
+										:formInterfazInversion:ViewCtoInv:btnAsignar, 
+									    :formInterfazInversion:ViewCtoInv:btnNoPertenece,:formInterfazInversion:ViewCtoInv:panelGridCtoInvers,
+									    :formInterfazInversion:ViewCtoInv:txtFiso,:formInterfazInversion:ViewCtoInv:txtNomFiso,
+									    :formInterfazInversion:ViewCtoInv:txtPlaza,:formInterfazInversion:ViewCtoInv:txtPromotor,
+									    :formInterfazInversion:ViewCtoInv:selForma,:formInterfazInversion:ViewCtoInv:txtCheques,
+									    :formInterfazInversion:panelGridRechazos,:formInterfazInversion:dtRechazos,:formInterfazInversion:txtImporte, 
+										:formInterfazInversion:txtPorcentaje,:formInterfazInversion:txtCtoInvers"/>
+								
+							<p:column id="ColumnCtoInv" headerText="Cto. de Inversión"  style="width:110px" >
+					            <h:outputText value="#{noIdentificados.cto_Inv}"/>
+					        </p:column>
+          
+							<p:column headerText="Intermediario" filterMatchMode="exact" style="width:220px">
+									<h:outputText value="#{noIdentificados.entidad_Financ}"  />
+								</p:column>
+								
+								<p:column headerText="Custodio" style="width:220px" styleClass="centerColumnContent">
+									<h:outputText value="#{noIdentificados.custodio}"/>
+								</p:column>
+
+							<p:column headerText="No. Regs" style="width:50px" styleClass="rightColumnContent">
+									<h:outputText value="#{noIdentificados.num_Regis}"/>
+								</p:column>
+							</p:dataTable>
+
+						<p:outputPanel>	  
+						
+						<h:panelGrid id="dtButtonAsignaPertenece" >
+    					   <h:panelGrid id="dtFiltrosNoIdent" 
+    					                columns="4" 
+    					                rendered ="#{mbInterfazInversion.habilitaFiltrosNoIdent}" >
+    							<p:outputLabel value="Contrato de Inversión "/>	
+								<p:inputText id="txtCtoInverNoIdent" 
+								             styleClass="inputForm2"  
+								             value="#{mbInterfazInversion.sCtoInvNoIdent}" 
+								             onkeypress="if((event.which &lt; 48 || event.which &gt; 57)) return false;">
+								 </p:inputText>
+								
+								<p:commandButton id="btnConsultaNoIdent" 
+		    				                 icon="ui-icon-search" 
+		    								 styleClass="buttonsCto"  
+		    								 title="Buscar"
+		    								 actionListener = "#{mbInterfazInversion.CtoNoIdentificados()}"
+											 update= ":formInterfazInversion:ViewCtoInv,:formInterfazInversion:ViewCtoInv:panelGridCtoInvers"  />
+									 				 
+								<p:commandButton id="btnLimpiaNoIdent"  
+											 icon="ui-icon-refresh" 
+							                 styleClass="buttonsCto" 
+							                 title="Limpiar filtros"
+											 actionListener = "#{mbInterfazInversion.ActualizaNoIdent()}"
+											 update = ":formInterfazInversion:ViewCtoInv,:formInterfazInversion:ViewCtoInv:panelGridCtoInvers,
+											 :formInterfazInversion:ViewCtoInv:dtFiltrosNoIdent,:formInterfazInversion:ViewCtoInv:txtCtoInverNoIdent"/> 
+						   </h:panelGrid>
+						   		 					
+						   <h:panelGrid columns="2" 
+						                cellpadding="2" 
+						                columnClasses="firstColumnButton, secondColumnButton">  
+    						<p:commandButton id="btnAsignar" 
+    						                 icon="ui-icon-check" 
+    						                 styleClass="buttonsCto"  
+    										 disabled ="#{!mbInterfazInversion.habilitaBtnAsigna}"
+    										 actionListener="#{mbInterfazInversion.CtoInvAsignarFiso}" 
+                                                                                 process="@this" 
+    										 immediate="true"
+    										 title="Asignar CtoInv. a Fideicomiso" 
+    										 update=":formInterfazInversion:ViewCtoInv,:formInterfazInversion:ViewCtoInv:panelGridCtoInvers,
+    										 :formInterfazInversion:ViewCtoInv:dtFiltrosNoIdent, 
+    										 :formInterfazInversion:ViewCtoInv:txtFiso,:formInterfazInversion:ViewCtoInv:txtNomFiso, 
+    										 :formInterfazInversion:ViewCtoInv:txtPlaza,:formInterfazInversion:ViewCtoInv:txtPromotor, 
+    										 :formInterfazInversion:ViewCtoInv:selForma,:formInterfazInversion:ViewCtoInv:txtCheques,
+    										 :formInterfazInversion:panelBotones,:formInterfazInversion:btnOtrosInterm,
+    										 :formInterfazInversion:btnAplicar"  />
+							
+							<p:commandButton id="btnNoPertenece" 
+							                 icon="ui-icon-closethick" 
+							                 styleClass="buttonsCto" 
+											 disabled ="#{!mbInterfazInversion.habilitaBtnAsigna}"
+											 title="CtoInv. No Pertenece a Fiducia" 
+    										 actionListener="#{mbInterfazInversion.CtoInvNoFiducia}" 
+											 update=":formInterfazInversion:dlgNoFiducia"/>
+							</h:panelGrid>		 					
+						  </h:panelGrid>
+							
+							<h:panelGrid id="panelGridCtoInvers" 
+							             rendered ="#{mbInterfazInversion.habilitaCtoAsign}">
+							
+								<h:panelGrid columns="3" 
+								             columnClasses="ColumnAsigna">	 
+									<p:outputLabel value="Fideicomiso"/>
+									<p:inputText id="txtFiso" 
+									             value="#{mbInterfazInversion.sNumFiso}" 
+									             styleClass="inputForm2" 
+                                                                                     style="width:200px !important; float:left;"
+												 onkeypress="if((event.which &lt; 48 || event.which &gt; 57))  return false;">
+										<p:ajax event="blur" 
+										        listener="#{mbInterfazInversion.ObtieneNomContrato}"
+										   		update=":formInterfazInversion:ViewCtoInv:txtFiso,:formInterfazInversion:ViewCtoInv:txtNomFiso"/>
+                                                                        </p:inputText>	
+                                                                        <p:commandButton id="btnBuscarContratoXAsignar" 
+                                                                                        icon="ui-icon-search" 
+                                                                                        style="max-width:30px !important;float:left;"
+                                                                                        styleClass="buttonsCto"  
+                                                                                        actionListener="#{mbInterfazInversion.AbrirBusquedaContratoPorAsignar}" 
+                                                                                        title="Buscar fideicomisos" 
+                                                                                        update=":formInterfazInversion:dlgBuscarFideicomisos"/>
+									
+									<p:outputLabel value="Nombre"/>						
+									<p:inputText id="txtNomFiso" 
+									             value="#{mbInterfazInversion.sNomFiso}" 
+									             readonly="true" 
+									             styleClass="inputNumber2" 
+									             style="width:200px !important;"/>
+                                                                        <h:outputText value="&lt;br/&gt;" escape="false"/>
+                                                                        
+									<p:outputLabel value="Plaza"/>
+									<p:inputText id="txtPlaza" 
+												 value="#{mbInterfazInversion.sPlaza}" 
+												 maxlength="40" 
+												 styleClass="inputForm2" 
+                                                                                                 style="width:200px !important;"
+												 onkeypress="return keypress(event)"/>
+                                                                        <h:outputText value="&lt;br/&gt;" escape="false"/>
+										
+									<p:outputLabel value="Promotor / área"/>
+									<p:inputText id="txtPromotor" 
+												 value="#{mbInterfazInversion.sPromotor}" 
+												 maxlength="40" 
+												 styleClass="inputForm2" 
+                                                                                                 style="width:200px !important;"
+												 onkeypress="return keypress(event)"/>
+                                                                        <h:outputText value="&lt;br/&gt;" escape="false"/>
+		
+									<h:outputLabel value="Forma Manejo"/>
+									<p:selectOneMenu id="selForma" 
+									                 value="#{mbInterfazInversion.sFormaManejo}"
+                                                                                 style="width:200px !important;">
+										<f:selectItems value="#{mbInterfazInversion.formaManejo.entrySet()}" 
+													   var="formaManejo" 
+													   itemLabel="#{formaManejo.value}" 
+													   itemValue="#{formaManejo.value}"  />
+									</p:selectOneMenu>
+                                                                        <h:outputText value="&lt;br/&gt;" escape="false"/>
+		
+									<p:outputLabel value="Cta. Cheques"/>
+									<p:inputText id="txtCheques" 
+												 value="#{mbInterfazInversion.sCtaCheques}" 
+												 styleClass="inputForm2" 
+												 maxlength="40" 
+                                                                                                 style="width:200px !important;"
+												 onkeypress="if((event.which &lt; 48 || event.which &gt; 57))  return false;">
+									</p:inputText>
+									<h:outputText value="&lt;br/&gt;" escape="false"/>
+									
+								<h:panelGrid columns="2" 
+								             cellpadding="2" 
+								             columnClasses="firstColumnButton, secondColumnButton"> 
+		    						<p:commandButton id="btnSeleccionarAsigna" 
+		    						                 icon="ui-icon-check" 
+		    						                 styleClass="buttonsCto"  
+		    										 actionListener="#{mbInterfazInversion.AsignaFiso}" 
+		    										 title="Seleccionar" 
+		    										 update=":formInterfazInversion:ViewCtoInv,:formInterfazInversion:ViewCtoInv:panelGridCtoInvers, 
+		    										 :formInterfazInversion:ViewCtoInv:txtFiso,:formInterfazInversion:ViewCtoInv:txtNomFiso, 
+		    										 :formInterfazInversion:ViewCtoInv:txtPlaza,:formInterfazInversion:ViewCtoInv:txtPromotor, 
+		    										 :formInterfazInversion:ViewCtoInv:selForma,:formInterfazInversion:ViewCtoInv:txtCheques,
+		    										 :formInterfazInversion:dlgAsignaCto"  />
+									
+									<p:commandButton id="btnRegresa"  
+									                 icon="ui-icon-arrowreturnthick-1-w" 
+									                 styleClass="buttonsCto" 
+									                 title="Regresar"
+		    										 actionListener="#{mbInterfazInversion.SalirAsignaFiso}" 
+									                 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+															:formInterfazInversion:ViewCtoInv:dtNoIdentif,
+															:formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 					:formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+															:formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+															:formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+															:formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+															:formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+															:formInterfazInversion:panelBotones"/>
+								  </h:panelGrid>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:outputPanel>	
+											
+						<h:panelGrid columns="5" 
+						             cellpadding="5" >
+								<p:outputLabel value="Rechazados No Procesados" 
+								               styleClass="lbRojo"/>
+
+								<p:outputLabel value="Importe"/>
+								<p:inputText id="txtCtosImporte" 
+								             value="#{mbInterfazInversion.ctoInvNoIdentificadosTotalImp}" 
+								             styleClass="inputNumber2" 
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="#,###,###,###,##0.0#"/>
+								</p:inputText>
+
+								<h:outputLabel value="Pje (%)"/>
+								<p:inputText id="txtCtosPorcentaje" 
+								             value="#{mbInterfazInversion.ctoInvNoIdentificadosTotalPje}" 
+								             styleClass="inputNumberPje" 
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="##0.0###"/>
+								</p:inputText>
+						</h:panelGrid>
+					</h:panelGrid>
+				</p:tab>
+				
+				<p:tab id="tabCtosInvAsignar" 
+				       title="Contratos de Inversión por Asignar a Fideicomiso">
+				
+						   <p:dataTable id="dtPorAsignarCto" 
+										value="#{mbInterfazInversion.porAsignarFiso}" 
+										filteredValue="#{mbInterfazInversion.filteredPorAsignar}"
+										var="porAsignarFiso"
+										widgetVar="dtPorAsignar"
+										rowKey="#{porAsignarFiso}"
+										scrollable="true" 
+										scrollHeight="160" 
+										selectionMode="single"
+										resizableColumns="true" 										
+										emptyMessage="Sin registros">
+								<p:ajax event="rowSelect" 
+								        listener="#{mbInterfazInversion.onRowSelect_porAsignar}" 
+										update="@this,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,:formInterfazInversion:panelGridRechazos, 
+									 	 :formInterfazInversion:dtRechazos,:formInterfazInversion:txtImporte,:formInterfazInversion:txtPorcentaje,
+									 	 :formInterfazInversion:txtCtoInvers "/>
+
+								<p:column headerText="Cto. de Inversión" style="width:110px">
+									<h:outputText value="#{porAsignarFiso.cto_Inv}" >
+										<f:convertNumber groupingUsed="true" pattern="###############0"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Intermediario" style="width:200px">
+									<h:outputText value="#{porAsignarFiso.entidad_Financ}"/>
+								</p:column>
+
+								<p:column headerText="Fideicomiso" style="width:80px">
+									<h:outputText value="#{porAsignarFiso.num_Cto}" >
+										<f:convertNumber groupingUsed="true" pattern="###############0"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Nombre" style="width:300px">
+									<h:outputText value="#{porAsignarFiso.nom_Cto}"/>
+								</p:column>
+
+								<p:column headerText="Plaza" style="width:70px">
+									<h:outputText value="#{porAsignarFiso.plaza}"/>
+								</p:column>
+
+								<p:column headerText="Promotor" style="width:80px">
+									<h:outputText value="#{porAsignarFiso.promotor}"/>
+								</p:column>
+								
+								<p:column headerText="Cta. Cheques" style="width:80px">
+									<h:outputText value="#{porAsignarFiso.cta_Cheques}"/>
+								</p:column>
+								
+								<p:column headerText="Manejo" style="width:100px">
+									<h:outputText value="#{porAsignarFiso.manejo}"/>
+								</p:column>
+								
+								<p:column headerText="Estatus" style="width:100px">
+									<h:outputText value="#{porAsignarFiso.status}"/>
+								</p:column>
+																
+								<p:column headerText="Fecha Alta" style="width:100px">
+                                                                    <h:outputText value="#{porAsignarFiso.fec_Alta}">
+                                                                        <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                                    timeZone        ="America/Mexico_City"/>
+                                                                    </h:outputText>
+								</p:column>
+								
+								<p:column headerText="Fecha Ult. Mod." style="width:100px">
+									<h:outputText value="#{porAsignarFiso.fec_Ult_Mov}">
+                                                                            <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                                        timeZone        ="America/Mexico_City"/>
+                                                                        </h:outputText>
+								</p:column>
+								
+								<p:column headerText="Sec" style="width:35px">
+									<h:outputText value="#{porAsignarFiso.inv_Sec}"/>
+								</p:column>
+							</p:dataTable>	
+						
+						<h:panelGrid  columns="2" 
+						              cellpadding="2" 
+						              columnClasses="firstColumnButton, secondColumnButton" > 
+								<p:commandButton id="btnEliminarAsignarFiso"  
+												 icon="ui-icon-trash"
+												 styleClass="buttonsCto"  
+												 title="Quitar de la Lista"
+												 disabled="#{!mbInterfazInversion.habilitaEliminaporAsignar}" 
+												 actionListener = "#{mbInterfazInversion.BorrarCtoInvFiso}"
+												 update = ":formInterfazInversion:dlgBorraAsignarFiso"/>	
+												 
+                                <p:commandButton icon = "ui-icon-circle-arrow-s"
+                                                 title           = "Exporta el resultado de la consulta a un archivo de texto"
+                                                 actionListener  = "#{mbInterfazInversion.ExportaCtoPorAsignar}"/> 
+												 			
+					</h:panelGrid>			
+				</p:tab>
+				
+				<p:tab id="tabCtosInvNoPerten" 
+				       title="Contratos Inversión no Pertenecen a Fiduciario">
+				
+							<p:dataTable id="dtNoPerteneceCto"  
+										value="#{mbInterfazInversion.noPerteneceFiducia}" 
+										var="noPerteneceFiso"
+										widgetVar="dtNoPerteneceCto"
+										rowKey="#{noPerteneceFiso}"
+										filteredValue="#{mbInterfazInversion.filteredNoPertenece}"
+										scrollable="true" 
+										scrollHeight="160"
+										selectionMode="single"
+										resizableColumns="true" 										
+										emptyMessage="Sin registros">
+								<p:ajax event="rowSelect" 
+								        listener="#{mbInterfazInversion.onRowSelect_noPertenece}" 
+										update="@this,:formInterfazInversion:ViewCtoInv:btnEliminaNoPertenece,
+												:formInterfazInversion:panelGridRechazos,:formInterfazInversion:dtRechazos, 
+												:formInterfazInversion:txtImporte,:formInterfazInversion:txtPorcentaje,
+									 	 		:formInterfazInversion:txtCtoInvers "/>
+
+								<p:column headerText="Cto. de Inversión" style="width:110px" >
+									<h:outputText value="#{noPerteneceFiso.cto_Inv}" >
+										<f:convertNumber groupingUsed="true" pattern="###############0"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Intermediario" style="width:240px" styleClass="centerColumnContent">
+									<h:outputText value="#{noPerteneceFiso.entidad_Financ}"/>
+								</p:column>
+
+								<p:column headerText="Fecha Alta" style="width:80px" styleClass="centerColumnContent">
+									<h:outputText value="#{noPerteneceFiso.fec_Alta}">
+                                                                            <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                                        timeZone        ="America/Mexico_City"/>
+                                                                        </h:outputText>
+								</p:column>
+
+								<p:column headerText="Sec" style="width:40px" styleClass="rightColumnContent">
+									<h:outputText value="#{noPerteneceFiso.inv_Sec}"/>
+								</p:column>
+							</p:dataTable>
+							
+							<h:panelGrid columns="2" 
+							             cellpadding="2" 
+							             columnClasses="firstColumnButton, secondColumnButton">
+							
+								<p:commandButton id="btnEliminaNoPertenece"  
+												 icon="ui-icon-trash"
+												 styleClass="buttonsCto"  
+												 title="Quitar de la lista"
+												 disabled="#{!mbInterfazInversion.habilitaEliminaNoPertenece}"
+												 actionListener = "#{mbInterfazInversion.BorrarNoPerteneceFiducia}"
+												 update = ":formInterfazInversion:dlgBorraNoPertenece"/>	
+							</h:panelGrid>	
+				</p:tab>
+				
+				<p:tab id="tabClaves" title="Claves sin Servicio">
+						   <p:dataTable id="dtClavesNoIdentif" 
+										value="#{mbInterfazInversion.clavesNoIdentificadas}" 
+										var="clavesNoIdentificadas"
+										widgetVar="dtClavesNoIdentif"
+										rowKey="#{clavesNoIdentificadas}"
+										filteredValue="#{mbInterfazInversion.filteredClavesNoIdentificadas}"
+										scrollable="true" 
+										scrollHeight="150" 
+										selectionMode="single"
+										resizableColumns="true"  										
+										emptyMessage="Sin registros">
+								<p:ajax event="rowSelect" 
+								        listener="#{mbInterfazInversion.onRowSelect_claveSinServ}" 
+										update="@this,:formInterfazInversion:ViewCtoInv:gridServicios,:formInterfazInversion:panelGridRechazos, 
+									 	 :formInterfazInversion:dtRechazos,:formInterfazInversion:txtImporte,:formInterfazInversion:txtPorcentaje,
+									 	 :formInterfazInversion:txtCtoInvers"/>
+							
+							<p:column headerText="Claves" filterBy="#{clavesNoIdentificadas.clave}" style="width:110px" >
+								<h:outputText value="#{clavesNoIdentificadas.clave}"/>
+							</p:column>
+							
+							<p:column headerText="Intermediario" style="width:220px">
+								<h:outputText value="#{clavesNoIdentificadas.entidad_Financ}"  />
+							</p:column>
+
+							<p:column headerText="Servicio" style="width:230px">
+								<h:outputText value="#{clavesNoIdentificadas.servicio}"/>
+							</p:column>
+
+							<p:column headerText="No. Regs" style="width:50px" styleClass="rightColumnContent">
+								<h:outputText value="#{clavesNoIdentificadas.num_Regis}"/>
+							</p:column>
+						</p:dataTable>
+						
+						<h:panelGrid id="gridServicios" 
+						             columns="3" 
+						             cellpadding="3" >
+							<h:outputLabel value="Servicios" 
+							               style = "margin-left: 15px"/>
+							<p:selectOneMenu id="selServicios" 
+							            	 value="#{mbInterfazInversion.cbServicio}"
+							            	 styleClass="selServ" 
+							            	 disabled ="#{!mbInterfazInversion.habilitaServicios}"> 
+       			 			 	<f:selectItem itemLabel="" 
+       			 			 	              itemValue="" 
+       			 			 	              noSelectionOption="true"/>
+								<f:selectItems value="#{mbInterfazInversion.servicios}"/>
+								<p:ajax event="change"/>
+							</p:selectOneMenu>
+							
+							<p:commandButton id="btnAltaClave" 
+							                 icon="ui-icon-check" 
+											 disabled ="#{!mbInterfazInversion.habilitaServicios}"
+											 actionListener="#{mbInterfazInversion.AltaClaveNoIdent}" 
+										     styleClass="buttonsCto" 
+											 title="Registrar Clave y Servicio" 
+											 update=":formInterfazInversion:dlgAltaClave"/> 
+						</h:panelGrid>
+						
+						<h:panelGrid id="panelGridClavesNoProcesados" 
+						             columns="5" 
+						             cellpadding="5" > 													 						
+							<p:outputLabel value="Rechazados No Procesados" 
+							               styleClass="lbRojo"/>
+
+							<p:outputLabel value="Importe"/>
+								<p:inputText id="txtClavesImporte" 
+								             value="#{mbInterfazInversion.claveNoIdentifTotalImp}" 
+								             styleClass="inputNumber2" 
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="#,###,###,###,##0.0#"/>
+								</p:inputText>
+
+								<h:outputLabel value="Pje (%)"/>
+								<p:inputText id="txtClavesPorcentaje" 
+								             value="#{mbInterfazInversion.claveNoIdentifTotalPje}" 
+								             styleClass="inputNumberPje" 
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="##0.0###"/>
+								</p:inputText>
+						</h:panelGrid>
+				
+				</p:tab>
+				
+				<p:tab id="tabOtrosRechazados" title="Otros Rechazos">
+				
+					<h:panelGrid id="panelGridOtrosRechazos" 
+					             columns="2" 
+					             cellpadding="2" 
+					             columnClasses="firstColumnGrid, secondColumnGrid" >
+							<p:dataTable id="dtOtrosRechazos" 
+										value="#{mbInterfazInversion.otrosRechazos}" 
+										var="otrosRechazos"
+										widgetVar="dtOtrosRechazos"
+										rowKey="#{otrosRechazos}"
+										scrollable="true" 
+										scrollHeight="160" 	
+										selectionMode="single" 		
+										resizableColumns="true" 								
+										emptyMessage="Sin registros">
+								<p:ajax event="rowSelect" 
+								        listener="#{mbInterfazInversion.onRowSelect_OtrosRechazos}" 
+										update="@this,:formInterfazInversion:panelGridRechazos, 
+									 	 :formInterfazInversion:dtRechazos,:formInterfazInversion:txtImporte,:formInterfazInversion:txtPorcentaje,
+									 	 :formInterfazInversion:txtCtoInvers "  />
+
+								<p:column headerText="Cto. de Inversión" style="width:45px" >
+									<h:outputText value="#{otrosRechazos.cto_Inv}" >
+										<f:convertNumber groupingUsed="true" pattern="###############0"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Clave" style="width:40px">
+									<h:outputText value="#{otrosRechazos.clave}"/>
+								</p:column>
+
+								<p:column headerText="Intermediario" style="width:70px" >
+									<h:outputText value="#{otrosRechazos.entidad_Financ}"/>
+								</p:column>
+
+								<p:column headerText="Custodio" style="width:70px" >
+									<h:outputText value="#{otrosRechazos.custodio}"/>
+								</p:column>
+								
+								<p:column headerText="Fideicomiso" style="width:40px" >
+									<h:outputText value="#{otrosRechazos.num_Cto}"/>
+								</p:column>
+
+								<p:column headerText="No.Reg" style="width:30px">
+									<h:outputText value="#{otrosRechazos.num_Regis}"/>
+								</p:column>
+							</p:dataTable>
+							
+							<h:panelGrid columns="2" 
+							             cellpadding="2" >	
+							 
+							<p:outputLabel value="Fideicomiso"/>
+							<p:inputText id="txtOtroFiso" 
+							             value="#{mbInterfazInversion.sNumFisoOtros}" 
+							             styleClass="inputForm2" 
+                                                                     onblur="compruebaValidoEntero(this)"
+                                                                    onkeypress="if((event.which &lt; 48 || event.which &gt; 57))  return false;" > 
+							 </p:inputText>
+ 
+							<p:outputLabel value="Contrato de Inversión"/>
+							<p:inputText id="txtOtroCtoInv" 
+							             value="#{mbInterfazInversion.sCtoInvOtros}" 
+							             styleClass="inputForm2" 
+                                                                     onblur="compruebaValidoEntero(this)"
+							             onkeypress="if((event.which &lt; 48 || event.which &gt; 57))  return false;">
+							</p:inputText>
+
+							<p:outputLabel value="Clave"/>
+							<p:inputText id="txtOtroClave" 
+							             value="#{mbInterfazInversion.sClaveOtros}" 
+							             styleClass="inputForm2" 
+										 onkeypress="return keypress(event)"/>
+							<h:outputText value="&lt;br/&gt;" escape="false"/>
+							<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+							<p:selectBooleanCheckbox id="checkEstruct" 
+							                         style="margin-left: 15px !important"
+													 value="#{mbInterfazInversion.checkEstructuraContable}" >
+							</p:selectBooleanCheckbox>
+							<p:outputLabel value="Falta Operación o Guías Contables" 
+							               style="font-weight: bolder;"/>
+							<h:outputText value="&lt;br/&gt;" escape="false"/>
+							<h:outputText value="&lt;br/&gt;" escape="false"/>
+							
+							
+							<h:panelGrid columns="2" 
+							             cellpadding="2" 
+							             columnClasses="firstColumnButton, secondColumnButton">
+		    						<p:commandButton id="btnConsultaOtros" 
+		    						                 icon="ui-icon-search" 
+		    										 styleClass="buttonsCto"  
+		    										 title="Buscar"
+		    										 actionListener = "#{mbInterfazInversion.OtrosRechazos}"
+													 update= ":formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+													 :formInterfazInversion:ViewCtoInv:txtOtroFiso,:formInterfazInversion:ViewCtoInv:txtOtroCtoInv,
+													 :formInterfazInversion:ViewCtoInv:txtOtroClave,:formInterfazInversion:ViewCtoInv:checkEstruct,
+													 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:txtOtrosRechCtosImporte, 
+									 				 :formInterfazInversion:ViewCtoInv:txtOtrosRechCtosPorcentaje,:formInterfazInversion:panelGridRechazos,
+									 				 :formInterfazInversion:dtRechazos "  />
+									 				 
+									<p:commandButton id="btnLimpiaOtros"  
+													 icon="ui-icon-refresh" 
+									                 styleClass="buttonsCto" 
+									                 title="Limpiar filtros"
+													 actionListener = "#{mbInterfazInversion.ActualizarOtrosRechazos}"
+													 update = ":formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+													 :formInterfazInversion:ViewCtoInv:txtOtroFiso,:formInterfazInversion:ViewCtoInv:txtOtroCtoInv,
+													 :formInterfazInversion:ViewCtoInv:txtOtroClave,:formInterfazInversion:ViewCtoInv:checkEstruct,
+													 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:txtOtrosRechCtosImporte, 
+									 				 :formInterfazInversion:ViewCtoInv:txtOtrosRechCtosPorcentaje,:formInterfazInversion:panelGridRechazos,
+									 				 :formInterfazInversion:dtRechazos "/>
+							</h:panelGrid>
+							
+						 	</h:panelGrid>
+					</h:panelGrid>
+						
+							<h:panelGrid id="panelGridOtrosNoProcesados" 
+							             columns="5" 
+							             cellpadding="5">
+							
+							<p:outputLabel value="Rechazados No Procesados" 
+							               styleClass="lbRojo"/>
+
+								<p:outputLabel value="Importe"/>
+								<p:inputText id="txtOtrosRechCtosImporte" 
+								             value="#{mbInterfazInversion.otrosRechazosTotalImp}" 
+								             styleClass="inputNumber2"
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="#,###,###,###,##0.0#"/>
+								</p:inputText>
+
+								<h:outputLabel value="Pje (%)"/>
+								<p:inputText id="txtOtrosRechCtosPorcentaje" 
+								             value="#{mbInterfazInversion.otrosRechazosTotalPje}" 
+								             styleClass="inputNumberPje" 
+								             readonly="true">
+									<f:convertNumber groupingUsed="true" 
+									                 pattern="##0.0###"/>
+								</p:inputText>
+						</h:panelGrid>
+				</p:tab>
+			</p:tabView>
+			
+			<h:panelGrid id="panelGridRechazos">
+			
+				<p:dataTable id="dtRechazos" 
+							widgetVar="dtRechazos"
+							value="#{mbInterfazInversion.detalleRechazados}" 
+							var="detalleRechazo"
+							rowKey="#{detalleRechazo}"
+							resizableColumns="true" 
+							scrollable="true" 
+							scrollHeight="200" 
+							scrollWidth="1150"
+							selectionMode="single"
+							emptyMessage="Sin registros"  >
+				<p:ajax event="rowSelect" 
+				        listener="#{mbInterfazInversion.onRowSelectDetalleRech}"/>
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Detalle de Rechazos #{mbInterfazInversion.rechazosDet}" styleClass="textLeft"/>
+						</p:outputPanel>
+					</f:facet>
+
+		            <p:column style="width:25px">
+						<p:commandButton update=":formInterfazInversion:detalleDialog,:formInterfazInversion:formDialogDetalle:contenedorDialog" actionListener="#{mbInterfazInversion.loadDetalleRech(detalleRechazo)}" icon="ui-icon-search"/>
+		            </p:column>
+            
+					<p:column headerText="Origen" style="width:100px" >
+						<h:outputText value="#{detalleRechazo.origen}"/>
+					</p:column>
+					
+					<p:column headerText="Id." style="width:25px" >
+						<h:outputText value="#{detalleRechazo.row_Id}"/>
+					</p:column>
+					
+					<p:column headerText="Cto. de Inversión" style="width:100px" >
+						<h:outputText value="#{detalleRechazo.cto_Inv}"/>
+					</p:column>
+					
+					<p:column headerText="Mda." style="width:20px" >
+						<h:outputText value="#{detalleRechazo.num_Moneda}"/>
+					</p:column>
+
+					<p:column headerText="CLAVE" style="width:75px" >
+						<h:outputText value="#{detalleRechazo.clave}"/>
+					</p:column>
+
+					<p:column headerText="Tipo Valor" style="width:55px" >
+						<h:outputText value="#{detalleRechazo.tipo_Valor}"/>
+					</p:column>
+
+					<p:column headerText="Fideicomiso" style="width:60px" >
+						<h:outputText value="#{detalleRechazo.num_Cto}"/>
+					</p:column>
+
+					<p:column headerText="Sub Fiso." style="width:40px" >
+						<h:outputText value="#{detalleRechazo.num_Subcto}"/>
+					</p:column>
+
+					<p:column headerText="Estatus" style="width:45px" >
+						<h:outputText value="#{detalleRechazo.status}"/>
+					</p:column>
+
+					<p:column headerText="Motivo Rechazo" style="width:400px" >
+                                            <h:outputText value="#{detalleRechazo.desc_Error}" title="#{detalleRechazo.desc_Error}"/>
+					</p:column>
+					
+					<p:column headerText="Pizarra" style="width:60px">
+						<h:outputText value="#{detalleRechazo.pizarra}"/>
+					</p:column>
+					
+					<p:column headerText="Serie" style="width:40px">
+						<h:outputText value="#{detalleRechazo.serie}"/>
+					</p:column>
+					
+					<p:column headerText="Cupón" style="width:40px">
+						<h:outputText value="#{detalleRechazo.cupon}"/>
+					</p:column>
+					
+						<p:column headerText="Títulos" style="width:70px" styleClass="rightColumnContent">
+							<h:outputText value="#{detalleRechazo.titulos}">
+								<f:convertNumber groupingUsed="true" pattern="#,###,###,###,###,##0"/>
+							</h:outputText>
+						</p:column>
+					
+					<p:column headerText="Precio" style="width:70px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.precio}">
+							<f:convertNumber groupingUsed="true" pattern="#,###,###,###,###,###,##0.00#######"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Importe" style="width:70px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.importe}"/>
+					</p:column>
+					
+					<p:column headerText="Tasa" style="width:60px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.tasa_Rend}">
+							<f:convertNumber pattern="#,###,###,###,###,##0.00######"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Plazo" style="width:60px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.plazo}">
+							<f:convertNumber pattern="##,##0"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Premio" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.premio}" >
+							<f:convertNumber pattern="#,###,###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Fecha Aplica" style="width:75px">
+						<h:outputText value="#{detalleRechazo.fec_Apl}">
+                                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                timeZone        ="America/Mexico_City"/>
+                                                </h:outputText>
+					</p:column>
+					
+					<p:column headerText="Comisión" style="width:70px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.comision}" >
+							<f:convertNumber pattern="#,###,###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="IVA" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.IVA}" >
+							<f:convertNumber pattern="#,###,###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="ISR" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.ISR}" >
+							<f:convertNumber pattern="#,###,###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="TC" style="width:60px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.tipo_Cambio}"  >
+							<f:convertNumber pattern="###,###,###,###,###,##0.00######"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Mercado" style="width:50px">
+						<h:outputText value="#{detalleRechazo.mercado}"  />
+					</p:column>
+					
+					<p:column headerText="Orden" style="width:60px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.orden}"  />
+					</p:column>
+					
+					<p:column headerText="NumTrans" style="width:70px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.num_Trans}"  />
+					</p:column>
+					
+					<p:column headerText="No.Banco" style="width:65px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleRechazo.num_Banco}"  />
+					</p:column>
+					
+					<p:column headerText="Fecha Vence" style="width:75px">
+						<h:outputText value="#{detalleRechazo.fec_Vence}">
+                                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                timeZone        ="America/Mexico_City"/>
+                                                </h:outputText>
+					</p:column>
+					
+					<p:column headerText="Mueve Tit" style="width:55px">
+						<h:outputText value="#{detalleRechazo.mueve_Tits}"  />
+					</p:column>
+					
+					<p:column headerText="Mueve EFE" style="width:70px">
+						<h:outputText value="#{detalleRechazo.mueve_Efectivo}"  />
+					</p:column>
+					
+					<p:column headerText="Archivo Origen" style="width:85px">
+						<h:outputText value="#{detalleRechazo.nom_File}"  />
+					</p:column>					
+				</p:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelGridBody" 
+			             columns="7" 
+			             cellpadding="7" 
+			             columnClasses="firstColumn, secondColumn, thirdColumn, fourColumn, fiveColumn, sixColumn">
+				
+				<p:outputLabel value="Rechazados No Procesados" 
+				               styleClass="lbRojo"/>
+				
+				<p:outputLabel value="Importe"/>
+				<p:inputText id="txtImporte" 
+				             value="#{mbInterfazInversion.detalleRechazosTotalImp}" 
+				             styleClass="inputNumber2" 
+				             readonly="true">
+					<f:convertNumber groupingUsed="true" 
+					                 pattern="#,###,###,###,##0.0#"/>
+			 	</p:inputText>
+
+				<h:outputLabel value="Pje (%)"/>
+				<p:inputText id="txtPorcentaje" 
+				             value="#{mbInterfazInversion.detalleRechazosTotalPje}"  
+				             maxlength="8" 
+				             styleClass="inputNumberPje" >
+					<f:convertNumber groupingUsed="true" 
+					                 pattern="##0.0###"/>
+				</p:inputText>
+
+				<p:outputLabel value="Contrato de Inversión"/>
+				<p:inputText id="txtCtoInvers" 
+				             value="#{mbInterfazInversion.sCtoInv}" 
+				             styleClass="inputNumber2"/>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelBotones" 
+						columns="3" 
+						columnClasses="firstColumnFoot, firstColumnFoot, firstColumnFoot ">
+			 
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+					
+				<h:panelGrid columns="3" 
+				             styleClass="styleButtons">					
+				<p:commandButton id="btnActualizar" 
+								value="Actualizar"
+								icon="ui-icon-refresh" 
+								styleClass="buttons"
+								actionListener = "#{mbInterfazInversion.ActualizaDatos}"
+								update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,:formInterfazInversion:ViewCtoInv:dtNoIdentif,
+								:formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+								:formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+								:formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,:formInterfazInversion:ViewCtoInv:dtFiltrosNoIdent
+								:formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+								:formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+								:formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+								:formInterfazInversion:panelBotones,:formInterfazInversion:dlgAplicar"  />
+								
+				<p:commandButton id="btnOtrosInterm" 
+								value="Otros Intermediarios"
+                                                                style="display:none"
+								icon="ui-icon-document" 
+								styleClass="buttons"
+								actionListener = "#{mbInterfazInversion.ActualizaOtrosIntermediarios}"
+								disabled ="#{!mbInterfazInversion.habilitaBtnOtrosInterm}"
+								oncomplete="dlgOtrosIntermediarios.show()"
+								update=":formInterfazInversion:dlgOtrosIntermediarios,:formInterfazInversion:dtResumen,
+								:formInterfazInversion:dtDetalleOtros"/>
+								
+				<p:commandButton id="btnAplicar" 
+								value="Aplicar Inversiones"
+								icon="ui-icon-check"
+								styleClass="buttons"
+								disabled ="#{!mbInterfazInversion.habilitaBtnAplicarInv}"
+								actionListener ="#{mbInterfazInversion.AplicarInv}" 
+								update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+								:formInterfazInversion:ViewCtoInv:dtNoIdentif,
+								:formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+								:formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+								:formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+								:formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+								:formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+								:formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+								:formInterfazInversion:panelBotones,:formInterfazInversion:dlgAplicar"/>
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgAsignaCto" 
+			                 widgetVar="dlgAsignaCto" 
+			                 closable="false"
+							 message="¿Confirma que el Cto. de Inversión #{mbInterfazInversion.rechazosBeanNoIdentif.cto_Inv} debe ser Asignado al Fideicomiso #{mbInterfazInversion.sNumFiso} ?">	
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Confirma_AsignaFiso}"
+								 oncomplete="dlgAsignaCto.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 actionListener="#{mbInterfazInversion.SalirAsignaFiso}" 
+								 oncomplete="dlgAsignaCto.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"  />
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgNoFiducia" 
+			                 widgetVar="dlgNoFiducia" 
+			                 message="¿Confirma que el Cto. de Inversión #{mbInterfazInversion.rechazosBeanNoIdentif.cto_Inv} No Pertenece a Fiduciario?"  
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Confirma_NoAsignaFiso}" 
+								 oncomplete="dlgNoFiducia.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgNoFiducia.hide()"/>
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgBorraAsignarFiso" 
+			                 widgetVar="dlgBorraAsignarFiso" 
+			                 message ="¿Confirma eliminar al Cto de Inversión #{mbInterfazInversion.sCtoInvporAsignar} de la lista, para ser Asignado al Fideicomiso #{mbInterfazInversion.sFisoporAsignar} #{mbInterfazInversion.porAsignarBean.nom_Cto}?"  
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Confirma_EliminarFiso}" 
+								 oncomplete="dlgBorraAsignarFiso.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgBorraAsignarFiso.hide()"/>
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgBorraNoPertenece" 
+			                 widgetVar="dlgBorraNoPertenece" 
+			                 message ="¿Confirma eliminar al Cto de Inversión #{mbInterfazInversion.sCtoInvporAsignar} de la lista de Contratos que No Pertenece a Fiduciario?" 
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Confirma_EliminarNoPerteneceFiducia}" 
+								 oncomplete="dlgBorraNoPertenece.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgBorraNoPertenece.hide()"/>
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgAplicar" 
+			                 widgetVar="dlgAplicar" 
+			                 message ="¿Confirma Procesar los movimientos Pendientes del Cto de Inversion #{mbInterfazInversion.sCtoInv}?" 
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Confirma_Aplicar}" 
+								 oncomplete="dlgAplicar.hide()"
+								 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+										 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+										 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+										 :formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+										 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+										 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+										 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgAplicar.hide()"/>
+			</p:confirmDialog>
+
+			<p:dialog  id        = "dlgAjaxStatus"  closable  = "false"
+                       header    = "Espere" 		modal     = "true"
+                       resizable = "false"          style     = "background-color: #eee;
+					   height: auto;                width: auto;"
+					   widgetVar = "dlgAjaxStatus">
+                <center> <p:graphicImage value = "../vista/recursos/img/gif/000.gif"/> </center>
+            </p:dialog>	
+
+			<p:dialog id="detalleDialog" 
+			          widgetVar="detalleDialog" 
+			          header="Detalle de Rechazos" 
+			          dynamic="true" 
+			          modal="true" 
+			          showEffect="fade" 
+			          hideEffect="fade" 
+			          resizable="false" >       
+                <h:form id="formDialogDetalle">
+                <p:outputPanel id="contenedorDialog" 
+                               styleClass="gridDialog"  >
+                	<h:panelGrid rendered="#{mbInterfazInversion.detalleRechazosBean != null}"  
+                		         columns="4" 
+                		         cellpadding="4" 
+                		         columnClasses="firstColumnDialog, secondColumnDialog, firstColumnDialog, secondColumnDialog" >                	
+		            	<h:outputLabel value="Origen: " 
+		            	               styleClass="lbDetalle"/> 
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.origen}"/>
+		            	<h:outputLabel value="Id: " 
+		            	               styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.row_Id}"/>
+		            	<h:outputLabel value="Cto. Inversión: " 
+		            				   styleClass="lbDetalle"  />
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.cto_Inv}"/>
+		            	<h:outputLabel value="Moneda: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.num_Moneda}"/>
+		            	<h:outputLabel value="Clave: " 
+		            				   styleClass="lbDetalle"/> 
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.clave}"/>
+		            	<h:outputLabel value="Tipo Valor: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.tipo_Valor}"/>
+		            	<h:outputLabel value="Fideicomiso: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.num_Cto}"/>
+		            	<h:outputLabel value="Sub. Fiso.: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.num_Subcto}"/>
+		            	<h:outputLabel value="Estatus: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.status}"/>
+		            	<h:outputLabel value="Pizarra: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.pizarra}"/>
+		            	<h:outputLabel value="Serie: " 
+		            				   styleClass="lbDetalle"/>	
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.serie}"/>
+		            	<h:outputLabel value="Cupón: " 
+		            				   styleClass="lbDetalle"/>	
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.cupon}"/>
+		            	<h:outputLabel value="Títulos: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.titulos}"/>
+		            	<h:outputLabel value="Precio: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.precio}"/>
+		            	<h:outputLabel value="Importe: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.importe}"/>
+		            	<h:outputLabel value="Tasa: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.tasa_Rend}"/>
+		            	<h:outputLabel value="Plazo: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.plazo}"/>
+		            	<h:outputLabel value="Premio: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.premio}"/>
+		            	<h:outputLabel value="Fecha Aplica: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.fec_Apl}">
+                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                                    timeZone        ="America/Mexico_City"/>
+                                </h:outputLabel>
+		            	<h:outputLabel value="Comisión: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.comision}"/>
+		            	<h:outputLabel value="I.V.A: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.IVA}"/>
+		            	<h:outputLabel value="I.S.R: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.ISR}"/>
+		            	<h:outputLabel value="Tipo de Cambio: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.tipo_Cambio}"/>
+		            	<h:outputLabel value="Mercado: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.mercado}"/>
+		            	<h:outputLabel value="Orden: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.orden}"/>
+		            	<h:outputLabel value="Num. Transacción: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.num_Trans}"/>
+		            	<h:outputLabel value="Num. Banco: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.num_Banco}"/>
+		            	<h:outputLabel value="Fecha Vence: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.fec_Vence}">
+                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                timeZone        ="America/Mexico_City"/>
+                                </h:outputLabel>
+		            	<h:outputLabel value="Mueve Títulos: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.mueve_Tits}"/>
+		            	<h:outputLabel value="Mueve Efectivo: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value=" #{mbInterfazInversion.detalleRechazosBean.mueve_Efectivo}"/>
+		            	<h:outputLabel value="Archivo Origen: " 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.nom_File}"/>
+		            	<h:outputLabel value="Motivo de Rechazo:" 
+		            				   styleClass="lbDetalle"/>
+		            	<h:outputLabel value="#{mbInterfazInversion.detalleRechazosBean.desc_Error}"/>
+		        	</h:panelGrid>
+		        </p:outputPanel>
+		        </h:form>
+    		</p:dialog>
+ 
+			<p:dialog id="dlgOtrosIntermediarios" 
+			          widgetVar="dlgOtrosIntermediarios" 
+			          header="Otros Intermediarios" 
+			          dynamic="true" 
+			          modal="true" 
+			          showEffect="fade" 
+			          hideEffect="fade" 
+			          resizable="false" 
+			          height="600" 
+			          closable="false">       
+                
+                <h:panelGrid columns="2" 
+                             cellpadding="2" 
+                             columnClasses ="firstColumnGridOtros, secondColumnGridOtros" >                	
+		        		            
+		        <p:fileUpload fileUploadListener= "#{mbInterfazInversion.CargaArchivoInversiones}"
+		        			  invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt) 10MB" 
+		        			  showButtons = "false"
+	                       	  allowTypes = "/(\.|\/)(txt)$/" 
+	                       	  sizeLimit = "10000024" 
+	                       	  mode = "advanced"  
+	                       	  label = "Carga Otros Intermediarios"
+	                       	  uploadLabel = "Carga Otros Intermediarios"
+	                       	  update =":formInterfazInversion:dlgReprocesarArchivo,:formInterfazInversion:dtResumen"/>
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+	                       		    
+                <p:dataTable id="dtResumen" 
+							widgetVar="dtResumen"
+							value="#{mbInterfazInversion.resumenOtrosInterm}" 
+							var="resumenOtros"
+							rowKey="#{resumenOtros}"
+							scrollable="true"
+							scrollHeight="180" 
+							scrollWidth="1000" 
+							selectionMode="single"
+							resizableColumns="true"   
+							emptyMessage="Sin registros"  >	
+										
+				<p:ajax event="rowSelect" 
+				        listener="#{mbInterfazInversion.onRowSelect_resumenOtros}"
+						update=":formInterfazInversion:dtDetalleOtros"/>
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Resumen" styleClass="textLeft"/>
+						</p:outputPanel>
+					</f:facet>
+					
+					<p:column headerText="Archivo" style="width:20px" >
+						<h:outputText value="#{resumenOtros.nom_file}"/>
+					</p:column>
+					
+					<p:column headerText="Fecha Alta" style="width:20px" >
+						<h:outputText value="#{resumenOtros.fec_Alta}">
+                                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                                    timeZone        ="America/Mexico_City"/>
+                                                </h:outputText>
+					</p:column>
+					
+					<p:column headerText="Intermediario" style="width:20px" >
+						<h:outputText value="#{resumenOtros.intermediario}"/>
+					</p:column>
+					           
+					<p:column headerText="Custodio" style="width:30px" >
+						<h:outputText value="#{resumenOtros.custodio}"/>
+					</p:column>
+					
+					<p:column headerText="Moneda" style="width:40px" >
+						<h:outputText value="#{resumenOtros.moneda}"/>
+					</p:column>
+					
+					<p:column headerText="Total Registros" style="width:25px" styleClass="rightColumnContent">
+						<h:outputText value="#{resumenOtros.total_Reg}" >							
+							<f:convertNumber pattern="#,###,###,##0"/>
+						</h:outputText>
+					</p:column>
+            
+					<p:column headerText="Importe" style="width:30px" styleClass="rightColumnContent">
+						<h:outputText value="#{resumenOtros.total_Imp}" >							
+							<f:convertNumber  groupingUsed="true" pattern="###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Total Reg. Errores" style="width:40px" styleClass="rightColumnContent">
+						<h:outputText value="#{resumenOtros.total_Reg_Err}" >						
+							<f:convertNumber pattern="#,###,###,##0"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Importe" style="width:30px" styleClass="rightColumnContent">
+						<h:outputText value="#{resumenOtros.total_Imp_Err}" >							
+							<f:convertNumber  groupingUsed="true" pattern="###,###,###,##0.00"/>
+						</h:outputText>
+					</p:column>
+                </p:dataTable>
+                                
+                <h:panelGrid columns="1" 
+                             cellpadding="1" 
+                             style="margin-top:10px; margin-left:20px;">                	
+	                       
+					<p:commandButton value="Aplicar Inversiones" 
+									 icon="ui-icon-pencil" 
+									 styleClass="styleButtons2"
+								 	 actionListener="#{mbInterfazInversion.AplicarOtrosIntermediarios}" 
+								 	 update=":formInterfazInversion:dtResumen,:formInterfazInversion:dtDetalleOtros"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					
+					<p:commandButton value="Actualizar" 
+									 icon="ui-icon-refresh" 
+									 styleClass="styleButtons2" 
+								 	 actionListener="#{mbInterfazInversion.ActualizaOtrosIntermediarios}" 
+								 	 update=":formInterfazInversion:dtResumen,:formInterfazInversion:dtDetalleOtros"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+					
+					<p:commandButton value="Cerrar" 
+									 icon="ui-icon-close" 
+									 styleClass="styleButtons2"
+								 	 oncomplete="dlgOtrosIntermediarios.hide()"
+								 	 update=":formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+									:formInterfazInversion:ViewCtoInv:dtNoIdentif,
+									:formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+									:formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+									:formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,
+									:formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+									:formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+									:formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+									:formInterfazInversion:panelBotones"/>
+					<h:outputText value="&lt;br/&gt;" escape="false"/>
+		        </h:panelGrid>
+		        	
+                <p:dataTable id="dtDetalleOtros" 
+							widgetVar="dtDetalleOtros"
+							value="#{mbInterfazInversion.detalleOtrosInterm}" 
+							var="detalleOtros"
+							rowKey="#{detalleOtros.id}"
+							resizableColumns="true" 
+							scrollable="true" 
+							scrollHeight="210" 
+							scrollWidth="1000"
+							selectionMode="single"
+							emptyMessage="Sin registros"  >
+				<p:ajax event="rowSelect" listener="#{mbInterfazInversion.onRowSelectDetalleRech}"/>
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Detalle #{mbInterfazInversion.otrosIntermDet}" styleClass="textLeft"/>
+						</p:outputPanel>
+					</f:facet>
+            
+					<p:column headerText="Id." style="width:20px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.id}"/>
+					</p:column>
+					
+					<p:column headerText="Fecha Movto." style="width:80px" >
+						<h:outputText value="#{detalleOtros.fec_Movto}">
+                                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                timeZone        ="America/Mexico_City"/>
+                                                </h:outputText>
+					</p:column>
+					
+					<p:column headerText="Cto. de inversión" style="width:100px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.cto_Inv}"/>
+					</p:column>
+					
+					<p:column headerText="Moneda" style="width:50px" >
+						<h:outputText value="#{detalleOtros.id_Moneda}"/>
+					</p:column>
+					           
+					<p:column headerText="CLAVE" style="width:70px" >
+						<h:outputText value="#{detalleOtros.cve_Operacion}"/>
+					</p:column>
+					
+					<p:column headerText="Tipo Valor" style="width:70px" >
+						<h:outputText value="#{detalleOtros.tipo_Valor}"/>
+					</p:column>
+            
+					<p:column headerText="Estatus" style="width:60px" >
+						<h:outputText value="#{detalleOtros.estatus}"/>
+					</p:column>
+					
+					<p:column headerText="Motivo Rechazo" style="width:200px" >
+						<h:outputText value="#{detalleOtros.desc_Error}"/>
+					</p:column>
+					
+					<p:column headerText="Pizarra" style="width:60px" >
+						<h:outputText value="#{detalleOtros.pizarra}"/>
+					</p:column>
+					
+					<p:column headerText="Serie" style="width:60px" >
+						<h:outputText value="#{detalleOtros.serie}"/>
+					</p:column>
+            
+					<p:column headerText="Cupón" style="width:40px" >
+						<h:outputText value="#{detalleOtros.cupon}"/>
+					</p:column>
+					
+					<p:column headerText="Títulos" style="width:80px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.titulos}"/>
+					</p:column>
+					
+					<p:column headerText="Precio" style="width:80px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.precio}"/>
+					</p:column>
+					
+					<p:column headerText="Importe" style="width:80px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.importe}"/>
+					</p:column>
+					
+					<p:column headerText="Tasa" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.tasa}"/>
+					</p:column>
+					
+					<p:column headerText="Plazo" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.plazo}"/>
+					</p:column>
+            
+					<p:column headerText="Premio" style="width:50px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.premio}"/>
+					</p:column>
+					
+					<p:column headerText="Comisión" style="width:70px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.comision}"/>
+					</p:column>
+					
+					<p:column headerText="IVA" style="width:40px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.IVA}"/>
+					</p:column>
+					
+					<p:column headerText="ISR" style="width:40px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.ISR}"/>
+					</p:column>
+					
+					<p:column headerText="Tipo Cambio" style="width:80px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.tipo_Cambio}"/>
+					</p:column>
+            
+					<p:column headerText="Fecha Vence" style="width:80px" >
+						<h:outputText value="#{detalleOtros.fec_Vence}">
+                                                    <f:convertDateTime          pattern         = "dd/MM/yyyy"
+                                                                                timeZone        ="America/Mexico_City"/>
+                                                </h:outputText>
+					</p:column>
+					
+					<p:column headerText="No. Banco" style="width:60px" styleClass="rightColumnContent">
+						<h:outputText value="#{detalleOtros.num_Banco}"/>
+					</p:column>
+					
+					<p:column headerText="Redacción" style="width:300px" >
+						<h:outputText value="#{detalleOtros.redaccion}"/>
+					</p:column>
+                </p:dataTable> 	
+		        </h:panelGrid>		        
+    		</p:dialog>
+ 
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgReprocesarArchivo" 
+			                 widgetVar="dlgReprocesarArchivo" 
+			                 message ="Ya existe un archivo Cargado con este nombre #{mbInterfazInversion.sNomArchivo} ¿Desea reemplazarlo?  " 
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.OtrosIntermediarios}" 
+								 oncomplete="dlgReprocesarArchivo.hide()" 
+								 update=":formInterfazInversion:dtResumen"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgReprocesarArchivo.hide()"/>
+			</p:confirmDialog>
+			
+			<p:confirmDialog header="Fiduciario" 
+			                 id="dlgAltaClave" 
+			                 widgetVar="dlgAltaClave" 
+			                 message ="¿Confirma el Alta de la Clave #{mbInterfazInversion.clavesBeanSinServicio.clave} con el Servicio #{mbInterfazInversion.cbServicio} ? " 
+			                 closable="false">
+				<p:commandButton title="Aceptar" 
+				                 value="Si" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbInterfazInversion.Administra_Clave}" 
+								 oncomplete="dlgAltaClave.hide()" 
+								 update=":formInterfazInversion:ViewCtoInv:dtClavesNoIdentif,:formInterfazInversion:ViewCtoInv:btnAltaClave,
+                                                                         :formInterfazInversion:ViewCtoInv:selServicios,
+                                                                         :formInterfazInversion:ViewCtoInv:panelGridCtoInv,
+									 :formInterfazInversion:ViewCtoInv:dtNoIdentif,
+									 :formInterfazInversion:ViewCtoInv:dtPorAsignarCto,:formInterfazInversion:ViewCtoInv:btnEliminarAsignarFiso,
+									 :formInterfazInversion:ViewCtoInv:dtNoPerteneceCto,:formInterfazInversion:dlgBorraNoPertenece,
+									 :formInterfazInversion:ViewCtoInv:panelGridOtrosRechazos,:formInterfazInversion:ViewCtoInv:dtOtrosRechazos,
+									 :formInterfazInversion:ViewCtoInv:panelGridOtrosNoProcesados,:formInterfazInversion:ViewCtoInv:checkEstruct,
+									 :formInterfazInversion:panelGridRechazos,:formInterfazInversion:panelGridBody,
+									 :formInterfazInversion:panelBotones"/>
+				<p:commandButton title="Cancelar" 
+				                 value="No" 
+				                 icon="ui-icon-close" 
+								 oncomplete="dlgAltaClave.hide()"/>
+			</p:confirmDialog>
+			<p:dialog                                     id="dlgBuscarFideicomisos" 
+                                                                      widgetVar="dlgBuscarFideicomisos" 
+                                                                      header="Fideicomisos" 
+                                                                      modal="true" 
+                                                                      resizable="false"  
+                                                                      dynamic="true" 
+                                                                      showEffect="fade" 
+                                                                      hideEffect="fade" 
+                                                                      width="500" 
+                                                                      minHeight="200">
+                            
+                            <p:dataTable                        id="dtBusquedaFideicomisosPorAsignar" 
+                                                                widgetVar="dtBusquedaFideicomisosPorAsignar"
+                                                                value="#{mbInterfazInversion.listadoBusquedaFideicomisoPorAsignar}" 
+                                                                var="fideicomisoBusqueda"
+                                                                rowKey="#{fideicomisoBusqueda}"
+                                                                scrollable      = "true"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                                                currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition= "bottom"
+                                                                emptyMessage    = "Sin Registros"
+                                                                rows            = "10"
+                                                                selectionMode="single">
+                                <p:ajax event="rowSelect" listener="#{mbInterfazInversion.onRowSelectBusquedaFideicomiso}" update=":formInterfazInversion:ViewCtoInv:txtFiso,:formInterfazInversion:ViewCtoInv:txtNomFiso,:formInterfazInversion:dtBusquedaFideicomisosPorAsignar,:formInterfazInversion:txtBusqContrato,:formInterfazInversion:txtBusqNombre" />
+                                <p:column headerText="Fideicomiso" style="width: 30%;">
+                                    <h:outputText value="#{fideicomisoBusqueda.contrato}"/>
+                                </p:column>
+
+                                <p:column headerText="Nombre" style="width: 70%;">
+                                    <h:outputText value="#{fideicomisoBusqueda.nombre}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                            <br /> <br />
+                            <h:panelGrid id="panelGridBusquedaCto" 
+				             columns="4" >
+                                <p:outputLabel value="Fideicomiso"/>    
+                                <p:outputLabel value="Nombre"/> 
+                                <h:outputText value="&lt;br/&gt;" escape="false"/>
+                                <h:outputText value="&lt;br/&gt;" escape="false"/>
+                                <p:inputText id="txtBusqContrato" 
+                                     value="#{mbInterfazInversion.sBusquedaFideicomisoPorAsignar}" 
+                                     maxlength="10"
+                                     onkeypress="if((event.which &lt; 48 || event.which &gt; 57)) return false;"
+                                     styleClass="inputForm" 
+                                     style="width:180px !important;">
+                                </p:inputText>
+                                
+                                <p:inputText id="txtBusqNombre" 
+                                     value="#{mbInterfazInversion.sBusquedaNombreContratoPorAsignar}" 
+                                     maxlength="40" 
+                                     styleClass="inputForm" 
+                                     style="width:180px !important; text-transform: uppercase;"
+                                     onkeypress="return keypress(event)"/>
+                                
+                                <p:commandButton id="btnConsultaBusquedaFiso"
+                                         actionListener="#{mbInterfazInversion.buscarFideicomisosPorAsignar}"
+                                         icon="ui-icon-search" 
+                                         styleClass="buttonsCto"  
+                                         title="Buscar"
+                                         update=":formInterfazInversion:dtBusquedaFideicomisosPorAsignar"/>
+                                
+                                <p:commandButton id="btnLimpiaBusquedaFiso" 
+                                         actionListener="#{mbInterfazInversion.limpiarCamposBusquedaPorAsignar}"
+                                         icon="ui-icon-refresh" 
+                                         styleClass="buttonsCto" 
+                                         title="Limpiar filtros"
+                                         update=":formInterfazInversion:dtBusquedaFideicomisosPorAsignar,
+                                         :formInterfazInversion:txtBusqContrato,:formInterfazInversion:txtBusqNombre"/>
+                            </h:panelGrid>
+                        </p:dialog>
+                    
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

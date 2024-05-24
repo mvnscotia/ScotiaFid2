@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<meta http-equiv="Conten-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Conten-Type-Options" content="nosniff" />
+	<meta http-equiv="X-XSS-Protection" content="1" />
+	<meta http-equiv="Cache-control" content="No-Store" />
+	<meta http-equiv="Cache-control" content="No-Cache" />
+	<link rel="stylesheet" type="text/css"
+		href="../vista/recursos/css/cssGral.css" media="screen" />
+	<title>Sistema_Fiduciario</title>
+	<style type="text/css">
+	.firstColumn {width: 200px;}
+	.secondColumn {width: 500px;}
+	.thirdColumn {width: 500px;}
+	.firstColumnTime {width: 50px;text-align: right;}
+	.secondColumnTime {width: 50px;text-align: center;}
+	.thirdColumnTime {width: 50px;text-align: left;}
+	.inputForm {width: 250px;text-transform: uppercase;}
+	.selectOneMenuForm {width: 250px !important;}
+	td.centeredColumnContent {text-align: center;}
+	td.rightColumnContent {text-align: right;}
+	td.leftColumnContent {text-align: left;}
+	.ui-panelgrid td, .ui-panelgrid tr {border-style: none !important}
+	h3 {text-align: center;font-weight: bold;color: #D23D1E}
+	
+</style>
+	<script>
+          PrimeFaces.locales["es_ES"] = {
+		    closeText: "Cerrar",
+		    prevText: "Anterior",
+		    nextText: "Siguiente",
+		    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+		    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+		    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+		    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+		    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+		    weekHeader: "Semana",
+		    firstDay: 0,
+		    isRTL: false,
+		    showMonthAfterYear: false,
+		    yearSuffix: "",
+		    timeOnlyTitle: "Solo hora",
+		    timeText: "Tiempo",
+		    hourText: "Hora",
+		    minuteText: "Minuto",
+		    secondText: "Segundo",
+		    currentText: "Fecha actual",
+		    ampm: false,
+		    month: "Mes",
+		    week: "Semana",
+		    day: "Día",
+		    allDayText : "Todo el día"
+		};
+      </script>
+</h:head>
+<h:body>
+	<p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                        rendered        = "true">
+        <p:ajax                                         event           = "idle"
+                                                        listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+        <p:ajax                                         event           = "active"
+   					                                    listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+    </p:idleMonitor>
+	<p:growl autoUpdate="true" 
+			 showDetail="true" 
+			 showSummary="true"
+			 life="15000" />
+	<p:ajaxStatus 	onstart="dlgAjaxStatus.show();"
+					oncomplete="dlgAjaxStatus.hide();" />
+	<h:form id="formFacturasCanceladas">
+		<p:panel header="Consulta de Estatus de Cancelaciones">
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			
+			<p:dataTable 	id="dtFacturasCanceladas" 
+						    scrollable="true"
+							scrollHeight="300" 
+							value="#{mbFdCanFact.facturas}" 
+							var="factura"
+							rows="10" 
+							paginator="true" 
+							paginatorPosition="bottom"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+							emptyMessage="Sin registros">
+				
+				<p:column style="width:10px">
+					<p:rowToggler />
+				</p:column>
+				
+				<p:column	headerText="Fecha Solicitud" 
+							width="9%"
+							styleClass="centeredColumnContent">
+					<h:outputText value="#{factura.fdCanFactBean.fcrFecSol}" />
+				</p:column>
+				<p:column 	headerText="Fecha Cancelación" 
+							width="9%"
+							styleClass="centeredColumnContent">
+					<h:outputText value="#{factura.fdCanFactBean.fcrFecCancela}" />
+				</p:column>
+				<p:column 	headerText="Estatus" 
+							width="10%"
+							styleClass="centeredColumnContent">
+					<h:outputText value="#{factura.fdCanFactBean.fcrStatus}" />
+				</p:column>
+				<p:column 	headerText="Tipo de Factura" 
+							width="10%"
+							styleClass="centeredColumnContent">
+					<h:outputText value="#{factura.facStatusCte}" />
+				</p:column>
+				<p:column 	headerText="Fideicomiso" 
+							width="12%"
+							styleClass="centeredColumnContent">
+					<h:outputText value="#{factura.facNumContrato}" />
+				</p:column>
+				<p:column 	headerText="Importe" 
+							width="10%"
+							styleClass="rightColumnContent">
+					<h:outputText value="#{factura.facHonorarios}">
+						<f:convertNumber groupingUsed="true"
+										 pattern="$#,###,###,###,###,##0.00####" />
+					</h:outputText>
+				</p:column>
+				<p:column 	headerText="Folio Fiduciario" 
+							width="15%"
+							styleClass="leftColumnContent">
+					<h:outputText value="FID#{factura.fdCanFactBean.fidFolioFact}" />
+				</p:column>
+				<p:column 	headerText="Nombre" 
+							width="25%"
+							styleClass="leftColumnContent">
+					<h:outputText value="#{factura.facNombreRecep}" />
+				</p:column>
+				<p:rowExpansion>
+					<h:panelGrid 	id="display" 
+									columns="2" 
+									cellpadding="4"
+									style="width:400px;" 
+									styleClass="ui-widget-content"
+									columnClasses="firstColumn, secondColumn">
+						<h:outputText value="R.F.C.:" />
+						<h:outputText id="txtRFC" 
+									  value="#{factura.facRFC}" />
+						<h:outputText value="Participante:" />
+						<h:outputText id="txtPart" 
+									  value="#{factura.facCvePersFid}" />
+						<h:outputText value="No. Participante:" />
+						<h:outputText id="txtNoParticipante"
+									  value="#{factura.facNumPersFid}" />
+						<h:outputText value="Moneda:" />
+						<h:outputText id="txtMoneda"
+									  value="#{!(factura.facNumMoneda == 1)?'MONEDA NACIONAL':'DÓLAR AMERICANO'}" />
+						<h:outputText value="Importe:" />
+						<h:outputText id="txtImporte" 
+									  value="#{factura.facHonorarios}" />
+						<h:outputText value="I.V.A.:" />
+						<h:outputText id="txtIVA" 
+									  value="#{factura.facIvaTraladado}" />
+						<h:outputText value="Folio Fiduciario:" />
+						<h:outputText id="txtFolioFiduciario"
+									  value="FID#{factura.fdCanFactBean.fidFolioFact}" />
+						<h:outputText value="Folio Transitoria:" />
+						<h:outputText id="txtFolioTransitoria"
+									  value="#{factura.fdCanFactBean.fidFolioTran}" />
+						<h:outputText value="Folio Acuse:" />
+						<h:outputText id="txtFolioAcuse"
+									  value="#{factura.fdCanFactBean.fcrFolioAcuse}" />
+						<h:outputText value="Mensaje:" />
+						<h:outputText id="txtMensaje" 
+									  value="#{factura.facMensaje}" />
+						<h:outputText value="UUID:" />
+						<h:outputText id="txtUUID"
+									  value="#{factura.fdCanFactBean.fcrFolioCancela}" />
+						<h:outputText value="Motivo de la Cancelación:" />
+						<h:outputText id="txtMotivo"
+									  value="#{factura.fdCanFactBean.fcrMotivoCancela}" />
+						<h:outputText value="&lt;br/&gt;" escape="false" />
+					</h:panelGrid>
+				</p:rowExpansion>
+			</p:dataTable>
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			
+		</p:panel>
+  
+		<center>  
+	    <p:panelGrid                            styleClass      = "bordePanel"
+                                                style           = "margin: 0.3% 0.3% 0.3% 10%;">
+              <p:row>
+                 <p:column                      styleClass      = "degradadoOrigenCentro"
+                                                style           = "color: #ffffff; font-weight: bolder;"> 
+                         <h:outputLabel         value           = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         										   Criterios de Consulta
+                         										   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/> 
+                 </p:column>
+              </p:row>
+         </p:panelGrid>
+         
+			<p:panelGrid columns="6" 
+						 cellpadding="1">
+						 
+				<h:outputLabel value="Fecha Inicial" />
+				<p:calendar id="calFechaInicial" 
+							navigator="true"
+							disabledWeekends="true" 
+							value="#{mbFdCanFact.fechaInicial}"
+							mode="popup" 
+							pattern="dd/MM/yyyy" 
+							timeZone="America/Mexico_City"
+							locale="es_ES" 
+							readonlyInput="true">
+					<p:ajax event="focus" 
+							listener="#{mbFdCanFact.validaConsulta}"
+							update=":formFacturasCanceladas:btnAceptar"/>
+					<p:ajax event="dateSelect" 
+							listener="#{mbFdCanFact.disableConsulta}"
+							update="@this,:formFacturasCanceladas:btnAceptar"/> 
+					</p:calendar> 
+							
+				<h:outputLabel value="Fecha Final" />
+				<p:calendar id="calFechaFinal" 
+							navigator="true"
+							disabledWeekends="true" 
+							value="#{mbFdCanFact.fechaFinal}"
+							mode="popup" 
+							pattern="dd/MM/yyyy" 
+							timeZone="America/Mexico_City"
+							locale="es_ES" 
+							readonlyInput="true">
+					<p:ajax event="focus" 
+							listener="#{mbFdCanFact.validaConsulta}"
+							update=":formFacturasCanceladas:btnAceptar"/>
+					<p:ajax event="dateSelect" 
+							listener="#{mbFdCanFact.disableConsulta}"
+							update="@this,:formFacturasCanceladas:btnAceptar"/> 
+					</p:calendar> 
+							
+				<h:outputLabel value="Tipo Factura" />
+				<p:selectOneMenu id="cboTipoFactura" 
+								 styleClass="selectOneMenuForm"
+								 value="#{mbFdCanFact.tipoFactura}">
+					<f:selectItem itemLabel="" 		itemValue="" />
+					<f:selectItem itemLabel="PPD" 	itemValue="PPD" />
+					<f:selectItem itemLabel="PUE" 	itemValue="PUE" />
+					<f:selectItem itemLabel="CP" 	itemValue="CP" />
+						  <p:ajax event="change" 
+								  listener="#{mbFdCanFact.disableConsulta}"
+								  update="@this,:formFacturasCanceladas:btnAceptar"/> 
+				</p:selectOneMenu>
+				
+				<h:outputLabel value="Fideicomiso" />
+				<p:inputText 	id="txtFideicomiso" 
+								value="#{mbFdCanFact.fideicomiso}"
+								maxlength="10"
+								onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"> 
+						    <p:ajax event="focus" 
+									listener="#{mbFdCanFact.validaConsulta}"
+									update=":formFacturasCanceladas:btnAceptar"/>
+						    <p:ajax event="blur" 
+									listener="#{mbFdCanFact.validaFiso}"
+									update="@this,:formFacturasCanceladas:cboEstatus,:formFacturasCanceladas:btnAceptar"/> 
+					 </p:inputText> 
+					  
+				<h:outputLabel value="Estatus" />
+				<p:selectOneMenu id="cboEstatus" 
+								 styleClass="selectOneMenuForm"
+								 value="#{mbFdCanFact.estatus}">
+					<f:selectItem itemLabel="" 				itemValue="" />
+					<f:selectItem itemLabel="CANCELADO" 	itemValue="CANCELADO" />
+					<f:selectItem itemLabel="TRANSFERIDO" 	itemValue="TRANSFERIDO" />
+					<f:selectItem itemLabel="PENDIENTE" 	itemValue="PENDIENTE" />
+					<f:selectItem itemLabel="VIGENTE" 		itemValue="VIGENTE" />
+						  <p:ajax event="change" 
+								  listener="#{mbFdCanFact.disableConsulta}"
+								  update="@this,:formFacturasCanceladas:btnAceptar"/>
+				</p:selectOneMenu>
+				
+				<h:outputLabel 	value="UUID" />
+				<p:inputText 	id="txtUUID" 
+								value="#{mbFdCanFact.uuid}"
+								styleClass="inputForm" 
+								maxlength="36"
+								onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.keyCode != 45)) return false;" >
+						<p:ajax event="focus" 
+								listener="#{mbFdCanFact.validaConsulta}"
+								update=":formFacturasCanceladas:btnAceptar"/>
+						<p:ajax event="blur" 
+								listener="#{mbFdCanFact.validaUUID}"
+								update="@this,:formFacturasCanceladas:btnAceptar"/> 
+				</p:inputText> 
+					 
+				<h:outputLabel 	value="Tipo Participante" />
+				<p:selectOneMenu id="cboTipoParticipante"
+								 styleClass="selectOneMenuForm"
+								 value="#{mbFdCanFact.tipoParticipante}">
+					<f:selectItem itemLabel="" 					itemValue="" />
+					<f:selectItem itemLabel="FIDEICOMITENTE" 	itemValue="FIDEICOMITENTE" />
+					<f:selectItem itemLabel="FIDEICOMISARIO" 	itemValue="FIDEICOMISARIO" />
+					<f:selectItem itemLabel="TERCERO" 			itemValue="TERCERO" />
+						  <p:ajax event="change" 
+								  listener="#{mbFdCanFact.disableConsulta}"
+								  update="@this,:formFacturasCanceladas:txtNoParticipante,:formFacturasCanceladas:btnAceptar"/>
+				</p:selectOneMenu> 
+					 
+				<h:outputLabel value="No. Participante" />
+				<p:inputText 	id="txtNoParticipante"
+								value="#{mbFdCanFact.noParticipante}" 
+								maxlength="2"
+								onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"> 
+						<p:ajax event="focus" 
+								listener="#{mbFdCanFact.validaConsulta}"
+								update=":formFacturasCanceladas:btnAceptar"/>
+						<p:ajax event="blur" 
+								listener="#{mbFdCanFact.disableConsulta}"
+								update="@this,:formFacturasCanceladas:btnAceptar"/> 
+				</p:inputText> 
+			</p:panelGrid>
+			
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			<p:panelGrid 	border="0" 
+							columns="3" 
+							cellpadding="4">
+				<p:commandButton 	value="Aceptar" 
+									id="btnAceptar"
+									icon="ui-icon-check" 
+                 				    disabled="#{!mbFdCanFact.bConsulta_Disable}"
+									actionListener="#{mbFdCanFact.consultar()}"
+									update=":formFacturasCanceladas:dtFacturasCanceladas,:formFacturasCanceladas:btnExportar, 
+									:formFacturasCanceladas:calFechaInicial,:formFacturasCanceladas:calFechaFinal" />
+				<p:commandButton 	value="Limpiar" 
+									id="btnLimpiar"
+									icon="ui-icon-trash" 
+									actionListener="#{mbFdCanFact.limpiar()}"
+									update=":formFacturasCanceladas:dtFacturasCanceladas,:formFacturasCanceladas:calFechaInicial, 
+									:formFacturasCanceladas:calFechaFinal,:formFacturasCanceladas:cboTipoFactura, 
+									:formFacturasCanceladas:txtFideicomiso,:formFacturasCanceladas:cboTipoParticipante, 
+									:formFacturasCanceladas:cboEstatus,:formFacturasCanceladas:txtNoParticipante, 
+									:formFacturasCanceladas:txtUUID,:formFacturasCanceladas:btnAceptar,:formFacturasCanceladas:btnExportar" />
+					<p:commandButton value="Exportar" 
+									 id="btnExportar"
+									 icon="ui-icon-print" 
+									 disabled="#{!(mbFdCanFact.facturas.size() != 0)}"
+	                                 actionListener  = "#{mbFdCanFact.Exportar}"/>
+			</p:panelGrid>
+		</center> 
+		<p:dialog 	id="dlgAjaxStatus" 
+					closable="false" 
+					header="Espere"
+					modal="true" 
+					resizable="false"
+					style="background-color: #eee; height : auto; width : auto;"
+					widgetVar="dlgAjaxStatus">
+			<center>
+				<p:graphicImage value="../vista/recursos/img/gif/000.gif" />
+			</center>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

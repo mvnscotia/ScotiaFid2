@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Sistema Fiduciario</title>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <meta http-equiv="refresh"                              content         = "3000; url=sesionExpiro.html"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <style                                                  type            = "text/css"
+                                                                media           = "screen">
+            .form{
+                align-items     : center;
+                background-color: #EC121F;
+                display         : flex;
+                flex-direction  : column;
+                justify-content : center;
+                margin          : auto;
+                max-width       : 600px;
+                width           : 100%;
+            }
+            *{
+                font-size       : small;
+            }
+            input[type="text"], input[type="password"]{
+                border          : 2px solid!important;
+                border-color    : #ff9933!important; 
+                display         : block;
+                height          : 30px;
+                margin-left     : 15px;
+                padding         : 5px;
+                text-align      : center; 
+                width           : 90%;
+            }
+            select{
+                border          : 2px solid!important;
+                border-color    : #ff9933!important; 
+                display         : block;
+                height          : 35px;
+                margin-left     : 15px;
+                width           : 93%;
+            }
+            input[type="text"]:hover, input[type="password"]:hover{
+                border      : 2px solid!important;
+                border-color: #F2F5F9!important; 
+            }
+            input[type="submit"]{
+                background-color: #EC121F!important;
+                color           : #ffffff!important;
+            }
+            input[type="submit"]:hover{
+                background-color: #ffffff!important;
+                color           : #EC121F!important;
+            }
+        </style>
+    </h:head>
+    <h:body                                                     style           = "background-image : linear-gradient(180deg, #d5d8dc, #ffffff);
+                                                                                   background-repeat: repeat-x;
+                                                                                   height           : 600px;">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <h:form                                                 id              = "frmLogin"
+                                                                style           = "background-color: #ffffff;
+                                                                                   border: 2px solid #EC121F;
+                                                                                   margin-left : auto;
+                                                                                   margin-right: auto;
+                                                                                   width       : 45%;
+                                                                                   -webkit-box-shadow: 12px 12px 12px 0px rgba(0,0,0,0.1);
+                                                                                   -moz-box-shadow: 12px 12px 12px 0px rgba(0,0,0,0.1);
+                                                                                    box-shadow: 12px 12px 12px 0px rgba(0,0,0,0.1);">
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <br/>
+            <br/>
+            <img                                                src             = "vista/recursos/img/png/002.png"
+                                                                style           = "display: block;
+                                                                                   margin-left: auto;
+                                                                                   margin-right: auto;"/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <center>
+                <h:outputLabel                                  value           = "BIENVENIDO"
+                                                                style           = "display    : block;
+                                                                                   color      : black;
+                                                                                   font-family: sans-serif;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;
+                                                                                   margin-left: 15px;"/>
+            </center>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <center>
+                <br/>
+                <br/>
+                <p:commandButton                                value           = "Comenzar"
+                                                                actionListener  = "#{mbLogin.onLogin_SesionInicia()}"
+                                                                update          = ":frmLogin:dlgUsuarioRol"
+                                                                style           = "background   : #EC121F!important;
+                                                                                   border-radius: 0px!important;
+                                                                                   color        : #ffffff;
+                                                                                   font-weight  : bolder; 
+                                                                                   height       : 40px;
+                                                                                   width        : 200px;" />
+            </center>
+            <br/>
+            <br/>
+            <center>
+                <h:outputLabel                                  value           = "Derechos reservados Eficiencia En Software 2021"
+                                                                style           = "color      : #EC121F;
+                                                                                   display    : block; 
+                                                                                   font-family: sans-serif;
+                                                                                   font-size  : xx-small;"/>
+                <br/>
+                <h:outputLabel                                  value           = "Última actualización 02/04/2024 18:55"
+                                                                style           = "color      : #EC121F;
+                                                                                   display    : block; 
+                                                                                   font-family: sans-serif;
+                                                                                   font-size  : xx-small;
+                                                                                   font-weight: bolder;"/>                                           
+            </center>
+            <br/>
+            
+            <p:dialog                                           id              = "dlgUsuarioRol"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Selección de Rol"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgUsuarioRol">
+                <br/>
+                <p:panelGrid                                    style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "3"
+                                                                style           = "color: #ff9933; font-weight: bold;">
+                            <h:outputLabel                      value           = "Usuario"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "3">
+                            <h:outputLabel                      value           = "#{beanUsuarioLogin.usuarioLoginNombre}"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "3">
+                            <h:outputLabel                      value           = "Último acceso"
+                                                                style           = "color: #ff9933; font-weight: bold;"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "3">
+                            <h:outputLabel                      value           = "#{beanUsuarioLogin.usuarioLoginFirmado}"/>
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Seleccione rol:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanUsuarioLogin.usuarioLoginRol}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbLogin.listaRol}" />       
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-check"
+                                                                title           = "Aceptar"
+                                                                actionListener  = "#{mbLogin.onLogin_SesionSeleccionaRol()}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/> 
+                <center>
+                    <p:commandButton                            icon            = "ui-icon-circle-arrow-e"
+                                                                value           = "Cerrar Sesión"
+                                                                actionListener  = "#{mbLogin.onLogin_SesionCierra}"
+                                                                style           = "margin-right: 25px;"/>
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgCierre"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Cierre de Sesión"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                draggable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   min-height          : 200px;
+                                                                                   max-width           : 400px !important;"
+                                                                widgetVar       = "dlgCierre">
+                <br/>
+                <center>
+                    <h:outputLabel                              style           = "color: #000000; font-size: 13px; font-weight: bold; text-align: center;"
+                                                                value           = "Atención:" /> 
+                    <br /><br />
+                    <h:outputLabel                              style           = "color: #000000; font-size: 13px; text-align: center;"
+                                                                value           = "Este usuario ya se encuentra firmado en ScotiaFid, 
+                                                                                    cierre sesión para volver a autenticarse..." />
+                    <br /><br />
+                    <p:commandButton                            value           = "Cerrar Sesión"
+                                                                actionListener  = "#{mbLogin.onLogin_SesionCierra}"
+                                                                style           = "background   : #EC121F!important;
+                                                                                   border-radius: 0px!important;
+                                                                                   color        : #ffffff;
+                                                                                   height       : 40px;
+                                                                                   width        : 200px;
+                                                                                   margin-top: 15px;" />
+                    <br/>
+                </center> 
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           ="/vista/recursos/img/gif/000.gif"/>
+                </center>
+            </p:dialog>
+        </h:form>
+        <br/>
+    </h:body>
+</html>

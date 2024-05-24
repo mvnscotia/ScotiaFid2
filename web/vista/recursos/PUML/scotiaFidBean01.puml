@@ -1,0 +1,315 @@
+@startuml
+
+    class scotiaFid.bean.ContabilidadGarantiaBienBean{
+        -garantiaBienId
+        -garantiaBienTipo
+        -garantiaBienClasif
+        -garantiaBienImporte
+        -garantiaBienImporteTC
+        -garantiaBienImporteUltVal
+        -garantiaBienMonedaNom
+        -garantiaBienMonedaNum
+        -garantiaBienPeriodicidad
+        -garantiaBienFecha
+        -garantiaBienFechaUltVal
+        -garantiaBienFechaPrxVal
+        -garantiaBienDescripcion
+        -garantiaBienComentario
+        -garantiaBienStatus
+        -garantiaBienTituloVentana
+        -garantiaBienCveRevalua
+        
+        +getGarantiaBienId
+        +setGarantiaBienId(Short garantiaBienId)
+        +getGarantiaBienTipo
+        +setGarantiaBienTipo(String garantiaBienTipo)
+        +getGarantiaBienClasif
+        +setGarantiaBienClasif(String garantiaBienClasif)
+        +getGarantiaBienImporte
+        +setGarantiaBienImporte(Double garantiaBienImporte)
+        +getGarantiaBienImporteTC
+        +setGarantiaBienImporteTC(Double garantiaBienImporteTC)
+        +getGarantiaBienImporteUltVal
+        +setGarantiaBienImporteUltVal(Double garantiaBienImporteUltVal)
+        +getGarantiaBienMonedaNom
+        +setGarantiaBienMonedaNom(String garantiaBienMonedaNom)
+        +getGarantiaBienMonedaNum
+        +setGarantiaBienMonedaNum(Short garantiaBienMonedaNum)
+        +getGarantiaBienPeriodicidad
+        +setGarantiaBienPeriodicidad(String garantiaBienPeriodicidad)
+        +getGarantiaBienFecha
+        +setGarantiaBienFecha(Date garantiaBienFecha)
+        +getGarantiaBienFechaUltVal
+        +setGarantiaBienFechaUltVal(Date garantiaBienFechaUltVal)
+        +getGarantiaBienFechaPrxVal
+        +setGarantiaBienFechaPrxVal(Date garantiaBienFechaPrxVal)
+        +getGarantiaBienDescripcion
+        +setGarantiaBienDescripcion(String garantiaBienDescripcion)
+        +getGarantiaBienComentario
+        +setGarantiaBienComentario(String garantiaBienComentario)
+        +getGarantiaBienStatus
+        +setGarantiaBienStatus(String garantiaBienStatus)
+        +getGarantiaBienTituloVentana
+        +setGarantiaBienTituloVentana(String garantiaBienTituloVentana)
+        +getGarantiaBienCveRevalua
+        +setGarantiaBienCveRevalua(Short garantiaBienCveRevalua)
+
+        +ContabilidadGarantiaBienBean()
+    }
+    class scotiaFid.bean.ContabilidadGarantiaBienSalidaBean{
+        -garantiaBienSalidaImporteNvo
+        -garantiaBienSalidaImporteAnt
+        -garantiaBienSalidaFechaValNva
+        -garantiaBienSalidaFechaValAnt
+
+        +getGarantiaBienSalidaImporteNvo
+        +setGarantiaBienSalidaImporteNvo(Double garantiaBienSalidaImporteNvo)
+        +getGarantiaBienSalidaImporteAnt
+        +setGarantiaBienSalidaImporteAnt(Double garantiaBienSalidaImporteAnt)
+        +getGarantiaBienSalidaFechaValNva
+        +setGarantiaBienSalidaFechaValNva(Date garantiaBienSalidaFechaValNva)
+        +getGarantiaBienSalidaFechaValAnt
+        +setGarantiaBienSalidaFechaValAnt(Date garantiaBienSalidaFechaValAnt)
+
+        +ContabilidadGarantiaBienSalidaBean()
+
+    }
+    class scotiaFid.bean.ContabilidadGarantiaGralBean{
+        -garantiaContratoNumero;
+        -garantiaContratoNumeroSub;
+        -garantiaContratoNombre;
+        -garantiaTipo;
+        -garantiaTipoInmuebles;
+        -garantiaTipoMuebles;
+        -garantiaTipoValores;
+        -garantiaTipoOtros;
+        -garantiaTipoNumerario;
+        -garantiaRevaluaCve;
+        -garantiaRevaluaPeriodo;
+        -garantiaFecha;
+        -garantiaRevaluaFechaIni;
+        -garantiaRevaluaFechaFin;
+        -garantiaRelacionCredGar;
+        -garantiaImporteCredito;
+        -garantiaImporteGarantia;
+        -garantiaImporteUltVal;
+        -garantiaImporteNumerario;
+        -garantiaMonedaNombre;
+        -garantiaMonedaNumero;
+        -garantiaDesc;
+        -garantiaComentario;
+        -garantiaStatus;
+        -garantiaBitTipoOper;
+        -garantiaBitUsuario;
+        -garantiaBitPantalla;
+        -garantiaBitIP;
+
+        +getGarantiaContratoNumero
+        +setGarantiaContratoNumero(Long garantiaContratoNumero)
+        +getGarantiaContratoNumeroSub
+        +setGarantiaContratoNumeroSub(Integer garantiaContratoNumeroSub)
+        +getGarantiaContratoNombre
+        +setGarantiaContratoNombre(String garantiaContratoNombre)
+        +getGarantiaTipo
+        +setGarantiaTipo(String[] garantiaTipo)
+        +getGarantiaTipoInmuebles
+        +setGarantiaTipoInmuebles(String garantiaTipoInmuebles)
+        +getGarantiaTipoMuebles
+        +setGarantiaTipoMuebles(String garantiaTipoMuebles)
+        +getGarantiaTipoValores
+        +setGarantiaTipoValores(String garantiaTipoValores)
+        +getGarantiaTipoOtros
+        +setGarantiaTipoOtros(String garantiaTipoOtros)
+        +getGarantiaTipoNumerario
+        +setGarantiaTipoNumerario(String garantiaTipoNumerario)
+        +getGarantiaRevaluaCve
+        +setGarantiaRevaluaCve(String garantiaRevaluaCve)
+        +getGarantiaRevaluaPeriodo
+        +setGarantiaRevaluaPeriodo(String garantiaRevaluaPeriodo)
+        +getGarantiaFecha
+        +setGarantiaFecha(Date garantiaFecha)
+        +getGarantiaRevaluaFechaIni
+        +setGarantiaRevaluaFechaIni(Date garantiaRevaluaFechaIni)
+        +getGarantiaRevaluaFechaFin
+        +setGarantiaRevaluaFechaFin(Date garantiaRevaluaFechaFin)
+        +getGarantiaRelacionCredGar
+        +setGarantiaRelacionCredGar(String garantiaRelacionCredGar)
+        +getGarantiaImporteCredito
+        +setGarantiaImporteCredito(Double garantiaImporteCredito)
+        +getGarantiaImporteGarantia
+        +setGarantiaImporteGarantia(Double garantiaImporteGarantia)
+        +getGarantiaImporteUltVal
+        +setGarantiaImporteUltVal(Double garantiaImporteUltVal)
+        +getGarantiaImporteNumerario
+        +setGarantiaImporteNumerario(Double garantiaImporteNumerario)
+        +getGarantiaMonedaNombre
+        +setGarantiaMonedaNombre(String garantiaMonedaNombre)
+        +getGarantiaMonedaNumero
+        +setGarantiaMonedaNumero(Integer garantiaMonedaNumero)
+        +getGarantiaDesc
+        +setGarantiaDesc(String garantiaDesc)
+        +getGarantiaComentario
+        +setGarantiaComentario(String garantiaComentario)
+        +getGarantiaStatus
+        +setGarantiaStatus(String garantiaStatus)
+        +getGarantiaBitTipoOper
+        +setGarantiaBitTipoOper(String garantiaBitTipoOper)
+        +getGarantiaBitUsuario
+        +setGarantiaBitUsuario(Integer garantiaBitUsuario)
+        +getGarantiaBitPantalla
+        +setGarantiaBitPantalla(String garantiaBitPantalla)
+        +getGarantiaBitIP
+        +setGarantiaBitIP(String garantiaBitIP)
+
+        +ContabilidadGarantiaGralBean();
+        
+    }
+    
+    class scotiaFid.bean.ContabilidadMovtoBean{
+        -movtoFolio;
+        -movtoOperacionId;
+        -movtoOperacionNom;
+        -movtoTransaccId;
+        -movtoFecha;
+        -movtoContratoNum;
+        -movtoContratoNom;
+        -movtoContratoNumSub;
+        -movtoUsuarioId;
+        -movtoUsuarioNom;
+        -movtoDesc;
+        -movtoImporte;
+        -movtoFechaReg;
+        -movtoStatus;
+
+        +getMovtoFolio
+        +setMovtoFolio(Long movtoFolio)
+        +getMovtoOperacionId
+        +setMovtoOperacionId(String movtoOperacionId)
+        +getMovtoOperacionNom
+        +setMovtoOperacionNom(String movtoOperacionNom)
+        +getMovtoTransaccId
+        +setMovtoTransaccId(String movtoTransaccId)
+        +getMovtoFecha
+        +setMovtoFecha(Date movtoFecha)
+        +getMovtoContratoNum
+        +setMovtoContratoNum(Long movtoContratoNum)
+        +getMovtoContratoNom
+        +setMovtoContratoNom(String movtoContratoNom)
+        +getMovtoContratoNumSub
+        +setMovtoContratoNumSub(Integer movtoContratoNumSub)
+        +getMovtoUsuarioId
+        +setMovtoUsuarioId(Long movtoUsuarioId)
+        +getMovtoUsuarioNom
+        +setMovtoUsuarioNom(String movtoUsuarioNom)
+        +getMovtoDesc
+        +setMovtoDesc(String movtoDesc)
+        +getMovtoImporte
+        +setMovtoImporte(Double movtoImporte)
+        +getMovtoFechaReg
+        +setMovtoFechaReg(Date movtoFechaReg)
+        +getMovtoStatus
+        +setMovtoStatus(String movtoStatus)
+ 
+        +ContabilidadMovtoBean()
+
+    }
+    class scotiaFid.bean.ContabilidadOperacionBean{
+        -operacionId;
+        -operacionNombre;
+        -operacionTarifa;
+        -operacionFechaReg;
+        -operacionFechaMod;
+        -operacionStatus;
+        -operacionBitUsuarioNum;
+        -operacionBitTipoOperacion;
+
+        +getOperacionId
+        +setOperacionId(String operacionId)
+        +getOperacionNombre
+        +setOperacionNombre(String operacionNombre)
+        +getOperacionTarifa
+        +setOperacionTarifa(String operacionTarifa)
+        +getOperacionFechaReg
+        +setOperacionFechaReg(Date operacionFechaReg)
+        +getOperacionFechaMod
+        +setOperacionFechaMod(Date operacionFechaMod)
+        +getOperacionStatus
+        +setOperacionStatus(String operacionStatus)
+        +getOperacionBitUsuarioNum
+        +setOperacionBitUsuarioNum(Integer operacionBitUsuarioNum)
+        +getOperacionBitTipoOperacion
+        +setOperacionBitTipoOperacion(String operacionBitTipoOperacion)
+        
+        +ContabilidadOperacionBean()
+        
+    }
+    
+    class scotiaFid.bean.ContabilidadSaldoBean{
+        -saldoCTAM;
+        -saldoSC1;
+        -saldoSC2;
+        -saldoSC3;
+        -saldoSC4;
+        -saldoCuentaNombre;
+        -saldoMonedaNombre;
+        -saldoMonedaNumero;
+        -saldoAX1;
+        -saldoAX2;
+        -saldoAX3;
+        -saldoInicioMes;
+        -saldoCargosMes;
+        -saldoAbonosMes;
+        -saldoInicioEjer;
+        -saldoCargosEjer;
+        -saldoAbonosEjer;
+        -saldoActual;
+        -saldoMes;
+        -saldoAño;
+        -saldoFechaUltMod;
+
+        +getSaldoCTAM
+        +setSaldoCTAM(Short saldoCTAM)
+        +getSaldoSC1
+        +setSaldoSC1(Short saldoSC1)
+        +getSaldoSC2
+        +setSaldoSC2(Short saldoSC2)
+        +getSaldoSC3
+        +setSaldoSC3(Short saldoSC3)
+        +getSaldoSC4
+        +setSaldoSC4(Short saldoSC4)
+        +getSaldoCuentaNombre
+        +setSaldoCuentaNombre(String saldoCuentaNombre)
+        +getSaldoMonedaNombre
+        +setSaldoMonedaNombre(String saldoMonedaNombre)
+        +getSaldoMonedaNumero
+        +setSaldoMonedaNumero(Short saldoMonedaNumero)
+        +getSaldoAX1
+        +setSaldoAX1(Long saldoAX1)
+        +getSaldoAX2
+        +setSaldoAX2(Long saldoAX2)
+        +getSaldoAX3
+        +setSaldoAX3(Long saldoAX3)
+        +getSaldoInicioMes
+        +setSaldoInicioMes(Double saldoInicioMes)
+        +getSaldoCargosMes
+        +setSaldoCargosMes(Double saldoCargosMes)
+        +getSaldoAbonosMes
+        +setSaldoAbonosMes(Double saldoAbonosMes)
+        +getSaldoInicioEjer
+        +setSaldoInicioEjer(Double saldoInicioEjer)
+        +getSaldoCargosEjer
+        +setSaldoCargosEjer(Double saldoCargosEjer)
+        +getSaldoAbonosEjer
+        +setSaldoAbonosEjer(Double saldoAbonosEjer)
+        +getSaldoActual
+        +setSaldoActual(Double saldoActual)
+        +getSaldoMes
+        +setSaldoMes(Short saldoMes)
+        +getSaldoAño
+        +setSaldoAño(Short saldoAño)
+        +getSaldoFechaUltMod
+        +setSaldoFechaUltMod(Date saldoFechaUltMod)
+        
+        +ContabilidadSaldoBean()
+    }
+@enduml

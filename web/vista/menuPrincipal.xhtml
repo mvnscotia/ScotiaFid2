@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Sistema Fiduciario.- Menu Principal</title>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        <script                                                 type            = "text/javascript"
+                                                                src             ="../vista/recursos/js/functions.js">
+        </script>
+        <script                                                 type            = "text/javascript">
+            window.onload = function ejecutarAccion()
+            {
+                setTimeout("cierraSistema()", horaCierreSistema("#{mbMenu.menuSistemaHoraCierre}"));
+                clearActiveItems();
+            } 
+            
+            function redimensionarIFrame(obj) {
+              obj.style.height = obj.contentWindow.document.body.scrollHeight + 700 + 'px';
+            }
+            
+            function clearActiveItems() {                
+                const activeItems = document.getElementsByClassName('ui-state-active');
+
+                Array.from(activeItems).forEach((element) => {
+                    element.classList.remove('ui-state-active');
+                });
+
+                const cookieName = "panelMenu-frmMenu%3Amainmenu";
+                document.cookie = cookieName +'=; Path=/scotiaFid/vista; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+        </script>
+        <style                                                  type            = "text/css"
+                                                                media           = "screen">
+            input[type="submit"]{
+                background   : #EC121F!important;
+                border-color : #ffffff!important; 
+                border-radius: 5px!important;
+                border-style : solid!important; 
+                color        : #ffffff;
+                font-weight  : bolder; 
+                height       : 30px;
+                margin-left  : auto;
+                margin-right : auto; 
+                width        : 130px;
+            }
+            input[type="submit"]:hover{
+                background   : #FFFFFF!important;
+                border-color : #EC121F!important; 
+                color        : #EC121F!important;
+                font-weight  : bolder; 
+                height       : 35px;
+                width        : 135px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmMenu">
+            
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:growl                                            id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"/>
+            <p:panelGrid                                        style           = "margin-left: auto;
+                                                                                   margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                <p:row>
+                    <p:column                                   colspan         = "4">
+                        <center>
+                            <h:outputLabel                      value           = "#{mbMenu.menuSistemaCierra}"
+                                                                style           = "font-weight: bolder; font-size: x-small;"/> 
+                            <p:clock                            pattern         = "HH:mm:ss"
+                                                                mode 	        = "server"
+                            					autoSync        = "true"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   colspan         = "2">
+                        <h:outputLabel                          value           = "Fecha del Sistema: "
+                                                                style           = "color      : #EC121F;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                        <h:outputLabel                          value           = "#{mbMenu.menuSistemaFecha}"
+                                                                style           = "color      : #000000;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column>
+                        
+                    </p:column>
+                    <p:column>
+                        <center>
+                            <h:commandButton                    action  = "#{mbMenu.onMenu_CierraSesion}"
+                                                                value           = "Cerrar Sesión"
+                                                                id              = "btn_CerrarSesion"
+                                                                onclick="clearActiveItems();"/>
+                            <h:commandButton                    actionListener  = "#{mbMenu.onMenu_CierraSesion_TimeOut}"
+                                                                value           = "TimeOut"
+                                                                style           = "display:none"
+                                                                id              = "btn_TimeOut"
+                                                                onclick="clearActiveItems();"/>
+                        </center>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column                                   colspan         = "7"
+                                                                style           = "background: rgba(240,47,23,1);
+                                                                                   background: -moz-linear-gradient(left, rgba(240,47,23,1) 0%, rgba(255,255,255,1) 93%, rgba(255,255,255,1) 100%);
+                                                                                   background: -webkit-gradient(left top, right top, color-stop(0%, rgba(240,47,23,1)), color-stop(93%, rgba(255,255,255,1)), color-stop(100%, rgba(255,255,255,1)));
+                                                                                   background: -webkit-linear-gradient(left, rgba(240,47,23,1) 0%, rgba(255,255,255,1) 93%, rgba(255,255,255,1) 100%);
+                                                                                   background: -o-linear-gradient(left, rgba(240,47,23,1) 0%, rgba(255,255,255,1) 93%, rgba(255,255,255,1) 100%);
+                                                                                   background: -ms-linear-gradient(left, rgba(240,47,23,1) 0%, rgba(255,255,255,1) 93%, rgba(255,255,255,1) 100%);
+                                                                                   background: linear-gradient(to right, rgba(240,47,23,1) 0%, rgba(255,255,255,1) 93%, rgba(255,255,255,1) 100%);
+                                                                                   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f02f17', endColorstr='#ffffff', GradientType=1 );">
+                        <center>
+                            <h:outputLabel                      value           = "Sistema Fiduciario"
+                                                                style           = "color      : #ffffff;
+                                                                                   font-family: sans-serif;
+                                                                                   font-weight: bold; 
+                                                                                   font-size  : xx-large"/>
+                        </center>
+                    </p:column>
+                    <p:column>
+                        <center>
+                            <img                                src             = "recursos/img/png/001.png"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                height          = "80"
+                                                                width           = "75"/>
+                        </center>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputLabel                          value           = "Usuario:"
+                                                                style           = "color      : #EC121F;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column                                   colspan         = "2">
+                        <h:outputLabel                          value           = "#{mbMenu.menuUsuarioNombre}"
+                                                                style           = "color      : #000000;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputLabel                          value           = "Rol:"
+                                                                style           = "color      : #EC121F;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputLabel                          value           = "#{mbMenu.menuUsuarioPuesto}"
+                                                                style           = "color      : #000000;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputLabel                          value           = "Plaza:"
+                                                                style           = "color      : #EC121F;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                    <p:column                                   colspan         = "2">
+                        <h:outputLabel                          value           = "#{mbMenu.menuUsuarioPlaza}"
+                                                                style           = "color      : #000000;
+                                                                                   font-weight: bold;
+                                                                                   font-size  : x-small;"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:panelMenu                                        binding         = "#{mbMenu.panelMenu}"
+                                                                rendered        = "true"
+                                                                style           = "float: left; width: 10%;"
+                                                                widgetVar       = "mainmenu"
+                                                                id              = "mainmenu">
+            </p:panelMenu>
+            <br/>
+            <iframe                                             id              = "mainContainer" 
+                                                                name            = "mainContainer"
+                                                                frameborder     = "0"
+                                                                scrolling       = "yes"
+                                                                style           = "height: 930px;
+                                                                                   width : 90%;"
+                                                                src             = "principalMenu.sb"/>                                       
+          
+            <p:dialog                                           id              = "dlgIdleMntr"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sesión cerrada por inactividad"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgIdleMntr">
+                <br/>
+                <center>
+                    <p:graphicImage                             value           = "/vista/recursos/img/jpg/000.jpg"
+                                                                height          = "138"
+                                                                width           = "220"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            icon            = "ui-icon-home"
+                                                                value           = "Ir a página principal"
+                                                                actionListener  = "#{mbMenu.onMenuMonitor_CierraSesion}"/>
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "recursos/img/gif/000.gif"/>
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

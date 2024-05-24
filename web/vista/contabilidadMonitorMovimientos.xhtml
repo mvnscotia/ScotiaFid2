@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8" />
+      <meta http-equiv="Conten-Type-Options" content = "nosniff" />
+      <meta http-equiv="X-XSS-Protection" content = "1" />
+      <meta http-equiv="Cache-control" content = "No-Store" />
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv = "expires"                            content         = "43200"/>
+      <link rel = "stylesheet" type = "text/css" href = "../vista/recursos/css/cssGral.css"  media = "screen"/>
+      <script type  = "text/javascript"  src = "../vista/recursos/js/validador.js"></script>
+      <title>Sistema_Fiduciario</title>
+      <style type = "text/css">
+         *{ font-size : small;}
+         .form { align-items : center; flex-direction : column; justify-content : center; margin  : auto; max-width : 600px; width : 100%; }
+         .first { width: 30%; vertical-align: top; }
+         .second { width: 30%; vertical-align: top; }
+         .third { width: 40%; vertical-align: top; }
+         .firstColumn { width: 300px; }
+         .secondColumn { width: 450px; }
+         .thirdColumn { width: 500px; }
+         .firstColumnTime { width: 50px; text-align: center;}
+         .secondColumnTime { width: 50px; text-align: center;}
+         .thirdColumnTime { width: 50px; text-align: left;}
+         .inputForm { width: 400px; text-transform: uppercase; }
+         .inputTextAreaForm { width: 400px; text-transform: uppercase; }
+         .inputNumber { width: 300px; background-color: #F2D7D5 !important;}
+         .inputNumberEdit { width: 300px;}
+         .selectOneMenuForm { width: 400px; }
+         .selectOneMenuTime { width: 50px; }
+         .firstButtom { width: 325px;  text-align: center; }
+         .secondButtom { width: 325px;  text-align: left; } 
+         .firstColumnMonitor { width: 30%; }
+         .secondColumnMonitor { width: 70%; }
+         td.centeredColumnContent{text-align: center;}
+         td.rightColumnContent{text-align: right;}
+         td.leftColumnContent{text-align: left;}
+      </style>                                                        
+    </h:head>
+    <h:body>
+      <p:growl autoUpdate = "true" showDetail = "true" showSummary = "true" life = "15000"/>
+      <p:ajaxStatus onstart = "dlgAjaxStatus.show();" oncomplete  = "dlgAjaxStatus.hide();"/>
+      <h:form id="formMonitorCheques">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+        <p:panel header="Recepciones">
+          <center>
+            <h:panelGrid border="0" columns="3" cellpadding="4" styleClass="ui-widget-content" columnClasses="first, second, third">
+              <p:commandButton id="btnMonitor" icon="ui-icon-search" value="ScotiaBank Inverlat" oncomplete="dlgMonitorMovimientos.show()" />
+            </h:panelGrid>
+          </center>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+        </p:panel>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        
+        <p:dialog header="Monitor de Movimientos" id="dlgMonitorMovimientos" widgetVar="dlgMonitorMovimientos"  draggable="false" resizable="false" modal="true" closable="false" width="800" height="450">
+          <center>
+          <h:panelGrid border="0" columns="8" cellpadding="4" styleClass="ui-widget-content" >
+            <h:outputLabel value="Contrato:" style = "display : block; color : blue; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <h:outputText  value="#{mbMonitorMovimientos.monitorChequesBean.contrato}" />
+            <h:outputLabel value="Moneda:" style = "display : block; color : blue; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <h:outputText  value="#{mbMonitorMovimientos.monitorChequesBean.nombreMoneda}" />
+            <h:outputLabel value="Fecha:" style = "display : block; color : blue; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <h:outputText  value="#{mbMonitorMovimientos.monitorChequesBean.fecha}" />
+          </h:panelGrid>
+          </center>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+          <p:dataTable id="dtMonitorMovimientos" scrollable="true" scrollHeight="260" value="#{mbMonitorMovimientos.responses}" var="response" rowKey="#{response}" rows="10"  paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" emptyMessage="Sin registros">  
+            <p:ajax event="rowSelectRadio" listener="#{mbMonitorMovimientos.onRowSelect}" />
+            <p:column selectionMode="single" style="width:16px;text-align:center"/>
+            <p:column headerText="Confirmación" styleClass="centeredColumnContent" width="100"><h:outputText value="#{response.confirmacion}"/></p:column>
+            <p:column headerText="Referencia" styleClass="centeredColumnContent" width="80"><h:outputText value="#{response.referencia}"/></p:column>
+            <p:column headerText="Tipo Movimiento" styleClass="leftColumnContent" width="120"><h:outputText value="#{response.descripcion}" /></p:column>
+            <p:column headerText="Importe" styleClass="rightColumnContent" width="100"><h:outputText value="#{response.montoFormat}"/></p:column>
+            <p:column headerText="Estátus" styleClass="centeredColumnContent" width="100"><p:graphicImage value="#{response.estatus}" width="20" height="20" /></p:column>
+            <p:columnGroup type="footer">
+              <p:row>
+                 <p:column colspan="3" width="100" style="text-align:left"  footerText="Cuenta:"/>
+                 <p:column style="text-align:left">
+                  <f:facet name="footer">
+                   <h:outputText value="#{response.cuenta}"></h:outputText>
+                  </f:facet>
+                 </p:column>
+                 <p:column colspan="3" width="100" style="text-align:left"  footerText="Saldo:"/>
+                 <p:column style="text-align:left">
+                  <f:facet name="footer">
+                   <h:outputText value="#{response.saldoFormat}"></h:outputText>
+                  </f:facet>
+                 </p:column>
+               </p:row>
+             </p:columnGroup>
+          </p:dataTable>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+          <center>
+          <h:panelGrid border="0" columns="4" cellpadding="4" styleClass="ui-widget-content" >
+            <h:outputLabel value="APLICADO" style = "display : block; color : black; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <p:graphicImage value="/vista/recursos/img/png/green_circle.png" width="25" height="25" />
+            <h:outputLabel value="NO APLICADO" style = "display : block; color : black; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <p:graphicImage value="/vista/recursos/img/png/red_circle.png" width="25" height="25" />
+          </h:panelGrid>
+          </center>
+          <f:facet name="footer">
+          <center>
+            <h:panelGrid border="0" columns="2" cellpadding="4" columnClasses="firstButtom, firstButtom">
+              <p:commandButton value="Movimientos" icon="ui-icon-check" actionListener="#{mbMonitorMovimientos.getMonitorMovements}" update=":formMonitorCheques:dtMonitorMovimientos"/>
+              <p:commandButton value="Cancelar" icon="ui-icon-cancel" actionListener="#{mbMonitorMovimientos.cleanMonitorMovements}" oncomplete="dlgMonitorMovimientos.hide()" update=":formMonitorCheques:dtMonitorMovimientos" />
+            </h:panelGrid>
+          </center>
+          </f:facet> 
+        </p:dialog>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+       
+        <p:confirmDialog header="Copiar Movimiento" id="dlgCopiar" widgetVar="dlgCopiar" message="¿Está seguro de copiar el movimiento seleccionado?" modal="true" closable="false">
+          <p:commandButton title="Acepta copiar el movimiento" value="Si" icon="ui-icon-check" oncomplete="dlgCopiar.hide()"  />
+          <p:commandButton title="Cancela copiar el movimiento" value="No" icon="ui-icon-close" oncomplete="dlgCopiar.hide()"/>
+        </p:confirmDialog>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        
+        <p:confirmDialog header="Copiar Movimiento" id="dlgAplicado" widgetVar="dlgAplicado" message="El movimiento ya ha sido aplicado" modal="true" closable="false">
+          <p:commandButton title="Movimiento Aplicado" value="Cerrar" icon="ui-icon-check" oncomplete="dlgAplicado.hide()"  />
+        </p:confirmDialog>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        
+        <p:dialog id="dlgAjaxStatus" closable="false" header="Espere" modal="true" resizable="false" style="background-color: #eee; height : auto; width : auto;" widgetVar = "dlgAjaxStatus">
+        <center>
+         <p:graphicImage value = "../vista/recursos/img/gif/000.gif" />
+        </center>
+        </p:dialog>
+     </h:form> 
+   </h:body>
+</html>

@@ -1,0 +1,527 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui">
+<h:head>
+      <title>scotiaFid.- Registro de Pagarés</title>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8"/>
+      <meta http-equiv="Conten-Type-Options" content = "nosniff"/>
+      <meta http-equiv="X-XSS-Protection" content = "1"/>
+      <meta http-equiv="Cache-control" content = "No-Store"/>
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv="expires"       content = "43200"/>
+      <link rel       ="stylesheet"    type    = "text/css"
+                                       href    = "../vista/recursos/css/cssGral.css" 
+                                       media   = "screen"/>
+        <style                         type    = "text/css"
+        							   media   = "screen"> 
+         .firstColumn { width:160px; }         
+         .secondColumn {width:1050px; }  
+         .MasAncho{width:550px !important}
+         .AnchoMon{width:250px !important}
+         .firstColumnHead{ width: 400px;} 
+         .secondColumnHead{width: 190px; text-align: right;}  
+         .thirdColumnHead{width: 600px;}
+		 .firstColumnCalend{width: 145px;}
+         .firstColumnPremio{width: 155px; }   
+         .secondColumnPremio{width: 215px; } 
+         .firstColumnMoneda {width:150px;} 
+         .secondColumnMoneda {width:250px;}      
+         .thirdColumnMoneda{width:120px;text-align: center;}       
+		 .lbRojo {color:#D23D1E; display: block; font-weight: bolder} 
+         .firstColumnFoot{ width: 400px; text-align: center; margin: center; }
+         .inputForm { width:170px !important; color: black; border:solid 1px !important;}
+         .styleButtons{ display: block; text-aling: center; margin: 5px; text-indent: 60px; }
+         .inputNumber { width:170px !important; background-color: #ffffcc !important;color: darkgray; border: 1px dashed !important;}
+         .inputForm2 { width:133px !important; text-transform: uppercase; text-align: right;color: darkgray; border: 1px dashed !important;} 
+         .inputNumber2 { width:134px !important; background-color: #ffffcc !important; text-align: right;color: darkgray; border: 1px dashed !important;}
+  </style>
+
+	<script type="text/javascript" >   
+            
+            function convertirDecimal(campo){
+                  const numStr = campo.value;
+                  const num = Number(numStr);
+                  if (!isNaN(num)){
+                      campo.value = num.toFixed(2);
+                  } 
+              }
+              
+            function separator(numb) {
+                var str = numb.toString().split(".");
+                str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return str.join(".");
+            }
+              
+              function calcularImporteVencimiento(){
+                  const numStr1 = document.getElementById("formPagares:txtImporte").value;
+                  const num1 = Number(numStr1);
+                  const numStr2 = document.getElementById("formPagares:txtIntereses").value;
+                  const num2 = Number(numStr2);
+                  const importe = document.getElementById("formPagares:txtImpMovto");
+                  var resultado = null;
+                  if(!isNaN(num1) &amp;&amp; num1 > 0){ 
+                      if(!isNaN(num2) &amp;&amp; num2 > 0){
+                        resultado = num1+num2;
+                        resultado = resultado.toFixed(2);
+                        resultado = separator(resultado);
+                        importe.value = '$'+resultado;
+                    } else {
+                        importe.value = '$0.00';
+                    }
+                  } else {
+                      importe.value = '$0.00';
+                  }
+              }
+              
+              function calcularIntereses(){
+                  const importe = document.getElementById("formPagares:txtImporte").value;
+                  const num1 = Number(importe);
+                  const plazo = document.getElementById("formPagares:txtPlazo").value;
+                  const num2 = Number(plazo);
+                  const tasa = document.getElementById("formPagares:txtTasa").value;
+                  const num3 = Number(tasa);
+                  const intereses = document.getElementById("formPagares:txtIntereses");
+                  var resultado = null;
+                  if(!isNaN(num1) &amp;&amp; num1 > 0){ 
+                      if(!isNaN(num2) &amp;&amp; num2 > 0){
+                        if(!isNaN(num3) &amp;&amp; num3 > 0){
+                            resultado =(num1*num2*num3)/36000;
+                            resultado = resultado.toFixed(2);
+                            intereses.value = resultado;
+                        } else {
+                            intereses.value = '0.00';
+                        }
+                    } else {
+                        intereses.value = '0.00';
+                    }
+                  } else {
+                      intereses.value = '0.00';
+                  }
+              }
+              
+              function proyectarFecha(){
+                  const fechaMovimiento = document.getElementById("formPagares:CalendFecMov_input").value;
+                  const dias = Number(document.getElementById("formPagares:txtPlazo").value);
+                  const fechaVenci = document.getElementById("formPagares:txtFecMovto");
+                  document.getElementById("formPagares:txtPlazo").value = document.getElementById("formPagares:txtPlazo").value.trim();
+                  if(!isNaN(dias) &amp;&amp; dias != null &amp;&amp; dias > 0){
+                    var dateString = fechaMovimiento; 
+                    var newData = dateString.replace(/(\d+[/])(\d+[/])/, '$2$1');
+                    var f = new Date(newData);
+                    f.setDate(f.getDate() + dias);
+                    
+                    fechaVenci.value = formatDate(f);
+                  } else {
+                      fechaVenci.value = "";
+                  }
+              } 
+              
+              function padLeft(n){
+                return ("00" + n).slice(-2);
+              }
+
+              function formatDate(d){  
+                    dformat = [ padLeft(d.getDate()),
+                                padLeft(d.getMonth()+1),
+                                d.getFullYear()
+                                ].join('/');
+                 return dformat;
+              }
+          
+            function compruebaValidoEntero(campo){ 
+			    if (isNaN(campo.value)){
+			        campo.value = 0;
+			        campo.focus();  
+			    } 
+			};
+			
+		    PrimeFaces.locales['es'] = {
+		    closeText: 'Cerrar',
+		    prevText: 'Anterior',
+		    nextText: 'Siguiente',
+		    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+		    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+			dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		    dayNamesMin: ['D','L','M','M','J','V','S'],
+		    weekHeader: 'Semana',
+			firstDay: 1,
+		    isRTL: false,
+			showMonthAfterYear: false,
+			yearSuffix: '',
+		    timeOnlyTitle: 'Sólo hora',
+			timeText: 'Tiempo',
+		    hourText: 'Hora',
+			minuteText: 'Minuto',
+		    secondText: 'Segundo',
+		    currentText: 'Fecha actual',
+			ampm: false,
+		    month: 'Mes',
+		    week: 'Semana',
+		    day: 'Día',
+		    allDayText : 'Todo el día'
+		    };
+      </script>  
+</h:head>
+<h:body>
+	<p:growl autoUpdate="true" 
+	         showDetail="true" 
+	         showSummary="true" 
+	         life="15000"/>
+	         
+	<p:ajaxStatus onstart="dlgAjaxStatus.show();" 
+				  oncomplete="dlgAjaxStatus.hide();"/>
+
+	<h:form id="formPagares" 
+	        enctype="multipart/form-data">
+            
+	        <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            
+		<p:panel id="basic" 
+		         header="Registro de Pagarés" 
+		         styleClass="panelGrid">
+
+			<h:panelGrid id="panelGridHead" 
+			             columns="3" 
+			             cellpadding="3" 
+			             columnClasses="firstColumnHead, secondColumnHead, thirdColumnHead">
+			             
+				<p:outputPanel id="panelFecha" 
+				               autoUpdate="true">
+				               
+					<h:panelGrid id="panelGridFecha" 
+					             columns="2" 
+					             cellpadding="2" 
+					             columnClasses="firstColumnCalend" >
+					             
+						<p:outputLabel value="Fecha valor (dd/mm/aaaa)" 
+						               styleClass="lbRojo"/>
+						<p:calendar id="CalendFecMov" 
+						            value="#{mbPagares.fecValor}"                                                                 
+						            pattern         = "dd/MM/yyyy"
+                                    navigator       = "true"
+                                    disabledWeekends= "true" 
+                                    validatorMessage= "Tipo de dato no válido"
+                                    readonlyInput   = "true" 
+                                    locale          ="es"
+                                    timeZone        ="America/Mexico_City">
+							<p:ajax event="dateSelect" 
+							        listener="#{mbPagares.select_FecVal}" 
+							        update=":formPagares:txtFideicomiso,:formPagares:CalendFecMov,:formPagares:panelGridMonTipoCamb,:formPagares:panelGridMoneda"/>
+						</p:calendar>
+					</h:panelGrid>
+				</p:outputPanel>
+
+				<p:outputLabel value="Folio Pagaré"  />
+				<p:inputText id="txtFolio" 
+				             value="#{mbPagares.pagaresBean.folioReporto}" 
+				             readonly="true" 
+				             styleClass="inputNumber2">
+					<p:ajax event="blur" />
+				</p:inputText>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelGridBody" 
+			             columns="3" 
+			             cellpadding="3" 
+			             columnClasses="firstColumn, secondColumn" 
+			             styleClass="ui-widget-content">
+			             
+				<p:outputLabel value="Fideicomiso"/>
+				<p:inputText id="txtFideicomiso" 
+				             value="#{mbPagares.pagaresBean.fideicomiso}" 
+				             styleClass="inputForm" 
+				             maxlength="10" 
+				             onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;">
+					<p:ajax event="blur" 
+					        listener="#{mbPagares.checkFideicomiso}"
+							update=":formPagares:panelGridHead,:formPagares:txtFolio,:formPagares:panelGridBody,:formPagares:txtFideicomiso, 
+									:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq,:formPagares:selCustodio, 
+									:formPagares:panelGridContainer2,:formPagares:txtPlazo,  :formPagares:txtTasa,:formPagares:txtImporte,  
+									:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio,:formPagares:panelGridPremio, 
+									:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto,:formPagares:panelBotones"/>
+				</p:inputText>
+				<h:outputText value="&lt;br/&gt;" escape="false"/> 
+
+				<p:outputLabel value="Sub Fiso."  />
+                                <p:selectOneMenu id="selSubFiso" 
+                                                 value="#{mbPagares.subFiso}" 
+				                 disabled="#{mbPagares.habilitaTxtSubFiso}" 
+                                                 filter          = "true"
+                                                 filterMatchMode = "contains"
+				                 styleClass="MasAncho">
+                                    <f:selectItems                         value= "#{mbPagares.listaSubContrato}" /> 
+					<p:ajax event="change" 
+					        listener="#{mbPagares.checkSubFiso}" 
+					        update=":formPagares:panelGridBody,:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq, 
+							:formPagares:selCustodio,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+							:formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+	           	     				:formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto, 
+	           	     				:formPagares:panelBotones"/>
+                                        
+				</p:selectOneMenu>
+				<h:outputText value="&lt;br/&gt;" escape="false"/> 
+
+				<p:outputLabel value="Cto. de Inversión"  />
+				<p:selectOneMenu id="selCtoInv" 
+				                 value="#{mbPagares.sCtoInver}" 
+				                 disabled="#{mbPagares.habilitaSelCtoInv!=1}" 
+				                 styleClass="MasAncho" >
+					<f:selectItems value="#{mbPagares.ctoInversion.entrySet()}" 
+					               var="ctoInversion" 
+					               itemLabel="#{ctoInversion.value}" 
+					               itemValue="#{ctoInversion.key}"/>
+					<p:ajax event="change" 
+							listener="#{mbPagares.select_CtoInv}"
+							update=":formPagares:panelGridBody,:formPagares:selCtoInv,:formPagares:txtCtaCheq,:formPagares:selCustodio, 
+							:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa,:formPagares:txtImporte, 
+							:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio,:formPagares:panelGridPremio, 
+							:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto"/>
+				</p:selectOneMenu>
+				<h:outputText value="&lt;br/&gt;" escape="false"/> 
+
+				<p:outputLabel value="Cuenta Cheques"  />
+				<p:inputText id="txtCtaCheq" 
+				             value="#{mbPagares.ctaCheques}" 
+				             readonly="true" 
+				             styleClass="inputNumber" 
+				             disabled="0">
+					<p:ajax event="blur" />
+				</p:inputText>
+				<h:outputText value="&lt;br/&gt;" escape="false"/> 
+
+				<p:outputLabel value="Custodio"  />
+				<p:selectOneMenu id="selCustodio" 
+				                 value="#{mbPagares.pagaresBean.custodio}" 
+				                 disabled="#{mbPagares.habilitaSelCustodio!=1}" 
+				                 styleClass="MasAncho">
+					<f:selectItems value="#{mbPagares.custodio.entrySet()}" 
+					               var="custodio" 
+					               itemLabel="#{custodio.value}" 
+					               itemValue="#{custodio.key}"/>
+					<p:ajax event="change" 
+					        listener="#{mbPagares.select_Custodio}"
+							update="@this,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+									:formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+									:formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto"/>
+				</p:selectOneMenu>
+				<h:outputText value="&lt;br/&gt;" escape="false"/> 
+			</h:panelGrid>
+
+			<p:separator />
+			<h:panelGrid id="panelGridMonTipoCamb">
+				<h:panelGrid id="panelGridMoneda" 
+				             styleClass="panelGrid" 
+				             columns="4"  
+				             columnClasses="firstColumnMoneda, secondColumnMoneda, thirdColumnMoneda">
+				             
+					<p:outputLabel value="Moneda"  />
+					<p:selectOneMenu id="selMoneda" 
+					                 value="#{mbPagares.pagaresBean.moneda}" 
+					                 disabled="#{mbPagares.habilitaTxtMoneda}" 
+					                 styleClass="AnchoMon">
+						<f:selectItems value="#{mbPagares.monedas.entrySet()}" 
+						               var="monedas" 
+						               itemLabel="#{monedas.value}" 
+						               itemValue="#{monedas.key}"/>
+						<p:ajax event="change" 
+						        listener="#{mbPagares.select_Moneda()}"
+								update="@this,:formPagares:txtCambio"/>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Tipo de Cambio"  />
+					<p:inputText id="txtCambio"     
+					             value="#{mbPagares.pagaresBean.tipoCambio}"  
+                                                     readonly="#{mbPagares.isHabilitadoTC}"
+                                                     onblur="convertirDecimal(this);"
+                                                     styleClass="#{mbPagares.colorHabilitadoTC}"
+                                                     onkeypress="if((event.which &lt; 46 || event.which &gt; 57))  return false;"
+                                                 style="width:134px !important; text-align: right">
+                                            <f:convertNumber pattern="#,##0.00####"/> 
+					</p:inputText>
+				</h:panelGrid>
+			</h:panelGrid>
+			<p:separator />
+
+			<h:panelGrid id="panelGridContainer2" 
+			             columns="6" 
+			             styleClass="panelGrid" 
+			             columnClasses="firstColumnPremio, secondColumnPremio, firstColumnPremio, secondColumnPremio, firstColumnPremio, secondColumnPremio">
+				
+				<p:outputLabel value="Plazo"  />
+				<p:inputText id="txtPlazo" 
+				             value="#{mbPagares.pagaresBean.plazo}" 
+                                             onblur="proyectarFecha(); calcularIntereses(); calcularImporteVencimiento();"
+				             disabled="#{mbPagares.habilitaTxtContenedor!=1}" 
+				             maxlength="6"
+							 styleClass="inputForm2" 
+							 onkeypress="if((event.which &lt; 48 || event.which &gt; 57))  return false;">
+				</p:inputText>
+
+				<p:outputLabel value="Tasa"  />
+				<p:inputText id="txtTasa" 
+				             value="#{mbPagares.pagaresBean.tasa}" 
+				             disabled="#{mbPagares.habilitaTxtContenedor!=1}" 
+				             styleClass="inputForm2"
+                                             onblur="convertirDecimal(this); calcularIntereses(); calcularImporteVencimiento(); proyectarFecha();"
+                                             maxlength="10"
+				             onkeypress="if((event.which &lt; 46 || event.which &gt; 57))  return false;">
+					
+				</p:inputText>
+
+				<p:outputLabel value="Importe"  />
+				<p:inputText id="txtImporte" 
+				             value="#{mbPagares.pagaresBean.importe}"
+                                             onblur="convertirDecimal(this); calcularIntereses(); calcularImporteVencimiento(); proyectarFecha();"
+				             disabled="#{mbPagares.habilitaTxtContenedor!=1}" 
+				             maxlength="21"
+							 styleClass="inputForm2" 
+							 onkeypress="if((event.which &lt; 46 || event.which &gt; 57))  return false;">
+					
+				</p:inputText>
+			</h:panelGrid>
+
+			<h:panelGrid id="panelGridPremio" 
+			             columns="6" 
+			             styleClass="panelGrid" 
+			             columnClasses="firstColumnPremio, secondColumnPremio, firstColumnPremio, secondColumnPremio, firstColumnPremio, secondColumnPremio">
+				
+				<p:outputLabel value="Intereses"  />
+				<p:inputText id="txtIntereses" 
+				             value="#{mbPagares.pagaresBean.premio}" 
+				             readonly="true" 
+				             styleClass="inputNumber2">
+					<f:convertNumber groupingUsed="true" 
+					                 minFractionDigits="2"/>
+					<f:convertNumber pattern="$#,###,###,###,##0.00"/>
+				</p:inputText>
+
+				<p:outputLabel value="Fecha Vencimiento"  />
+				<h:panelGroup>
+					<p:inputText id="txtFecMovto" 
+					             value="#{mbPagares.fecMovto}" 
+					             readonly="true" 
+					             styleClass="inputNumber2"/>				
+					<p:watermark for="txtFecMovto" 
+					             value="dd/mm/aaaa">
+					</p:watermark>
+				</h:panelGroup>
+
+				<p:outputLabel value="Importe Vencimiento"  />
+				<p:inputText id="txtImpMovto" 
+				             value="#{mbPagares.dImpMovto}" 
+				             maxlength="21" 
+				             readonly="true" 
+				             styleClass="inputNumber2">
+					<f:convertNumber groupingUsed="true" 
+					                 minFractionDigits="2"/>
+					<f:convertNumber pattern="$#,###,###,###,##0.00"/>
+				</p:inputText>
+				
+			</h:panelGrid>
+
+			<h:panelGrid id="panelBotones" 
+			             columns="3"  
+			             styleClass="panelGrid" 
+			             columnClasses="firstColumnFoot, firstColumnFoot, firstColumnFoot ">
+			             
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+				<h:panelGrid  columns="2" 
+				              cellpadding="2" 
+				              styleClass="styleButtons">
+				              
+					<p:commandButton id="btnAceptar" 
+									 value="Aceptar" 
+									 actionListener="#{mbPagares.bAceptaPagares}" 
+									 icon="ui-icon-check"
+									 update=":formPagares:panelGridHead,:formPagares:CalendFecMov,:formPagares:txtFolio,:formPagares:panelGridBody, 
+											 :formPagares:txtFideicomiso,:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq, 
+									 		 :formPagares:selCustodio,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+											 :formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+											 :formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtImpMovto,:formPagares:panelBotones"/>
+					<p:commandButton id="btnCancelar" 
+					                 value="Cancelar" 
+									 actionListener="#{mbPagares.bCancelar()}" 
+									 icon="ui-icon-cancel" 
+									 disabled="#{mbPagares.habilitaBotonCancelar!=1}"/>
+				</h:panelGrid>
+				<h:outputText value="&lt;br/&gt;" escape="false"/>
+			</h:panelGrid>
+
+			<p:confirmDialog header="Fecha Valor" 
+			                 id="dlgFecVal" 
+			                 widgetVar="dlgFecVal" 
+			                 message="¿Está seguro de querer aplicar contablemente con Fecha Valor?" 
+			                 closable="false">
+			                 
+				<p:commandButton title="Aceptar" 
+				                 value="Aceptar" 
+				                 icon="ui-icon-check" 
+								 actionListener="#{mbPagares.ConfirmaFecValor}"
+								 update=":formPagares:panelGridHead,:formPagares:CalendFecMov,:formPagares:txtFolio,:formPagares:panelGridBody, 
+										:formPagares:txtFideicomiso,:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq, 
+										:formPagares:selCustodio,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+										:formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+						           	    :formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto, 
+						           	    :formPagares:panelBotones,:formPagares:btnAceptar"/>
+
+				<p:commandButton title="Cancelar" 
+				                 value="Cancelar"  
+				                 icon="ui-icon-close" 
+								 actionListener="#{mbPagares.NiegaFecValor}"
+								 update=":formPagares:panelGridHead,:formPagares:CalendFecMov,:formPagares:txtFolio,:formPagares:panelGridBody, 
+										:formPagares:txtFideicomiso,:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq, 
+										:formPagares:selCustodio,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+										:formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+										:formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto, 
+										:formPagares:panelBotones,:formPagares:btnAceptar"/>
+			</p:confirmDialog>
+
+			<p:confirmDialog header="Fiduciario Scotiabank Inverlat. Grupo Financiero" 
+			                 id="dlgSuspender" 
+			                 widgetVar="dlgSuspender" 
+			                 message="¿Desea suspender la captura?" 
+			                 closable="false">
+			                 
+				<p:commandButton value="Aceptar" 
+				 				 icon="ui-icon-check" 
+								 actionListener="#{mbPagares.bConfirmaCancelacion}" 
+								 oncomplete="dlgSuspender.hide()"
+								 update=":formPagares:panelGridHead,:formPagares:CalendFecMov,:formPagares:txtFolio,:formPagares:panelGridBody, 
+										:formPagares:txtFideicomiso,:formPagares:selSubFiso,:formPagares:selCtoInv,:formPagares:txtCtaCheq, 
+										:formPagares:selCustodio,:formPagares:panelGridContainer2,:formPagares:txtPlazo,:formPagares:txtTasa, 
+										:formPagares:txtImporte,:formPagares:panelGridMoneda,:formPagares:selMoneda,:formPagares:txtCambio, 
+										:formPagares:panelGridPremio,:formPagares:txtIntereses,:formPagares:txtFecMovto,:formPagares:txtImpMovto, 
+										:formPagares:panelBotones,:formPagares:btnAceptar"/>
+				<p:commandButton value="Cancelar" 
+				                 icon="ui-icon-close" 
+				                 oncomplete="dlgSuspender.hide()"/>
+			</p:confirmDialog>
+			<h:outputText value="&lt;br/&gt;" escape="false"/>
+
+			<p:dialog  id        = "dlgAjaxStatus"  
+					   closable  = "false"
+                       header    = "Espere" 		
+                       modal     = "true"
+                       resizable = "false"          
+                       style     = "background-color: #eee;
+					   height: auto;                
+					   width: auto;"
+					   widgetVar = "dlgAjaxStatus">
+                <center> 
+                	<p:graphicImage value = "../vista/recursos/img/gif/000.gif"/> 
+                </center>
+            </p:dialog>	
+     	</p:panel>
+	</h:form>
+</h:body>
+</html>

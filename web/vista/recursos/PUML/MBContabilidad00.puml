@@ -1,0 +1,20 @@
+@startuml
+    scotiaFid.bean.ContabilidadAsientoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadBienFideBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadBienFideUnidadBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadBienFideUnidadIndivBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadBienFideUnidadIndivMasivoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadBienFideUnidadLiqBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadDatoMovBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadDetValorBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadCancelaSaldoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadGarantiaGralBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadGarantiaBienBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadGarantiaBienSalidaBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadMovtoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadOperacionBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadPolizaManBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadSaldoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadSaldoPromBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.ContabilidadTipoCambBean ..> scotiaFid.controller.MBContabilidad 
+@enduml

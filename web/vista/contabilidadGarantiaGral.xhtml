@@ -1,0 +1,1276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+	<script type="text/javascript">  
+            
+            function convertirImporte(campo) {
+                const numStr = campo.value.replaceAll('$','');
+                const num = Number(numStr.replaceAll(',',''));
+
+                if (!isNaN(num)) {
+                    const importeFormateado = num.toLocaleString('es-MX', 
+                    { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+                    campo.value = importeFormateado;
+                }
+            }           
+         
+	    PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+	   </script>        
+          
+    </h:head> 
+    <h:body>
+        <h:form                                                 id              = "frmGarantiaGral">
+             <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+          
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Garantías">
+                <br/>
+                <center>
+                    <p:commandButton                            icon            = "ui-icon-document"
+                                                                value           = "Nuevo Registro"
+                                                                disabled="#{mbContabilidad.permisoEscrituraGarantias}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_RegistroNuevo}"
+                                                                update          = ":frmGarantiaGral:dlgGarantia,:frmGarantiaGral:selSubFiso"/> 
+                </center>
+                <br/>
+                <p:dataTable                                    id              = "dtGarantiaGral"
+                                                                emptyMessage    = "Sin Registros"
+                                                                value           = "#{mbContabilidad.consultaGarantia}"
+                                                                var             = "gar"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                selection       = "#{mbContabilidad.seleccionaGarantia}" 
+                                                                selectionMode   = "single"
+                                                                rowKey          = "#{gar.garantiaContratoNumero} #{gar.garantiaContratoNumeroSub}"
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition= "bottom"
+                                                                rows            = "10" 
+                                                                scrollable      ="true">
+                    <p:ajax                                     event           = "rowSelect"
+                                                                listener        = "#{mbContabilidad.onContabilidadGarantia_RegistroSelecciona}"
+                                                                update          = ":frmGarantiaGral:dlgGarantia,
+                                                                                   :frmGarantiaGral:dtGarBien
+                                                                                   :frmGarantiaGral:selSubFiso"/>
+                    <p:ajax                                     event           =  "rowDblselect"
+                                                                listener        = "#{mbContabilidad.onContabilidadGarantia_RegistroSelecciona}"
+                                                                update          = ":frmGarantiaGral:dlgGarantia,
+                                                                                   :frmGarantiaGral:dtGarBien"/>
+                    <p:column                                   headerText      = "Fideicomiso"
+                                                                style           = "width: 9%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gar.garantiaContratoNumero}"
+                                                                title           = "#{gar.garantiaContratoNumero}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gar.garantiaContratoNumeroSub}"
+                                                                title           = "#{gar.garantiaContratoNumeroSub}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Inm"
+                                                                style           = "width: 3%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gar.garantiaTipoInmuebles}"
+                                                                title           = "#{gar.garantiaTipoInmuebles}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Mue"
+                                                                style           = "width: 3%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gar.garantiaTipoMuebles}"
+                                                                title           = "#{gar.garantiaTipoMuebles}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Otr"
+                                                                style           = "width: 3%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gar.garantiaTipoOtros}"
+                                                                title           = "#{gar.garantiaTipoOtros}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                        <h:outputLabel                          value           = "#{gar.garantiaMonedaNombre}"
+                                                                title           = "#{gar.garantiaMonedaNombre}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Imp. Crédito"
+                                                                style           = "width: 10%;">
+                        <h:inputText                            value           = "#{gar.garantiaImporteCredito}"
+                                                                title           = "#{gar.garantiaImporteCredito}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Imp. Garantía"
+                                                                style           = "width: 10%;">
+                        <h:inputText                            value           = "#{gar.garantiaImporteGarantia}"
+                                                                title           = "#{gar.garantiaImporteGarantia}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Imp. Garantizado"
+                                                                style           = "width: 10%;">
+                        <h:inputText                            value           = "#{gar.garantiaImporteUltVal}"
+                                                                title           = "#{gar.garantiaImporteUltVal}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "n:m"
+                                                                style           = "width: 3%;">
+                        <h:outputLabel                          value           = "#{gar.garantiaRelacionCredGar}"
+                                                                title           = "#{gar.garantiaRelacionCredGar}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{gar.garantiaStatus}"
+                                                                title           = "#{gar.garantiaStatus}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Comentario"
+                                                                style           = "width: 28%;">
+                        <h:outputLabel                          value           = "#{gar.garantiaComentario}"
+                                                                title           = "#{gar.garantiaComentario}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:panelGrid                                    id              = "panelCriterios"
+                                                                styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column                               styleClass      = "degradadoOrigenCentro"
+                                                                colspan         = "16">
+                            <center>
+                                <h:outputLabel                  value           = "Criterios de Búsqueda"
+                                                                style           = "color      : #ffffff;
+                                                                                   font-weight: bolder;"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        autocomplete    = "off"
+                                                                maxlength       = "10"
+                                                                size            = "12"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;"
+                                                                value           = "#{beanCriterioBusquedaConta.txtCriterioAX1}">
+                             </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        autocomplete    = "off"
+                                                                maxlength       = "5"
+                                                                size            = "7"                                                                
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;"
+                                                                value           = "#{beanCriterioBusquedaConta.txtCriterioAX2}">
+                             </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Status:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanCriterioBusquedaConta.criterioStatus}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaStatus}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Plaza:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        autocomplete    = "off"
+                                                                maxlength       = "6"
+                                                                size            = "12"     
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;"
+                                                                value           = "#{beanCriterioBusquedaConta.txtCriterioPlaza}">
+                             </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Inm"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectBooleanCheckbox id="checkInm" 
+                                                     value="#{beanCriterioBusquedaConta.criterioCheckInm}">
+                               
+                            </h:selectBooleanCheckbox>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Mue"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectBooleanCheckbox id="checkMue" 
+                                                     value="#{beanCriterioBusquedaConta.criterioCheckMue}">
+                               
+                            </h:selectBooleanCheckbox>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Otr"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectBooleanCheckbox id="checkOtr" 
+                                                     value="#{beanCriterioBusquedaConta.criterioCheckOtr}">
+                               
+                            </h:selectBooleanCheckbox>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-search"
+                                                                title           = "Ejecuta una búsqueda en base a criterios especificados"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_Consulta}"
+                                                                update          = ":frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:panelCriterios,
+                                                                                   :frmGarantiaGral:dtGarBien"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-refresh"
+                                                                title           = "Limpia Campos"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_Limpia}"
+                                                                update          = ":frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:panelCriterios,
+                                                                                   :frmGarantiaGral:dtGarBien"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <br/>
+                <br/>
+                <p:dataTable                                    id              = "dtGarBien"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "250"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                value           = "#{mbContabilidad.consultaGarantiaBien}"
+                                                                var             = "gb"
+                                                                selection       = "#{mbContabilidad.seleccionaGarantiaBien}"
+                                                                selectionMode   = "single"
+                                                                paginator       = "true"
+                                                                paginatorPosition= "bottom"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                rows             ="10"
+                                                                rowKey          = "#{gb.garantiaBienTipo} #{gb.garantiaBienId}">
+                    <p:ajax                                     event           = "rowSelect"
+                                                                listener        = "#{mbContabilidad.onContabilidadGarantia_RegistroSeleccionaBien}"
+                                                                update          = ":frmGarantiaGral:dlgGarBien"/>
+                    <f:facet                                    name            = "header">
+                        <h:outputLabel                          value           = "Bienes del fideicomiso seleccionado"/>
+                    </f:facet>
+                    <p:column                                   headerText      = "Tipo"
+                                                                style           = "width: 12%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienTipo}"
+                                                                title           = "#{gb.garantiaBienTipo}"/>
+                    </p:column> 
+                    <p:column                                   headerText      = "Sec."
+                                                                style           = "width: 3%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{gb.garantiaBienId}"
+                                                                title           = "#{gb.garantiaBienId}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Clasificación"
+                                                                style           = "width: 15%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienClasif}"
+                                                                title           = "#{gb.garantiaBienClasif}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Moneda"
+                                                                style           = "width: 10%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienMonedaNom}"
+                                                                title           = "#{gb.garantiaBienMonedaNom}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Importe"
+                                                                style           = "width: 8%;">
+                        <h:inputText                            value           = "#{gb.garantiaBienImporte}"
+                                                                title           = "#{gb.garantiaBienImporte}"
+                                                                readonly        = "true"
+                                                                  
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                   pattern        = "####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Imp. Ult. Val."
+                                                                style           = "width: 8%;">
+                        <h:inputText                            value           = "#{gb.garantiaBienImporteUltVal}"
+                                                                title           = "#{gb.garantiaBienImporteUltVal}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "####,###,###,###,##0.00" />
+                        </h:inputText>
+                    </p:column>
+                    <p:column                                   headerText      = "Comentario"
+                                                                style           = "width: 32%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienComentario}"
+                                                                title           = "#{gb.garantiaBienComentario}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Ult. Val."
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienFechaUltVal}"
+                                                                title           = "#{gb.garantiaBienFechaUltVal}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{gb.garantiaBienStatus}"
+                                                                title           = "#{gb.garantiaBienStatus}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </p:panel>
+            
+            <p:dialog                                           id              = "dlgGarantia" 
+                                                                closable        = "true" 
+                                                                header          = "Sistema Fiduciario.- Mantenimiento de Garantías" 
+                                                                modal           = "true" 
+                                                                
+                                                                position        = "250, 30" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgGarantia">
+                <br/>
+                <p:panelGrid                                    id              = "panelCapturaGar"
+                                                                style           = "margin-left: auto; margin-right: auto;" 
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText                        id              = "ctrlId01"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado07}"
+                                                                value           = "#{beanContabilidadGarantiaGral.txtGarantiaContratoNumero}" 
+                                                                autocomplete    = "off" 
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                maxlength       = "10"
+                                                                validatorMessage= "false">
+                                
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadGarantia_VerificaContratoIngresado}"
+                                                                update          = ":frmGarantiaGral:panelCapturaGar"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value            = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu                    id="selSubFiso" 
+                                                                value           = "#{beanContabilidadGarantiaGral.txtGarantiaContratoNumeroSub}" 
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado07}" 
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains"
+                                                                style           = "border-radius: 0px!important;
+                                                                                   width        : 100%;"
+                                                                 >
+                                <f:selectItems                         value    = "#{mbContabilidad.listSubContratosNom}" /> 
+                                    <p:ajax                            event    = "change" 
+                                                                       listener = "#{mbContabilidad.onContabilidadGarantia_RegistroVerificaSubFiso()}"
+                                                                       update   = ":frmGarantiaGral:panelCapturaGar" />
+
+                            </p:selectOneMenu>
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">  
+                            <h:inputText                        id              = "txtGarantiaCtoNom"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaContratoNombre}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc;text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Tipo de Garantía"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "height: 35px;">
+                            <p:selectManyCheckbox               id              = "tipoGaranitiaCbx"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaTipo}"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                immediate="true">
+                                <f:selectItem                   itemLabel       = "Inmuebles" 
+                                                                itemValue       = "inm"/>
+                                <f:selectItem                   itemLabel       = "Muebles" 
+                                                                itemValue       = "mue"/>
+                                <f:selectItem                   itemLabel       = "Otros Bienes" 
+                                                                itemValue       = "otr"/>
+                            </p:selectManyCheckbox>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Importes"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Importe de Crédito:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "ctrlId05"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}" 
+                                                                value           = "#{beanContabilidadGarantiaGral.txtGarantiaImporteCredito}" 
+                                                                autocomplete    = "off" 
+                                                                maxlength       = "19"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                style           = "text-align: right;"
+                                                                onblur          = "convertirImporte(this)">
+                             </h:inputText>
+                        </p:column>
+                         <p:column>
+                            <h:outputLabel                      value           = "Importe de Garantías:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "ctrlId06" 
+                                                                readonly        = "true"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaImporteGarantia}" 
+                                                                style           = "background-color: #ffffcc; text-align: right;"
+                                                                autocomplete    = "off" 
+                                                                maxlength       = "19">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"/>
+                            <f:convertNumber                      pattern       = "$####,###,###,###,##0.00" />
+                                <p:ajax                        event            ="blur" 
+						               update           =":frmGarantiaGral:ctrlId06" />
+                            </h:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Moneda:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    id              = "ctrlId07"
+                                                                style           = "width: 100%;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaMonedaNombre}">
+                                <f:selectItem                   itemLabel       = "..." 
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaMonedaGar}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Importe Ultima Valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "ctrlId08" 
+                                                                readonly        = "true"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaImporteUltVal}" 
+                                                                style           = "background-color: #ffffcc; text-align: right;"
+                                                                autocomplete    = "off" 
+                                                                maxlength       = "19">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                <p:ajax                        event            ="blur" 
+						               update           =":frmGarantiaGral:ctrlId08" />
+                            </h:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Valuación"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha Inicio:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              = "ctrlId10"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}" 
+                                                                value           = "#{beanGenericoFecha.genericoFecha00}" 
+                                                                disabledWeekends= "true"
+                                                                navigator       = "true" 
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                autocomplete    = "off" 
+                                                                maxlength       = "10"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha Fin:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              = "ctrlId11"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}" 
+                                                                value           = "#{beanGenericoFecha.genericoFecha01}"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8" 
+                                                                autocomplete    = "off" 
+                                                                maxlength       = "10"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Rel. créd / gar (n:m)"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaGral.garantiaRelacionCredGar}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}" 
+                                                                autocomplete    = "off"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 58) return false;"
+                                                                style           = "text-align: center; width: 30%!important;"
+                                                                maxlength       = "5">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Descripción"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <p:inputTextarea                    id              = "ctrlid12"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaDesc}"
+                                                                autoResize      = "false"
+                                                                counter         = "lbl02"                                                                
+                                                                counterTemplate = "{0} caracteres disponibles de 2000"
+                                                                style           = "width: 100%;"
+                                                                maxlength       = "2000"
+                                                                 
+                                                                rows            = "8"/>
+                            <br/>
+                            <h:outputText                       id              = "lbl02"                                                               
+                                                                class           ="block"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Comentario"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <p:inputTextarea                    id              = "ctrlId13"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                autoResize      = "false"
+                                                                counter         = "lbl01"
+                                                                counterTemplate = "{0} caracteres disponibles de 255"
+                                                                maxlength       = "255"
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaComentario}"
+                                                                style           = "width: 100%"
+                                                                
+                                                                rows            = "5"/>
+                            <br/>
+                            <h:outputText                       id              = "lbl01" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Status:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    id              = "ctrlId14"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}" 
+                                                                value           = "#{beanContabilidadGarantiaGral.garantiaStatus}">
+                                <f:selectItem                   itemLabel       = "..." 
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaGarStatus}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <div                                        style           = "background-color: #F2F5F9;
+                                                                                   height          : 45px;">
+                        <p:commandButton                        id              = "cmdRegistroModifica" 
+                                                                icon            = "ui-icon-pencil" 
+                                                                value           = "Modificar" 
+                                                                style           = "margin-right: 15px; margin-top: 10px;"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoGarantiaDesHabilitado00}" 
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_RegistroModifica}"
+                                                                update          = ":frmGarantiaGral:cmdRegistroModifica, 
+                                                                                   :frmGarantiaGral:panelCapturaGar,
+                                                                                   :frmGarantiaGral:cmdRegistroAplica,
+                                                                                   :frmGarantiaGral:cmdRegistroElimina,
+                                                                                   :frmGarantiaGral:cmdMenuTpoGar,
+                                                                                   :frmGarantiaGral:tipoGaranitiaCbx"/>
+                        <p:commandButton                        id              = "cmdRegistroAplica" 
+                                                                icon            = "ui-icon-check" 
+                                                                value           = "Aplicar"
+                                                                style           = "margin-right: 15px;" 
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoGarantiaDesHabilitado01}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_RegistroAplica}"
+                                                                update          = ":frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:dtGarBien,
+                                                                                   :frmGarantiaGral:panelCriterios
+                                                                                   :frmGarantiaGral:panelCapturaGar"/>
+                        <p:commandButton                        id              = "cmdRegistroElimina" 
+                                                                icon            = "ui-icon-trash" 
+                                                                value           = "Eliminar" 
+                                                                   style           = "margin-right: 15px;"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoGarantiaDesHabilitado00}" 
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_RegistroElimina}"
+                                                                update          = ":frmGarantiaGral:dlgPopUpGral"/>
+                        <p:menuButton                           id              = "cmdMenuTpoGar"
+                                                                value           = "Captura de Garantías" 
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                            <p:menuitem                         value           = "Inmuebles"
+                                                                icon            = "ui-icon-radio-on"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado02}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_DespliegaVentana}"
+                                                                update          = ":frmGarantiaGral:dlgGarBien">
+                                <f:param                        name            = "garTipo"
+                                                                value           = "inm"/>
+                            </p:menuitem>
+                            <p:menuitem                         value           = "Muebles"
+                                                                icon            = "ui-icon-radio-on"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado03}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_DespliegaVentana}"
+                                                                update          = ":frmGarantiaGral:dlgGarBien">
+                                <f:param                        name            = "garTipo"
+                                                                value           = "mue"/>
+                            </p:menuitem>
+                            
+                            <p:menuitem                         value           = "Otros Bienes"
+                                                                icon            = "ui-icon-radio-on"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado04}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_DespliegaVentana}"
+                                                                update          = ":frmGarantiaGral:dlgGarBien">
+                                <f:param                        name            = "garTipo"
+                                                                value           = "otr"/>
+                            </p:menuitem>
+                            
+                        </p:menuButton>
+                    </div>
+                </center>
+                <br/>
+
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgGarBien" 
+                                                                closable        = "true" 
+                                                                header          = "Sistema Fiduciario.- #{beanContabilidadGarantiaBien.garantiaBienTituloVentana}" 
+                                                                modal           = "true" 
+                                                                hideEffect      = "explode"
+                                                                position        = "250,40" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgGarBien">
+                <br/>
+                <p:panelGrid                                    id              = "panelGarBien"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaGral.garantiaContratoNombre}"
+                                                                autocomplete    = "off"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaBien.garantiaContratoNumero}"
+                                                                readonly        = "true"
+                                                                maxlength       = "5"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 100%!important;"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaBien.garantiaContratoNumeroSub}"
+                                                                readonly        = "true"
+                                                                maxlength       = "5"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 35%!important;"/>
+                        </p:column> 
+                        </p:row>
+                        <p:row>    
+                        <p:column>
+                            <h:outputLabel                      value           = "Bien Id:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaBien.garantiaBienId}"
+                                                                readonly        = "true"
+                                                                maxlength       = "5"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 35%!important;"/>
+                        </p:column>
+                        
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Clasificación de bien:"/>
+                        </p:column>
+                        <p:column                               colspan         = "3">
+                            <h:selectOneMenu                    value           = "#{beanContabilidadGarantiaBien.garantiaBienClasif}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaGarClasif}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Importe bien:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              ="txtImporteBien"
+                                                                value           = "#{beanContabilidadGarantiaBien.txtGarantiaBienImporte}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                style           = "text-align: right;"
+                                                                onblur          = "convertirImporte(this)">
+                             </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Revaluación:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    id              ="txtRevaluacion"
+                                                                value           = "#{beanContabilidadGarantiaBien.garantiaBienCveRevalua}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                <f:selectItem                   itemLabel       = "NO"
+                                                                itemValue       = "0"/>
+                                <f:selectItem                   itemLabel       = "SI"
+                                                                itemValue       = "-1"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadGarantiaBien_RevaluacionVerifica}" 
+                                                                update          = ":frmGarantiaGral:cboGarantiabienPer"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Moneda:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanContabilidadGarantiaBien.garantiaBienMonedaNom}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaMonedaGarBien}"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadGarantia_RegistroBuscaTipoCambio}"
+                                                                update          = "txtBienFideTC,etiTC,@this"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Periodicidad de val.:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    id              = "cboGarantiabienPer"
+                                                                value           = "#{beanContabilidadGarantiaBien.garantiaBienPeriodicidad}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaPeriodicidad}"/>
+                                <p:ajax                         event           = "change"
+                                                                listener        = "#{mbContabilidad.onContabilidadRevalucionPeriodicidad}" 
+                                                                update          = ":frmGarantiaGral:txtRevaluacion"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      id              = "etiTC"
+                                                                value           = "Tipo de Cambio:"
+                                                                rendered        = "#{mbContabilidad.tcVisible}"/>
+                                                   
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              = "txtBienFideTC"
+                                                                value           = "#{mbContabilidad.bienTipoCambiTxt}"
+                                                                readonly        = "true"
+                                                                maxlength       = "16"
+                                                                rendered        = "#{mbContabilidad.tcVisible}"
+                                                                style           = "background-color: #ffffcc; text-align: right;">
+                            </h:inputText>
+
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <br/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Importe últ. valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id              ="txtImpUltVal"
+                                                                value           = "#{beanContabilidadGarantiaBien.garantiaBienImporteUltVal}"
+                                                                autocomplete    = "off"
+                                                                readonly        = "true"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                style           = "background-color: #ffffcc; text-align: right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                                <p:ajax                        event            ="blur" 
+						               update           =":frmGarantiaGral:txtImpUltVal" />
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha últ. valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         value           = "#{beanGenericoFecha.genericoFecha02}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                disabledWeekends= "true"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                                                
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha prox. valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         value           = "#{beanGenericoFecha.genericoFecha03}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                disabledWeekends= "true"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "8"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"/>
+                                                                
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Descripción"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <p:inputTextarea                    value           = "#{beanContabilidadGarantiaBien.garantiaBienDescripcion}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autoResize      = "false"
+                                                                counter         = "lb202"
+                                                                counterTemplate = "{0} caracteres disponibles de 2000"
+                                                                maxlength       = "2000"
+                                                                style           = "width: 100%;"
+                                                                rows            = "5"/>
+                            <br/>
+                            <h:outputText                       id              = "lb202" />
+                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Comentario"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "4">
+                            <p:inputTextarea                    value           = "#{beanContabilidadGarantiaBien.garantiaBienComentario}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autoResize      = "false"
+                                                                counter         = "lbl00"
+                                                                counterTemplate = "{0} caracteres disponibles de 255"
+                                                                maxlength       = "255"
+                                                                style           = "width: 100%;"
+                                                                rows            = "5"/>
+                            <br/>
+                            <h:outputText                       id              = "lbl00" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Status:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanContabilidadGarantiaBien.garantiaBienStatus}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaGarBienStatus}"/>
+                            </h:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <br/>
+                <center>
+                    <div                                        style           = "background-color: #F2F5F9;
+                                                                                   height          : 45px;">
+                        <p:commandButton                        id              = "cmd00"
+                                                                value           = "Modificar"
+                                                                icon            = "ui-icon-pencil"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_Modifica}"
+                                                                style           = "margin-right: 20px; margin-top: 10px;"
+                                                                update          = ":frmGarantiaGral:cmd00,
+                                                                                   :frmGarantiaGral:cmd01,
+                                                                                   :frmGarantiaGral:cmd02,
+                                                                                   :frmGarantiaGral:cmd03,
+                                                                                   :frmGarantiaGral:panelGarBien"/>
+                        <p:commandButton                        id              = "cmd01"
+                                                                value           = "#{beanGenericoTitulo.genericoTitulo00}"
+                                                                icon            = "ui-icon-circle-plus"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado05}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_Entrada}"
+                                                                style           = "margin-right: 20px; margin-top: 10px;"
+                                                                update          = ":frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:dtGarBien,
+                                                                                   :frmGarantiaGral:dlgPopUpGral00,
+                                                                                   :frmGarantiaGral:ctrlId06,
+                                                                                   :frmGarantiaGral:ctrlId08"/>
+                        <p:commandButton                        id              = "cmd02"
+                                                                value           = "Revaluación"
+                                                                icon            = "ui-icon-circle-triangle-e"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                style           = "margin-right: 20px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_RevaluacionDespliega}"
+                                                                update          = ":frmGarantiaGral:dlgRevaluacion"/>
+                        <p:commandButton                        id              = "cmd03"
+                                                                value           = "Salida"
+                                                                icon            = "ui-icon-circle-minus"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado06}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_Salida}"
+                                                                update          = ":frmGarantiaGral:dlgPopUpGral"/>
+                    </div>    
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgRevaluacion" 
+                                                                closable        = "true" 
+                                                                    header          = "Sistema Fiduciario.- Revaluación de importes de garantía" 
+                                                                modal           = "true" 
+                                                                hideEffect      = "explode"
+                                                                position        = "530, 30" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgRevaluacion">
+                <br/>
+                <p:panelGrid                                    styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Importe nuevo de la garantía:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        id             ="txtImpNvoGar"
+                                                                value           = "#{beanContabilidadGarantiaBienSalida.txtGarantiaBienSalidaImporteNvo}"
+                                                                autocomplete    = "off" 
+                                                                style           = "text-align: right;"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                size            = "20"
+                                                                onblur          = "convertirImporte(this)">
+                             </h:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Importe anterior de la garantía:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadGarantiaBienSalida.garantiaBienSalidaImporteAnt}"
+                                                                readonly        = "true"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 &amp;&amp; event.which != 44) return false;"
+                                                                style           = "background-color: #ffffcc; text-align: right;">
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minIntegerDigits = "2"
+                                                               />
+                            <f:convertNumber                      pattern        = "$####,###,###,###,##0.00" />
+                            </h:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Fecha nueva valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         value           = "#{beanGenericoFecha.genericoFecha04}"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                navigator       = "true"
+                                                                disabledWeekends= "true"
+                                                                readonlyInput   = "true"
+                                                                locale          = "es"
+                                                                timeZone        = "America/Mexico_City"/>
+                            
+                        </p:column> 
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha última valuación:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanGenericoFecha.genericoFecha05}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc;">
+                                <f:convertDateTime              pattern         = "dd/MM/yyyy"/> 
+                            </h:inputText>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton                            icon            = "ui-icon-check"
+                                                                value           = "Aceptar"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_RevaluacionConfirma}"
+                                                                update          = ":frmGarantiaGral:dlgPopUpGral"/>
+                </center>
+                <br/>
+            </p:dialog>
+          
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                modal           = "true"
+                                                                position        = "600, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion}"
+                                                                update          = ":frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:dtGarBien,
+                                                                                   :frmGarantiaGral:panelCriterios"/>
+                    <p:commandButton                            value           = "Cancelar"
+                                                                icon            = "ui-icon-close"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantia_Cancela()}"/>
+                </center>
+                <br/>
+            </p:dialog>
+
+            
+            
+            
+            <p:dialog                                           id              = "dlgPopUpGral00"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                modal           = "true"
+                                                                position        = "500, 150"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral00">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_EntradaVerifica00}"
+                                                                update          = ":frmGarantiaGral:dlgPopUpGral00,
+                                                                                   :frmGarantiaGral:dtGarantiaGral,
+                                                                                   :frmGarantiaGral:dtGarBien,"/>
+                    <p:commandButton                            value           = "Cancelar"
+                                                                icon            = "ui-icon-close"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGarantiaBien_EntradaVerifica01}"/>
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

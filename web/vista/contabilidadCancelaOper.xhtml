@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+<h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/> 
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+            <script type="text/javascript">             
+            function onValidaSubFisoMax(campo) {
+                if (campo.value > 32767) {
+                    campo.value = 0;
+                }
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmContabilidadCancelaOper">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+             <p:growl                                           id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Cancelación de Operaciones">
+                <br/>
+                <p:dataTable                                    id              = "dtMovtos"
+                                                                emptyMessage    = "Sin Registros"
+                                                                scrollable      = "true"
+                                                                value           = "#{mbContabilidad.consultaMovtos}"
+                                                                var             = "movto"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true"
+                                                                selection       = "#{mbContabilidad.seleccionaMovtoCancela}"
+                                                                rowKey          = "#{movto.movtoFolio}"                                                                
+                                                                paginator       = "true"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                paginatorPosition = "bottom"
+                                                                rows            = "10"
+                                                                lazy            = "true">
+                    <p:column                                   headerText      = "Fecha Valor"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{movto.movtoFecha}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"/>
+                        </h:outputLabel>                                     
+                    </p:column>
+                    
+                    <p:column                                   headerText      = "Fideicomiso"
+                                                                style           = "width: 8%;">
+                        <h:outputLabel                          value           = "#{movto.movtoContratoNum}"
+                                                                title           = "#{movto.movtoContratoNum}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{movto.movtoContratoNumSub}"
+                                                                title           = "#{movto.movtoContratoNumSub}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Folio"
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{movto.movtoFolio}"
+                                                                title           = "#{movto.movtoFolio}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Trans."
+                                                                style           = "width: 5%;">
+                        <h:outputLabel                          value           = "#{movto.movtoTransaccId}"
+                                                                title           = "#{movto.movtoTransaccId}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Descripción"
+                                                                style           = "width: 41%;">
+                        <h:outputLabel                          value           = "#{movto.movtoDesc}"
+                                                                title           = "#{movto.movtoDesc}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fecha real"
+                                                                style           = "width: 10%">
+                        <h:outputLabel                          value           = "#{movto.movtoFechaReg}"
+                                                                title           = "#{movto.movtoFechaReg}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy hh:mm:ss"
+                                                               timeZone         = "America/Mexico_City"/>
+                        </h:outputLabel>                                    
+                    </p:column>
+                    <p:column                                   headerText      = "Importe"
+                                                                style           = "width: 9%;">
+                        <h:inputText                            value           = "#{movto.movtoImporte}"
+                                                                title           = "#{movto.movtoImporte}"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;"
+                                                                readonly        = "true">
+
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                        </h:inputText>                   
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{movto.movtoStatus}"
+                                                                title           = "#{movto.movtoStatus}"/>                                    
+                    </p:column>
+                    <p:column                                   headerText      = "Sel."  
+                                                                style           = "width: 3%;"
+                                                                selectionMode   = "multiple">
+                        
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:panelGrid                                    id              = "panelCriterio"
+                                                                styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column                               colspan         = "13"
+                                                                styleClass      = "degradadoOrigenCentro"
+                                                                style           = "color: #ffffff; font-weight: bolder;">
+                            <center>
+                                <h:outputLabel                  value           = "Criterios de búsqueda"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="13" >
+                            <p:selectBooleanCheckbox          id		= "checkCancelMeses"
+                                                              value 	= "#{mbContabilidad.cancelaMesesAnt}" /> 
+                            <h:outputLabel                    value 	= "Cancelación de pagos de meses cerrados"
+                                                              style  	= "margin-left: 10px;"	/>
+                        </p:column>
+                    </p:row> 
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Folio Ini."/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Folio Fin"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Trans."/>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "dd"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "mm"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "aaaa"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "Cancelado"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX1}"
+                                                                id				= "txtCriterioAX1"
+                                                                autocomplete    = "off"
+                                                                size            = "10"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                                <f:attribute                    name             ="txtCriterioAX1" 
+                                                                value            ="txtCriterioAX1"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX2}"
+                                                                id				= "txtCriterioAX2"
+                                                                autocomplete    = "off"
+                                                                size            = "5"
+                                                                maxlength       = "5"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                onkeydown       = "onValidaSubFisoMax(this)"
+                                                                style           = "text-align: center;"   >
+                                <f:attribute                    name             ="txtCriterioAX2" 
+                                                                value            ="txtCriterioAX2"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFolioIni}"
+                                                                id				= "txtCriterioFolioIni"
+                                                                autocomplete    = "off"
+                                                                size            = "10"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;" 
+                                                                style           = "text-align: center;">
+                                <f:attribute                    name             ="txtCriterioFolioIni" 
+                                                                value            ="txtCriterioFolioIni"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFolioFin}"
+                                                                id				= "txtCriterioFolioFin"
+                                                                autocomplete    = "off"
+                                                                size            = "10"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;" > 
+                                <f:attribute                    name             ="txtCriterioFolioFin" 
+                                                                value            ="txtCriterioFolioFin"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioTransId}"
+                                                                id				= "txtCriterioTransId"
+                                                                autocomplete    = "off"
+                                                                size            = "6"
+                                                                maxlength       = "5"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;" > 
+                                <f:attribute                    name             ="txtCriterioTransId" 
+                                                                value            ="txtCriterioTransId"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaDD}"
+                                                                id				= "txtCriterioFechaDD"
+                                                                autocomplete    = "off"
+                                                                size            = "4"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;" >  
+                                <f:attribute                    name             ="txtCriterioFechaDD" 
+                                                                value            ="txtCriterioFechaDD"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaMM}"
+                                                                id				= "txtCriterioFechaMM"
+                                                                readonly        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                autocomplete    = "off"
+                                                                size            = "4"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center; background-color: #{beanGenericoColor.color00}" >
+                                <f:attribute                    name             ="txtCriterioFechaMM" 
+                                                                value            ="txtCriterioFechaMM"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaYYYY}"
+                                                                id				= "txtCriterioFechaYYYY"
+                                                                readonly        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                autocomplete    = "off"
+                                                                size            = "6"
+                                                                maxlength       = "4"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center; background-color: #{beanGenericoColor.color00}" >
+                                <f:attribute                    name             ="txtCriterioFechaYYYY" 
+                                                                value            ="txtCriterioFechaYYYY"/>
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanCriterioBusquedaConta.criterioCveMovtoCancelado}"
+                                                                id				= "cbCriterioCveMovtoCancelado">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItem                   itemLabel       = "NO"
+                                                                itemValue       = "NO"/>
+                                <f:selectItem                   itemLabel       = "SI"
+                                                                itemValue       = "SI"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-search"
+                                                                title           = "Ejecuta una búsqueda de información en base a criterios especificados"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaOper_Consulta}"
+                                                                update          = ":frmContabilidadCancelaOper:txtCriterioAX1,:frmContabilidadCancelaOper:txtCriterioAX2,
+					                                                               :frmContabilidadCancelaOper:txtCriterioFolioIni,:frmContabilidadCancelaOper:txtCriterioFolioFin,
+					                                                               :frmContabilidadCancelaOper:txtCriterioTransId,:frmContabilidadCancelaOper:txtCriterioFechaDD,
+					                                                               :frmContabilidadCancelaOper:txtCriterioFechaMM,:frmContabilidadCancelaOper:txtCriterioFechaYYYY, 
+					                                                               :frmContabilidadCancelaOper:cbCriterioCveMovtoCancelado,:frmContabilidadCancelaOper:dtMovtos,
+					                                                               :frmContabilidadCancelaOper:checkCancelMeses"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-refresh"
+                                                                title           = "Limpia campos"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaOper_Limpia}"
+                                                                update          = ":frmContabilidadCancelaOper:checkCancelMeses,
+                                                                				   :frmContabilidadCancelaOper:dtMovtos,
+                                                                                   :frmContabilidadCancelaOper:panelCriterio"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-cancel"
+                                                                title           = "Cancelar movimientos seleccionados"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancelaOper_Cancela}"
+                                                                update          = ":frmContabilidadCancelaOper:dlgPopUpGral"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "13"
+                                                                style           = "background-color: #F2F5F9;">
+                            <h:outputLabel                      value           = "Resultado del proceso de cancelación"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "13">
+                            <h:selectManyListbox                id              = "lstMensaje"
+                                                                style           = "height: 50px; width: 100%;">
+                                <f:selectItems                  value           = "#{mbContabilidad.listaGenerica}"/>
+                            </h:selectManyListbox>                
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+           
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                hideEffect      = "explode"
+                                                                modal           = "true"
+                                                                position        = "450, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion()}"
+                                                                update          = ":frmContabilidadCancelaOper:dtMovtos,
+                                                                                   :frmContabilidadCancelaOper:panelCriterio,
+                                                                                   :frmContabilidadCancelaOper:lstMensaje"/>
+                    <p:commandButton                            value           = "Cancelar"
+                                                                icon            = "ui-icon-close"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadCancela_Cancela()}"/>
+                </center>
+                <br/>
+                
+            </p:dialog>  
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

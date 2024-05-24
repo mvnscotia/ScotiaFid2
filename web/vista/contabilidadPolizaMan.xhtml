@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/> 
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+        
+            <script type="text/javascript"> 
+            
+            function onValidaSubFisoMax(campo) {
+                if (campo.value > 32767) {
+                    campo.value = 0;
+                }
+            }
+        </script>
+        	<script type="text/javascript">  
+	    PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+	   </script>        
+
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmPolizaMan"
+                                                                enctype         = "multipart/form-data">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            
+            <p:growl                                            id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Contabilidad - Póliza Contable">
+                <br/>
+                <center>
+                    <p:commandButton                            icon            = "ui-icon-document"
+                                                                value           = "Crear Póliza"
+                                                                disabled        ="#{mbContabilidad.permisoEscrituraPoliza}"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_DespliegaVentana}"
+                                                                update          = ":frmPolizaMan:dlgPolizaMtto"/>
+                </center>
+                <br/>
+                <p:dataTable                                    id              = "dtPolizaMan"
+                                                                emptyMessage    = "Sin Registros"
+                                                                paginator       = "true"
+                                                                paginatorPosition= "bottom"
+                                                                rows            = "10"
+                                                                resizableColumns= "true"
+                                                                liveResize      = "true" 
+                                                                value           = "#{mbContabilidad.consultaMovtosLazy}"
+                                                                var             = "pol"
+                                                                selection       = "#{mbContabilidad.seleccionaMovto}"
+                                                                selectionMode   = "single"
+                                                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                                                                currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                rowKey          = "#{pol.movtoFolio}"
+                                                                lazy="true">
+                    <p:column                                   headerText      = "Folio"
+                                                                style           = "width: 8%;">
+                        <h:outputLabel                          value           = "#{pol.movtoFolio}"
+                                                                title           = "#{pol.movtoFolio}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fiso."
+                                                                style           = "width: 8%;">
+                        <h:outputLabel                          value           = "#{pol.movtoContratoNum}"
+                                                                title           = "#{pol.movtoContratoNum}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "SubFiso"
+                                                                style           = "width: 4%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{pol.movtoContratoNumSub}"
+                                                                title           = "#{pol.movtoContratoNumSub}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Operación"
+                                                                style           = "width: 9%;">
+                        <h:outputLabel                          value           = "#{pol.movtoOperacionId}"
+                                                                title           = "#{pol.movtoOperacionId}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Trans."
+                                                                style           = "width: 3%;">
+                        <h:outputLabel                          value           = "#{pol.movtoTransaccId}"
+                                                                title           = "#{pol.movtoTransaccId}"/>
+                    </p:column>
+
+                    <p:column                                   headerText      = "Fecha Cont."
+                                                                style           = "width: 6%;">
+                        <h:outputLabel                          value           = "#{pol.movtoFecha}"
+                                                                title           = "#{pol.movtoFecha}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"
+                                                                timeZone        = "America/Mexico_City"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Fecha Captura"
+                                                                style           = "width: 10%;">
+                        <h:outputLabel                          value           = "#{pol.movtoFechaReg}"
+                                                                title           = "#{pol.movtoFechaReg}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy hh:mm:ss"
+                                                                timeZone        = "America/Mexico_City"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Descripción"
+                                                                style           = "width: 31%;">
+                        <h:outputLabel                          value           = "#{pol.movtoDesc}"
+                                                                title           = "#{pol.movtoDesc}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Importe"
+                                                                style           = "width: 10%;">
+                        <h:inputText                            value           = "#{pol.movtoImporte}"
+                                                                title           = "#{pol.movtoImporte}"
+                                                                style           = "background-color: transparent;
+                                                                                   border-style    : none!important;
+                                                                                   text-align      : right;"
+                                                                readonly        = "true">
+                                    
+                            <f:convertNumber                   maxFractionDigits= "2"
+                                                               minFractionDigits= "2"/>
+                            <f:convertNumber               pattern          = "$####,###,###,###,##0.00" />
+                        </h:inputText>                   
+                    </p:column>
+                    <p:column                                   headerText      = "Usuario Captura"
+                                                                style           = "width: 11%;">
+                        <h:outputLabel                          value           = "#{pol.movtoUsuarioNom}"
+                                                                title           = "#{pol.movtoUsuarioNom}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:panelGrid                                    id              = "panel00"
+                                                                styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column                               colspan         = "8"
+                                                                styleClass      = "degradadoOrigenCentro"
+                                                                style           = "color: #ffffff; font-weight: bolder;">
+                            <center>
+                                <h:outputLabel                  value           = "Criterios de búsqueda"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fideicomiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "SubFiso"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Folio"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Trans."/>
+                        </p:column>
+
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "dd"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "mm"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:outputLabel                  value           = "aaaa"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+
+                        </p:column>
+                        <p:column>
+
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX1}"
+                                                                autocomplete    = "off"
+                                                                size            = "10"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioAX2}"
+                                                                autocomplete    = "off"
+                                                                size            = "6"
+                                                                maxlength       = "5"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                onkeydown       = "onValidaSubFisoMax(this)"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFolio}"
+                                                                autocomplete    = "off"
+                                                                size            = "10"
+                                                                maxlength       = "10"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioTransId}"
+                                                                autocomplete    = "off"
+                                                                size            = "6"
+                                                                maxlength       = "5"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+              
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaDD}"
+                                                                autocomplete    = "off"
+                                                                size            = "4"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaMM}"
+                                                                autocomplete    = "off"
+                                                                size            = "4"
+                                                                maxlength       = "2"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanCriterioBusquedaConta.txtCriterioFechaYYYY}"
+                                                                autocomplete    = "off"
+                                                                size            = "6"
+                                                                maxlength       = "4"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: center;">
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-search"
+                                                                title           = "Ejecuta una búsqueda de información en base a criterios especificados"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_ConsultaEjecuta}"
+                                                                update          = ":frmPolizaMan:dtPolizaMan,
+                                                                                  :frmPolizaMan:panel00"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton                    icon            = "ui-icon-refresh"
+                                                                title           = "Limpia campos"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_ConsultaLimpia}"
+                                                                update          = ":frmPolizaMan:dtPolizaMan,
+                                                                                   :frmPolizaMan:panel00"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+            </p:panel>
+            
+            <p:dialog                                           id              = "dlgPolizaMtto" 
+                                                                closable        = "true" 
+                                                                header          = "Sistema Fiduciario.- Póliza Manual" 
+                                                                modal           = "true" 
+                                                                position        = "100, 40" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgPolizaMtto">
+                <br/>
+                <p:panelGrid                                    id              = "panelEnca"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Póliza:" />
+                        </p:column>
+                        <p:column                               colspan         = "5">
+                            <p:selectOneMenu                    value           = "#{beanContabilidadPolizaMan.polizaEncaNombre}"
+                                                                style           = "width: 100%;"
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaPoliza}"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadPolMan_CargaCampos}"
+                                                                update          = ":frmPolizaMan:panelPoliza,
+                                                                                   :frmPolizaMan:panelRolFid,@this"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Folio:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadPolizaMan.polizaEncaFolio}"
+                                                                maxlength       = "10"
+                                                                size            = "10"
+                                                                readonly        = "true"
+                                                                style           = "text-align: center; background-color: #ffffcc;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha Valor:" />
+                        </p:column>
+                        <p:column>
+                            <p:calendar                         id              = "fechaValor00"
+                                                                value           = "#{beanGenericoFecha.genericoFecha00}"
+                                                                disabledWeekends= "true"
+                                                                maxlength       = "10"
+                                                                navigator       = "true"
+                                                                pattern         = "dd/MM/yyyy"
+                                                                size            = "10"
+                                                                readonlyInput   = "true"
+                                                                locale          ="es"
+                                                                timeZone        ="America/Mexico_City"> 
+                            <p:ajax                             event           = "dateSelect" 
+                                                                listener        = "#{mbContabilidad.onPooliza_ValidaFechaValor()}"
+                                                                update          = "@this"/>
+                            </p:calendar>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Fecha Captura:" />
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanGenericoFecha.genericoFecha01}"
+                                                                readonly        = "true"
+                                                                maxlength       = "18"
+                                                                size            = "15"
+                                                                style           = "text-align: center; background-color: #ffffcc;">
+                                <f:convertDateTime              pattern         = "dd/MM/yyyy hh:mm:ss"
+                                                                timeZone        = "America/Mexico_City"/>             
+                            </h:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Hora Aplicación:"/>
+                        </p:column>
+                        <p:column>
+                            <h:inputText                        value           = "#{beanContabilidadPolizaMan.polizaEncaHoraAplica}"
+                                                                maxlength       = "5"
+                                                                size            = "7"
+                                                                readonly        = "true"
+                                                                style           = "text-align: center; background-color: #ffffcc;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Aport. Patrim.:" />
+                        </p:column>
+                        <p:column                               colspan         = "5">
+                            <p:selectOneMenu                    disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                value           = "#{beanContabilidadPolizaMan.polizaEncaAportPatrim}"
+                                                                style           = "width: 100%;">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <fieldset>
+                    <legend style="font-weight: bolder; font-size: small;"> Datos de la póliza </legend>
+                    <br/>
+                    <p:panelGrid                                id              = "panelPoliza"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                        <p:row>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza00Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza00Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol00"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza00Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza00Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza00Valor}">
+                                    <p:ajax                     event           = "change"
+                                                                update          = ":frmPolizaMan:txtPol01,@this,panelRolFid"                                                                 
+                                                                listener        = "#{mbContabilidad.onContabilidadPolMan_IngresaCampo00}"/>
+                                </h:inputText>
+                            </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza05Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza05Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol05"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza05Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza05Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza05Valor}">
+                            </h:inputText>
+                            </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza10Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza10Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol10"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza10Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza10Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza10Valor}">
+                            </h:inputText>
+                            </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza15Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza15Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol15"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza15Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza15Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza15Valor}">
+                            </h:inputText>
+                                 </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza01Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza01Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol01"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza01Etiqueta}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza01Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza01Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza06Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza06Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol06"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza06Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza06Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza06Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza11Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza11Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol11"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza11Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza11Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza11Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza16Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza16Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol16"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza16Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza16Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza16Valor}">
+                            </h:inputText>
+                                 </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza02Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza02Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol02"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza02Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza02Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza02Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza07Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza07Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol07"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza07Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza07Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza07Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza12Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza12Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol12"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza12Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza12Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza12Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza17Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza17Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol17"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza17Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza17Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza17Valor}">
+                            </h:inputText>
+                                 </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza03Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza03Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol03"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza03Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza03Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza03Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza08Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza08Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol08"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza08Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza08Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza08Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza13Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza13Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol13"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza13Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza13Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza13Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column>
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza18Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza18Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol18"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza18Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza18Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza18Valor}">
+                            </h:inputText>
+                                 </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza04Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza04Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol04"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza04Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza04Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza04Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza09Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza09Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol09"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza09Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza09Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza09Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza14Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza14Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol14"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza14Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza14Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza14Valor}">
+                            </h:inputText>
+                                 </p:column>
+                            <p:column                           style           = "background-color: #F2F5F9;">
+                                <h:outputLabel                  value           = "#{beanContabilidadPolizaMan.poliza19Etiqueta}"
+                                                                style           = "visibility: #{beanContabilidadPolizaMan.poliza19Visible}"/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText                    id              = "txtPol19"
+                                                                alt             = "#{beanContabilidadPolizaMan.poliza19Etiqueta}"
+                                                                autocomplete    = "off"
+                                                                maxlength       = "20"
+                                                                size            = "20"
+                                                                onkeypress      = "if((event.which &lt; 48 || event.which &gt; 57)&amp;&amp; event.which != 46 ) return false;"
+                                                                style           = "text-align: right; visibility: #{beanContabilidadPolizaMan.poliza19Visible}"
+                                                                value           = "#{beanContabilidadPolizaMan.poliza19Valor}">
+                            </h:inputText>
+                                 </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                </fieldset>
+                <br/>
+                <p:panelGrid                                    id              = "panelRolFid" 
+                                                                style           = "margin-left: auto; margin-right: auto; visibility: #{beanGenericoVisible.genericoVisible00}"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               colspan         = "4"
+                                                                style           = "background-color: #F2F5F9; font-weight: bold;">
+                            <h:outputLabel                      value           = ".:: Datos de la persona"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "Rol Fiduciario:"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanContabilidadPolizaMan.polizaEncaFidRol}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaFidRol}"/>
+                                <p:ajax                         listener        = "#{mbContabilidad.onContabilidadPolMan_CargaPersonas}"
+                                                                update          = ":frmPolizaMan:cboPolizaManPaticip"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "Participante:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu                    id              = "cboPolizaManPaticip"
+                                                                filter          = "true"
+                                                                filterMatchMode = "contains"
+                                                                style           = "width: 400px;"
+                                                                value           = "#{beanContabilidadPolizaMan.polizaEncaFidPers}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbContabilidad.listaFidPers}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "Redacción:"/>
+                    <h:inputText                                autocomplete    = "off"
+                                                                id              = "txtPolizaRedacc"
+                                                                maxlength       = "50"
+                                                                size            = "70"
+                                                                style           = "margin-left: 15px; width: 30%!important;"
+                                                                value           = "#{beanContabilidadPolizaMan.polizaEncaRedaccion}"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            icon            = "ui-icon-gear"
+                                                                value           = "Generar Póliza"
+                                                                style           = "margin-right: 20px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_Aplica}"
+                                                                disabled        ="#{mbContabilidad.permisoEscrituraPoliza}"
+                                                                update          = ":frmPolizaMan:dtPolizaMan,
+                                                                                   :frmPolizaMan:panelPoliza,
+                                                                                   :frmPolizaMan:panel00,
+                                                                                   panelEnca,
+                                                                                   :frmPolizaMan:dlgPopUpGral"/>
+                    <p:commandButton                            icon            = "ui-icon-refresh"
+                                                                value           = "Limpia Campos"
+                                                                style           = "margin-right: 20px;"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_Limpia}"
+                                                                disabled        ="#{mbContabilidad.permisoEscrituraPoliza}"
+                                                                update          = ":frmPolizaMan:panelEnca, 
+                                                                                   :frmPolizaMan:panelPoliza,
+                                                                                   :frmPolizaMan:panelRolFid,
+                                                                                   :frmPolizaMan:txtPolizaRedacc"/>
+                    <p:commandButton                            icon            = "ui-icon-circle-arrow-n"
+                                                                value           = "Carga Masiva"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadPolMan_ArchivoVentanaDespliega}"
+                                                                disabled        ="#{mbContabilidad.permisoEscrituraPoliza}"
+                                                                update          = "dlgPolizaCarga"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgPolizaCarga"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Carga Masiva"
+                                                                modal           = "true"
+                                                                position        = "150, 200"
+                                                                resizable       = "false"
+                                                                widgetVar       = "dlgPolizaCarga">
+                <br/>
+                <p:panelGrid                                    styleClass      = "bordePanel"
+                                                                style           = "margin-left: auto; margin-right: auto;">
+                    <p:row>
+                        <p:column>
+                            <p:fileUpload                     fileUploadListener= "#{mbContabilidad.onContabilidadPolMan_BulkLoad}"
+                                                              invalidSizeMessage= "Error, el tamaño máximo del archivo debe de ser de 1024Kb ( 1MB )"
+                                                              invalidFileMessage= "Error, solo se admiten archivos de tipo texto (*.txt)"
+                                                                showButtons     = "false"
+                                                                allowTypes      = "/(\.|\/)(txt)$/"
+                                                                mode            = "advanced"
+                                                                sizeLimit       = "10000024"
+                                                                update          = "growl, lstErrores"
+                                                                label           = "Archivo"
+                                                                uploadLabel     = "Transferir archivo"
+                                                                style           = "margin-left: auto; margin-right: auto;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9; font-weight: bolder;">
+                            <h:outputLabel                      value           = "Lista de Errores"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneListbox                 id              = "lstErrores"
+                                                                style           = "height: 150px; width: 650px;">
+                                <f:selectItems                  value           = "#{mbContabilidad.listaErr}"/>
+                            </p:selectOneListbox>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton                           icon             = "ui-icon-close"
+                                                               value            = "Cerrar Ventana"
+                                                               actionListener   = "#{mbContabilidad.onContabilidadPolMan_ArchivoVentanaCierra}"
+                                                               update           = "lstErrores"/>
+                </center>
+                <br/>
+            </p:dialog>
+           
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "false"
+                                                                closeOnEscape   = "false"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                modal           = "true"
+                                                                position        = "600, 150"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                                   font-size  : large;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                                   font-size  : medium;
+                                                                                   font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p:commandButton                            value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                actionListener  = "#{mbContabilidad.onContabilidadGrales_AplicaConfirmacion}"/>
+                </center>
+                <br/>
+            </p:dialog>
+            
+            <p:dialog id="dlgCambioFecha" header="Detalle Fecha Valor"   position = "200, 100" widgetVar="dlgCambioFecha" width="30%" closable="false"  resizable="false">  
+                    <br/>
+                    <p:panelGrid style = "margin-left: auto; margin-right: auto;" styleClass = "bordePanel">
+                        <p:row>
+                            <p:column style = "font-weight: bold;">
+                                <p:outputLabel value="¿Esta seguro de aplicar contablemente con fecha valor?" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br>
+                        <center>
+                            <p:commandButton value = "Aceptar" 
+                                             icon = "ui-icon-check" 
+                                             actionListener="#{mbContabilidad.onPooliza_CambiaFechaValor}"/>
+                            <p:commandButton value = "Cancelar" 
+                                             icon = "ui-icon-check" style="margin-left: 2%"
+                                             actionListener  = "#{mbContabilidad.onPooliza_RetieneFechaValor}"
+                                             update          = ":frmPolizaMan:fechaValor00"/>
+                        </center>
+                    </br>
+                </p:dialog>             
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                                   height          : auto;
+                                                                                   width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

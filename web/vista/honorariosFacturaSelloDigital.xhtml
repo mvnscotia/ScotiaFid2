@@ -1,0 +1,957 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv="expires"                              content         = "43200"/>
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+    <style type = "text/css"
+           media="screen"> 
+         .txtLargo{width: 200px }
+         .masAncho{width: 200px !important;;}
+         .selLarga{width: 230px !important;}
+		.panelGrid { border-style: none !important; }
+         td.rightColumnContent{text-align: right;} 
+         td.centeredColumnContent{text-align: center;}
+         td.leftColumnContent{text-align: left;}
+         .inputRead{width: 300px !important; background-color:#ffffcc !important} 
+         .firstColumnUUID{ width: 130px ; text-align: right ;} 
+         .btnStyle {width: 90px; margin : 5px; } 
+         .btnStyle2{width: 130px; margin: 8px;}  
+         .ColumnCriterios1ra { width: 100px !important;}
+         .ColumnCriterios2da { width: 230px !important;margin: 5px !important} 
+         .outLabel{  
+     background-color:#ffffcc !important;
+     display:inline-block; 
+ }
+      </style>               
+       
+	<script type="text/javascript">      
+	    PrimeFaces.locales['es'] = {
+	    closeText: 'Cerrar',
+	    prevText: 'Anterior',
+	    nextText: 'Siguiente',
+	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+		dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+	    dayNamesMin: ['D','L','M','M','J','V','S'],
+	    weekHeader: 'Semana',
+		firstDay: 1,
+	    isRTL: false,
+		showMonthAfterYear: false,
+		yearSuffix: '',
+	    timeOnlyTitle: 'Sólo hora',
+		timeText: 'Tiempo',
+	    hourText: 'Hora',
+		minuteText: 'Minuto',
+	    secondText: 'Segundo',
+	    currentText: 'Fecha actual',
+		ampm: false,
+	    month: 'Mes',
+	    week: 'Semana',
+	    day: 'Día',
+	    allDayText : 'Todo el día'
+		 };
+     </script>                  
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmFacturasConSelloDigital">
+ 			<p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+            
+             <p:growl                                           id              = "growl"
+                                                                autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+
+        
+        <p:panel id="pnConsulta" 
+        		 header="Consulta de Facturas con Sello Digital">
+         
+		    <p:dataTable  id="dtFacturas" 
+		    			  widgetVar = "dtFacturas" 
+	                      scrollable="true" 
+	                      value="#{mbFacturaSelloDigital.facturas}" 
+                          selection ="#{mbFacturaSelloDigital.selectFacturas}"
+	                      var="facturas"
+	                      rowKey="#{facturas}" 
+	                      rowIndexVar="indexParent"
+	                      rows="10"   
+	                      scrollHeight="300" 
+						  paginator="true" 
+						  resizableColumns= "true"
+						  liveResize      = "true"
+						  lazy            = "true"
+			              paginatorPosition="bottom" 
+			              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+			              currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+			              emptyMessage="Sin registros" > 
+             
+            		<p:ajax event="rowSelectRadio" 
+             				listener="#{mbFacturaSelloDigital.onRowSelect_Facturas}" 
+						    update=":frmFacturasConSelloDigital:pnBtnOpciones,
+					 		 :frmFacturasConSelloDigital:dlgReexpide,:frmFacturasConSelloDigital:dtReexpide,
+					         :frmFacturasConSelloDigital:dlgCancelaFact,:frmFacturasConSelloDigital:dtCancelacion,
+					         :frmFacturasConSelloDigital:dlgEmisionCFDI,:frmFacturasConSelloDigital:dtEmision" />
+										            
+             <f:facet name="header">
+				  <p:outputPanel> 
+				  		<h:outputText value="Facturas"/> 
+				  </p:outputPanel>
+			 </f:facet>
+			  
+             <p:column selectionMode="single" style="width:16px;text-align:center"/>
+             
+             <p:column  style="width:2%">
+               <p:rowToggler />    
+             </p:column>
+					
+             <p:column headerText="Fecha" 
+                       style="width: 7%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facFecha}">
+      				<f:convertDateTime pattern="dd/MM/yyyy"/> 
+				 </h:outputText>
+			 </p:column> 
+             <p:column headerText="Estatus" 
+                       style="width: 9%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facStatus}"/>
+			 </p:column> 
+             <p:column 	headerText="Tipo Factura" 
+                       style="width: 7%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facStatusCte}"/>
+			 </p:column>  
+             <p:column 	headerText="Fideicomiso" 
+                       style="width: 10%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facNumContrato}"/>
+			 </p:column>  
+             <p:column 	headerText="Participante" 
+                       style="width: 10%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facCvePersFid}"/>
+			 </p:column> 
+             <p:column 	headerText="No. Folio" 
+                       style="width: 7%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.facFolioFact}"/>
+			 </p:column>   
+             <p:column 	headerText="Folio Fact." 
+                       style="width: 11%;" 
+             		   styleClass="centeredColumnContent" >
+				 <h:outputText value="#{facturas.folio_Fac}"/>
+			 </p:column>  
+             <p:column 	headerText="Nombre" 
+                       style="width: 20%;" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{facturas.facNombreRecep}"/>
+			 </p:column>
+             <p:column 	headerText="Importe" 
+                       style="width: 10%;" 
+             		   styleClass="rightColumnContent" >
+				 <h:outputText value="#{facturas.facHonorarios}">
+					 <f:convertNumber groupingUsed="true" pattern="$#,###,###,###,###,##0.00####"/>
+				 </h:outputText>
+			 </p:column>
+             <p:column 	headerText="R.F.C." 
+                       style="width: 7%;" 
+             		   styleClass="leftColumnContent" >
+				 <h:outputText value="#{facturas.facRFC}"/>
+			 </p:column>
+			 
+             <p:rowExpansion> 
+	               <h:panelGrid id="pgRowExpansive"  
+             					border="0" 
+	               			    styleClass="ui-widget-content" 
+	               			    value="mbFacturaSelloDigital.indexParent+1">  
+	             
+	             <p:row> 
+				 <p:column ><h:outputText value="Fecha:" 
+                       					  style="display:inline-block;width:120px" /></p:column >  
+                 <p:column > <h:outputText 	id="txtFecha"  
+						             		styleClass="outLabel" 
+						             		style="width:150px"
+             			       				value="#{facturas.facFecha}"  >
+      				<f:convertDateTime pattern="dd/MM/yyyy"/> 
+				 </h:outputText></p:column > 
+				  
+               	 <p:column ><h:outputText value="Fideicomiso:" 
+                       					  style="display:inline-block;width:120px" /></p:column > 
+                 <p:column ><h:outputText 	id="txtFiso"  
+						             		style="width:150px"
+						             		styleClass="outLabel" 
+             			        			value="#{facturas.facNumContrato}"  > 
+				 </h:outputText></p:column >  
+				 
+               	 <p:column ><h:outputText value="Participante:" 
+                       					  style="display:inline-block;width:90px" /></p:column > 
+                 <p:column ><h:outputText 	id="txtPart"  
+						             		style="width:150px" 
+						             		styleClass="outLabel" 
+             			        			value="#{facturas.facCvePersFid}"  > 
+				 </h:outputText></p:column >  
+				 
+               	 <p:column ><h:outputText value="No. Participante:"
+                       					  style="display:inline-block;width:90px"  /></p:column > 
+                 <p:column ><h:outputText 	id="txtNoPart" 
+						             		style="width:50px" 
+						             		styleClass="outLabel" 
+             			        			value="#{facturas.facNumPersFid}"  > 
+				 </h:outputText></p:column > 
+	             </p:row>
+               	 
+               	 <p:row> 
+                 <p:column ><h:outputText 	value="Honorarios:" 
+                       					    style="display:inline-block;width:120px" /></p:column >
+                 <p:column ><h:outputText 	id="txtHorarios"  
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facHonorarios}" >
+					 <f:convertNumber groupingUsed="true" pattern="$#,###,###,###,###,##0.00####"/>
+				 </h:outputText></p:column >
+				 
+                 <p:column ><h:outputText 	value="Gastos de Cobranza:" 
+                       					    style="display:inline-block;width:120px" /></p:column >
+                 <p:column ><h:outputText 	id="txtGastos"  
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facMoratorios}" >
+					 <f:convertNumber groupingUsed="true" pattern="$#,###,###,###,###,##0.00####"/>
+				 </h:outputText></p:column > 
+				 
+                 <p:column ><h:outputText 	value="I.V.A:"
+                       					    style="display:inline-block;width:90px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtIVA"  
+						             		style="width:150px" 
+						             		styleClass="outLabel" 
+             			        			value="#{facturas.facIvaTraladado}">
+					 <f:convertNumber groupingUsed="true" pattern="$#,###,##0.00####" />
+				 </h:outputText>
+				 </p:column >
+				 
+                 <p:column ><h:outputText 	value="Tasa I.V.A:"
+                       					    style="display:inline-block;width:90px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtTasa"  
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facTasaImpuesto}" >
+					 <f:convertNumber groupingUsed="true" pattern="$#,###,##0.00####" />
+				 </h:outputText>
+             	</p:column >
+             	
+               	 <p:column ><h:outputText value="Moneda:" 
+                       					  style="display:inline-block;width:50px" /></p:column > 
+                 <p:column ><h:outputText 	id="txtMoneda"  
+						             		style="width:50px" 
+						             		styleClass="outLabel" 
+             			        			value="#{facturas.facNumMoneda}"  > 
+				 </h:outputText></p:column > 
+               </p:row>
+               
+				<p:row>
+                 <p:column ><h:outputText 	value="Fecha Int.:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtFecInt"  
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facFechaInt}" >
+		      				<f:convertDateTime pattern="dd/MM/yyyy"/> 
+				 </h:outputText></p:column > 
+             			        			
+             	
+                 <p:column ><h:outputText 	value="Tipo Factura:"
+                       					    style="display:inline-block;width:120px" /></p:column >
+                 <p:column ><h:outputText 	id="txtTipoFact" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facStatusCte}"  />
+             	 </p:column >  
+               </p:row>
+                
+               <p:row>    
+				 <p:column ><h:outputText 	value="Nombre:" 
+                       					    style="display:inline-block;width:120px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtNombre"  
+						             		styleClass="outLabel" 
+						             		style="width:660px" 
+             			        			value="#{facturas.facNombreRecep}"  />
+             	 </p:column > 
+             			        
+                 <p:column ><h:outputText 	value="R.F.C.:" 
+                       					    style="display:inline-block;width:90px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtRFC" 
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facRFC}"  />
+             	 </p:column > 
+               </p:row>
+               
+               <p:row>
+               
+                 <p:column ><h:outputText 	value="Nacionalidad:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtNacionalidad" 
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facNacionalidad == 'N' ? 'NACIONAL' : 'EXTRANJERO'}"  />
+             	 </p:column > 
+             			         
+                 <p:column ><h:outputText 	value="Tipo Persona:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtTipoPers" 
+						             		styleClass="outLabel" 
+						             		style="width:150px" 
+             			        			value="#{facturas.facCveTipoPer}"  />             			        			
+             	</p:column >  								
+				</p:row>
+				
+				<p:row>
+                 <p:column ><h:outputText 	value="Calle:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtCalle" 
+						             		styleClass="outLabel"
+						             		style="width:660px" 
+             			        			value="#{facturas.facDomCalle}"  /></p:column > 
+             			         
+                 <p:column ><h:outputText 	value="No. Ext.:"
+                       					    style="display:inline-block;width:90px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtExt" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facDomNumExt}"  /></p:column >
+             			                
+                 <p:column ><h:outputText 	value="No. Int.:"
+                       					    style="display:inline-block;width:50px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtInt" 
+						             		style="width:150px" 
+						             		styleClass="outLabel"
+						        			value="#{facturas.facDomNumInt}"  /></p:column > 			
+				</p:row>
+				        		
+				 <p:row>
+				 <p:column ><h:outputText 	value="Colonia:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtColonia" 
+						             		styleClass="outLabel"
+						             		style="width:660px" 
+             			        			value="#{facturas.facDomColonia}"  /></p:column > 
+             			        
+             			         
+                 <p:column ><h:outputText 	value="Estado:"
+                       					    style="display:inline-block;width:90px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtEdo" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facDomEstado}"  /></p:column > 
+				 </p:row>		             		
+						             		
+				<p:row>         
+                 <p:column ><h:outputText 	value="Localidad:" 
+                       					    style="display:inline-block;width:120px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtPoblacion" 
+						             		styleClass="outLabel"
+						             		style="width:660px" 
+             			        			value="#{facturas.facRecepLocalidad}"  />
+				 </p:column > 
+             			        
+                 <p:column ><h:outputText 	value="País:"
+                       					    style="display:inline-block;width:90px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtPais" 
+						             		style="width:150px" 
+						             		styleClass="outLabel"
+             			        			value="#{facturas.facDomPais}"  />
+				 </p:column >
+				</p:row>		             		
+             	
+             	<p:row>
+             	
+                 <p:column ><h:outputText 	value="C.P.:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtCP" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facCodigoPostal}"  />
+				 </p:column > 
+             			          
+                 <p:column ><h:outputText 	value="Folio Transitoria:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtFTrans" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facFolioTran}"  />
+				 </p:column > 
+             			        
+                 <p:column ><h:outputText 	value="Folio Fact.:" 
+                       					    style="display:inline-block;width:90px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtFFact" 
+						             		styleClass="outLabel"
+						             		style="width:240px" 
+             			        			value="#{facturas.folio_Fac}"  />
+				 </p:column >    
+             	</p:row>	
+             	
+             	<p:row>
+             	 <p:column ><h:outputText 	value="Condiciones de Pago:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtCondiciones" 
+						             		styleClass="outLabel"
+						             		style="width:420px" 
+             			        			value="#{facturas.facCondiPago}"  />
+				 </p:column > 
+             			        
+                 <p:column ><h:outputText 	value="Método Pago:" 
+                       					    style="display:inline-block;width:90px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtPago" 
+						             		style="width:240px" 
+						             		styleClass="outLabel"
+             			        			value="#{facturas.facMetPago}"  />
+				 </p:column > 
+             	</p:row>	
+             	
+             	<p:row>  
+                 <p:column ><h:outputText 	value="Folio SAT:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtFSAT" 
+						             		styleClass="outLabel"
+						             		style="width:420px" 
+             			        			value="#{facturas.facDomPoblacion}"  />
+				 </p:column > 
+             			    
+                 <p:column ><h:outputText 	value="Estatus:"
+                       					    style="display:inline-block;width:90px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtStatus" 
+						             		styleClass="outLabel"
+						             		style="width:150px" 
+             			        			value="#{facturas.facStatus}"  />
+				 </p:column >  
+                 <p:column ><h:outputText 	value="Sistema:" 
+                       					    style="display:inline-block;width:90px"  /></p:column >
+                 <p:column ><h:outputText 	id="txtSistema" 
+						             		styleClass="outLabel"
+						             		style="width:50px" 
+             			        			value="#{facturas.facSistema}"  />
+				 </p:column > 
+             	</p:row>   
+             	
+             	<p:row> 
+             	 <p:column ><h:outputText 	value="Cve. Regimen Fiscal:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtRegimen" 
+						             		styleClass="outLabel"
+						             		style="width:50px" 
+             			        			value="#{facturas.dif_regimenfiscal}"  />
+				 </p:column >  	
+             			          
+             			          
+                 <p:column ><h:outputText 	value="Regimen Fiscal:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtDescReg" 
+						             		styleClass="outLabel"
+						             		style="width:690px" 
+             			        			value="#{facturas.desc_Regimen_Fiscal}"  />
+				 </p:column > 
+             	</p:row>
+             	  
+             	<p:row>       
+                 <p:column ><h:outputText 	value="Mensaje:"
+                       					    style="display:inline-block;width:120px"   /></p:column >
+                 <p:column ><h:outputText 	id="txtMensaje" 
+						             		styleClass="outLabel"
+						             		style="width:960px" 
+             			        			value="#{facturas.facMensaje}"  />
+				 </p:column >  
+             	</p:row>
+               </h:panelGrid>
+            </p:rowExpansion>
+           </p:dataTable>
+               
+		   <p:panelGrid                                  styleClass      = "bordePanel"
+                                                         style           = "margin: 0.3% 0.3% 0.3% 10%;">
+              <p:row>
+                 <p:column                               colspan         = "7"
+                                                         styleClass      = "degradadoOrigenCentro"
+                                                         style           = "color: #ffffff; font-weight: bolder;"> 
+                         <h:outputLabel                  value           = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         													Criterios de Consulta
+                         													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"/> 
+                 </p:column>
+              </p:row>
+         </p:panelGrid>    
+       	  
+         <h:panelGrid id="pgCriteriosCons" 
+                      columns="3" 
+                      cellpadding="3"          >
+              
+	         <h:panelGrid id="dtConsulta" 
+	                      columns="4" 
+                      	  cellpadding="1"
+                          columnClasses="ColumnCriterios1ra,ColumnCriterios2da,ColumnCriterios1ra,ColumnCriterios2da">
+                       
+                     <h:outputLabel value =  "Fecha Inicial:" />    
+                        <p:calendar id="CalendFecIni"    
+						            value="#{mbFacturaSelloDigital.dFec_Inicial}"                                                                
+						            pattern         = "dd/MM/yyyy"
+                                    navigator       = "true"
+                                    disabledWeekends= "true" 
+                                    readonlyInput   = "true" 
+                                    locale          ="es"
+                                    timeZone        ="America/Mexico_City"
+					 				styleClass="txtLargo"  >
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+							<p:ajax event="dateSelect" 
+									listener="#{mbFacturaSelloDigital.disableConsulta}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					 </p:calendar> 
+					 
+                     <h:outputLabel value =  "Fecha Final:" />    
+                        <p:calendar id="CalendFecFin"    
+						            value="#{mbFacturaSelloDigital.dFec_Final}"                                                                
+						            pattern         = "dd/MM/yyyy"
+                                    navigator       = "true"
+                                    disabledWeekends= "true" 
+                                    readonlyInput   = "true" 
+                                    locale          ="es"
+                                    timeZone        ="America/Mexico_City"
+					 				styleClass="txtLargo"  >
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+							<p:ajax event="dateSelect" 
+									listener="#{mbFacturaSelloDigital.disableConsulta}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					 </p:calendar> 
+          			 
+					 <h:outputLabel  value =  "Fideicomiso:" /> 
+					 <p:inputText    id="txtFideicomiso" 
+						             maxlength="10" 
+					 				 styleClass="txtLargo" 
+						             value="#{mbFacturaSelloDigital.sFideicomiso}"  
+						             onkeypress = "if(event.which &lt; 48 || event.which &gt; 57)  return false;" > 
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+						    <p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validateFiso}"
+									update="@this,:frmFacturasConSelloDigital:selEstatus,:frmFacturasConSelloDigital:btnAceptar"/>
+					 </p:inputText>
+					 
+					<p:outputLabel    value="Estatus:"  />
+					<p:selectOneMenu  id="selEstatus" 
+					 				  styleClass="selLarga"
+									  value="#{mbFacturaSelloDigital.sEstatus}"  > 
+						<f:selectItem itemValue = "" 						itemLabel="" />
+						<f:selectItem itemValue = "ACTIVO" 					itemLabel="ACTIVO" />
+						<f:selectItem itemValue = "ALTA" 					itemLabel="ALTA" />
+						<f:selectItem itemValue = "CANCELADA" 				itemLabel="CANCELADA" />
+						<f:selectItem itemValue = "CANCELADA MEFE" 			itemLabel="CANCELADA MEFE" />
+						<f:selectItem itemValue = "CANCELADA CONDONACION" 	itemLabel="CANCELADA CONDONACIÓN" />
+						<f:selectItem itemValue = "VIGENTE" 				itemLabel="VIGENTE" />
+						<f:selectItem itemValue = "INCOMPLETO" 				itemLabel="INCOMPLETO" />
+						<f:selectItem itemValue = "SIN CONCLUIR" 			itemLabel="SIN CONCLUIR" />
+						<f:selectItem itemValue = "TRANSFERIDO" 			itemLabel="TRANSFERIDO" />  
+						<f:selectItem itemValue = "PAGO PROVEEDORES" 		itemLabel="PAGO PROVEEDORES" />  
+						      <p:ajax event="change" 
+									  listener="#{mbFacturaSelloDigital.disableConsulta}"
+									  update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					</p:selectOneMenu>
+          			  
+				     <h:outputLabel value = "No. Participante:" /> 
+					 <p:inputText   id="txtNoPart"  
+					 				styleClass="txtLargo" 
+						            value="#{mbFacturaSelloDigital.sNo_Part}"  
+						            onkeypress = "if(event.which &lt; 48 || event.which &gt; 57)  return false;" >	 
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+						   	<p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validateNoPart}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					 </p:inputText>  
+					 
+					<p:outputLabel    value="Tipo Participante:"  />
+					<p:selectOneMenu  id="selTipoPart" 
+					 				  styleClass="selLarga"
+									  value="#{mbFacturaSelloDigital.sTipo_Participante}"  > 
+						<f:selectItem itemValue = "" itemLabel="" />
+						<f:selectItem itemValue = "FIDEICOMITENTE" itemLabel="FIDEICOMITENTE" />
+						<f:selectItem itemValue = "FIDEICOMISARIO" itemLabel="FIDEICOMISARIO" />
+						<f:selectItem itemValue = "TERCERO"        itemLabel="TERCERO" />  
+						    <p:ajax event="change" 
+									listener="#{mbFacturaSelloDigital.disableConsulta}"
+									update="@this,:frmFacturasConSelloDigital:txtNoPart,:frmFacturasConSelloDigital:btnAceptar"/>
+					</p:selectOneMenu> 
+					  
+                     <h:outputLabel value = "Nombre:" /> 
+					 <p:inputText   id="txtNombre"  			 				 
+					 				 maxlength="80" 
+					 				styleClass="txtLargo"
+						            value="#{mbFacturaSelloDigital.sNombre}"  > 
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+						    <p:ajax event="blur"  
+									listener="#{mbFacturaSelloDigital.disableConsulta}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					</p:inputText> 
+          			 
+				     <h:outputLabel value = "Importe Honorarios:" /> 
+					 <p:inputText   id="txtImporte" 
+					 				styleClass="txtLargo" 
+						            value="#{mbFacturaSelloDigital.sImporte}"  
+						            onkeypress = "if((event.which &lt; 46 || event.which &gt; 57))  return false;" >	
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+						   	<p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validateImporte}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+					 </p:inputText>   
+					    
+					 
+				     <h:outputLabel  value = "UUID:" /> 
+					 	<p:inputText id="txtUUID" 					 				 
+					 				 maxlength="36" 
+					 				 styleClass="txtLargo"
+						             value="#{mbFacturaSelloDigital.sUUID}" >   
+						    <p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.validaConsulta}"
+									update=":frmFacturasConSelloDigital:btnAceptar"/>
+						    <p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validaUUID}"
+									update="@this,:frmFacturasConSelloDigital:btnAceptar"/>
+       				 </p:inputText>  		       				  	
+					<h:outputText value="&lt;br/&gt;" escape="false"/>			 
+              
+         </h:panelGrid>
+         <h:panelGrid id="dtButtons" 
+	                  columns="1" 
+			          cellpadding="1" > 
+          			 <p:commandButton  id="btnAceptar" 
+		                               icon="ui-icon-search" 
+		                               value="Aceptar"
+		                               styleClass="btnStyle"
+		                               actionListener="#{mbFacturaSelloDigital.Aceptar_click}"
+		                               disabled="#{!(mbFacturaSelloDigital.bConsulta_Disable)}"
+		                               update=":frmFacturasConSelloDigital:dtFacturas,:frmFacturasConSelloDigital:pgCriteriosCons,
+				                               :frmFacturasConSelloDigital:dtConsulta,:frmFacturasConSelloDigital:dtButtons, 
+				                               :frmFacturasConSelloDigital:btnExportar"  />
+		            <p:commandButton   id="btnLimpiar" 
+		                               icon="ui-icon-trash" 
+		                               styleClass="btnStyle"
+		                               value="Limpiar"
+		                               actionListener="#{mbFacturaSelloDigital.cleanFacturas}" 
+		                               update=":frmFacturasConSelloDigital:pgCriteriosCons,:frmFacturasConSelloDigital:dtConsulta,
+		                               		   :frmFacturasConSelloDigital:pnConsulta,:frmFacturasConSelloDigital:dtFacturas,
+		                               		   :frmFacturasConSelloDigital:btnExportar,:frmFacturasConSelloDigital:pnBtnOpciones" /> 
+		            <p:commandButton value="Exportar" 
+		                             id="btnExportar" 
+		                             icon="ui-icon-print"  
+		                             styleClass="btnStyle"
+		                             disabled="#{!(mbFacturaSelloDigital.facturas.size() != 0)}"
+                                     actionListener  = "#{mbFacturaSelloDigital.Exportar}"/>
+         </h:panelGrid>
+         
+        <p:panel id="pnBtnOpciones" > 
+        <h:outputText 	value="NOTA: Si el Estatus es igual a INCOMPLETO o ACTIVO, &#10; puede oprimir el botón Corregir, si ya corrigió el dato de origen." 
+                 		style="white-space: pre;"
+                 		disabled="#{!mbFacturaSelloDigital.bOpciones_Disable}" />
+      	<h:panelGrid  id="pgButtonsOpc" 
+                      columns="2"
+                      columnClasses="ColumnCriterios1ra,ColumnCriterios1ra" >
+			            
+                 <p:commandButton 	value="Corregir" 
+                 					styleClass="btnStyle2"
+                 					actionListener="#{mbFacturaSelloDigital.Corregir}"
+                 					disabled="#{!mbFacturaSelloDigital.bOpciones_Disable}"
+                 					icon="ui-icon-wrench" />   
+                  <p:commandButton  value="Reexpedición" 
+                 					styleClass="btnStyle2"
+                 					disabled="#{!mbFacturaSelloDigital.bOpciones_Disable}" 
+                 					actionListener="#{mbFacturaSelloDigital.Valida_Reexpide}"
+				 				 	update=":frmFacturasConSelloDigital:dlgReexpide,:frmFacturasConSelloDigital:dtReexpide"
+                 					icon="ui-icon-check"  />                    					  
+                  <p:commandButton 	value="Emisión CFDI Egreso"   
+                 					styleClass="btnStyle2" 
+                 					icon="ui-icon-calculator" 
+                 					disabled="#{!mbFacturaSelloDigital.bOpciones_Disable}"
+                 					actionListener="#{mbFacturaSelloDigital.ValidaEgresos}"
+				 				 	update=":frmFacturasConSelloDigital:dlgEmisionCFDI,:frmFacturasConSelloDigital:dtEmision"  />                    					
+                  <p:commandButton 	value="Cancelaciones" 
+                 					styleClass="btnStyle2"
+                 					icon="ui-icon-close" 
+                 					disabled="#{!mbFacturaSelloDigital.bOpciones_Disable}"
+                 					actionListener="#{mbFacturaSelloDigital.Valida_CancelaFactura}"
+				 				 	update=":frmFacturasConSelloDigital:dlgCancelaFact,:frmFacturasConSelloDigital:dtCancelacion" />     
+                  
+       </h:panelGrid>
+       </p:panel>
+       </h:panelGrid> 
+      </p:panel>
+        	<p:dialog header="Solicitud de Cancelaciones" 
+			          id="dlgCancelaFact" 
+			          widgetVar="dlgCancelaFact" 
+			          draggable="false" 
+			          resizable="false" 
+			          modal="true"
+			          closable="true"  
+			          height="170">
+			          
+				<h:panelGrid id="dtCancelacion"
+				             border="0" 
+	                         columns="4" 
+	                         columnClasses ="firstColumnConsulta, firstColumnConsulta" >
+	                     
+	            	<h:outputLabel  value = "Folio Fiduciario:" /> 
+					 <p:inputText    id="txtFolio"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.folio_Fac}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "Folio Transitoria: " /> 
+					 <p:inputText    id="txtFolioTran"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facFolioTran}" >
+				     </p:inputText>
+				     
+				     <h:outputLabel  value = "Estatus Actual:" /> 
+					 <p:inputText    id="txtEstatusAct"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facStatus}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "UUID: " /> 
+					 <p:inputText    id="txtUUIDCanc"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facDomPoblacion}" >
+				     </p:inputText>
+				      
+				     <h:outputLabel  value = "Motivo: " />   
+				     <p:selectOneMenu id="selMotivo" 
+					              value="#{mbFacturaSelloDigital.sValMotivo}"  
+					              style="width: 300px !important; text-align: left;" >
+						<f:selectItems value="#{mbFacturaSelloDigital.mMotivo.entrySet()}" 
+						               var="motivos" 
+						               itemLabel="#{motivos.value}" 
+						               itemValue="#{motivos.value}"/>
+						<p:ajax event="change" 
+						     	listener="#{mbFacturaSelloDigital.select_Motivo}"
+							   	update=":frmFacturasConSelloDigital:pgContenedor,:frmFacturasConSelloDigital:dtUUIDRexp,:frmFacturasConSelloDigital:btnSolicita"/>
+					</p:selectOneMenu> 	
+	            </h:panelGrid>
+	            
+	            <p:panel id="pgContenedor" 
+						 style= "border:none;">
+					<h:panelGrid id="dtUUIDRexp"
+	                         	 columns="2" 
+					             rendered ="#{mbFacturaSelloDigital.bUUID_Disable}"
+	                         	 columnClasses ="firstColumnUUID">	
+					 
+				     <h:outputLabel  id="lbUUIDReexp"
+				     				 value = "UUID REEXPEDIDO: " /> 
+					 <p:inputText    id="txtUUIDReexp"  				 				 
+					 				 maxlength="36"  
+					              	 style="width: 300px !important"
+						             value="#{mbFacturaSelloDigital.sUUIDCancelacion}" > 		
+					 		<p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.Deshabilita_Btn}"
+									update=":frmFacturasConSelloDigital:btnSolicita"/>  					
+					 		<p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validaUUID_Cancelacion}"
+									update="@this,:frmFacturasConSelloDigital:btnSolicita"/>  
+				     </p:inputText>
+				    </h:panelGrid> 
+				</p:panel>  	
+								
+				    <center>
+					<p:commandButton value="Solicita" 
+									 id="btnSolicita"
+					                 icon="ui-icon-check" 
+		                         	 disabled="#{!(mbFacturaSelloDigital.bOpera_Disable)}"
+					                 actionListener="#{mbFacturaSelloDigital.CancelaFactura}"
+			                         update=":frmFacturasConSelloDigital:pnConsulta,:frmFacturasConSelloDigital:dtFacturas,
+			                         		 :frmFacturasConSelloDigital:pgCriteriosCons,:frmFacturasConSelloDigital:dtConsulta,
+			                         		 :frmFacturasConSelloDigital:dtButtons,:frmFacturasConSelloDigital:btnExportar"  />
+					</center>
+			</p:dialog>
+		
+		    <p:dialog header="Emisión de CFDI de Egreso" 
+			          id="dlgEmisionCFDI" 
+			          widgetVar="dlgEmisionCFDI" 
+			          draggable="false" 
+			          resizable="false" 
+			          modal="true"  
+			          height="220"
+			          closable="true">
+			          
+				<h:panelGrid id ="dtEmision" 
+				             border="0" 
+	                      	 columns="2"  >
+	                     
+	            	<h:outputLabel  value = "Folio Fiduciario:" /> 
+					 <p:inputText    id="txtFolioFid"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.folio_Fac}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "Estatus Actual:" /> 
+					 <p:inputText    id="txtStatusAct"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facStatus}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "Folio Transitoria: " /> 
+					 <p:inputText    id="txtFolioTransit"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facFolioTran}" >
+				     </p:inputText>
+				     
+				     <h:outputLabel  value = "UUID: " /> 
+					 <p:inputText    id="txtUUIDEmision"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facDomPoblacion}" >
+				     </p:inputText>
+				       
+				     <h:outputLabel  value = "Importe del Egreso: " /> 
+					 <p:inputText    id="txtImporteEgreso"  
+					 				 value="#{mbFacturaSelloDigital.sImporteEmision}" 
+						             onkeypress = "if((event.which &lt; 46 || event.which &gt; 57))  return false;" >							             
+						   	<p:ajax event="focus" 
+									listener="#{mbFacturaSelloDigital.Deshabilita_Btn}"
+									update=":frmFacturasConSelloDigital:btnEmite"/>						             
+						   	<p:ajax event="blur" 
+									listener="#{mbFacturaSelloDigital.validateImporteEmision}"
+									update="@this,:frmFacturasConSelloDigital:btnEmite"/>
+				     </p:inputText>
+				     
+				     <h:outputLabel  value = "*Importe se calculará el I.V.A" /> 
+					<h:outputText value="&lt;br/&gt;" escape="false"/>		
+				     				 
+					</h:panelGrid>
+					
+				<center>
+					<p:commandButton value="Emite" 
+								 id="btnEmite"
+				                 icon="ui-icon-check"
+		                         disabled="#{!(mbFacturaSelloDigital.bOpera_Disable)}"
+				                 actionListener="#{mbFacturaSelloDigital.Emision}"
+		                         update=":frmFacturasConSelloDigital:pnConsulta,:frmFacturasConSelloDigital:dtFacturas,
+		                         		 :frmFacturasConSelloDigital:pgCriteriosCons,:frmFacturasConSelloDigital:dtConsulta,
+		                         		 :frmFacturasConSelloDigital:dtButtons,:frmFacturasConSelloDigital:btnExportar"   />
+				</center>
+			</p:dialog>
+			 
+		    <p:dialog header="Reexpedición" 
+			          id="dlgReexpide" 
+			          widgetVar="dlgReexpide" 
+			          draggable="false" 
+			          resizable="false" 
+			          modal="true" 
+			          height="250"
+			          closable="true">
+			          
+				<h:panelGrid id="dtReexpide"
+				             border="0" 
+	                      	 columns="2"  >
+	                     
+	            	<h:outputLabel  value = "Folio Fiduciario:" /> 
+					 <p:inputText    id="txtFolioFidRex"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.folio_Fac}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "Estatus Actual:" /> 
+					 <p:inputText    id="txtStatusActRex"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facStatus}" >
+				     </p:inputText> 
+				     
+				     <h:outputLabel  value = "R.F.C.: " /> 
+					 <p:inputText    id="txtRFC"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facRFC}" >
+				     </p:inputText>
+				     
+				     <h:outputLabel  value = "Folio Transitoria: " /> 
+					 <p:inputText    id="txtFTransRex"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facFolioTran}" >
+				     </p:inputText>
+				     
+				     <h:outputLabel  value = "UUID Relacionado: " /> 
+					 <p:inputText    id="txtUUIDRex"   
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facDomPoblacion}" >
+				     </p:inputText>
+				       
+				     <h:outputLabel  value = "Importe Honorarios: " />  
+					 <p:inputText    id="txtImporteRex"
+						             readonly="true" 
+						             styleClass="inputRead"
+						             value="#{mbFacturaSelloDigital.factSelloBean.facHonorarios}" >	 
+					 	<f:convertNumber groupingUsed="true" pattern="$#,###,###,###,###,##0.00####"/>
+				     </p:inputText>	  
+					</h:panelGrid>
+					 
+					<h:outputText value="&lt;br/&gt;" escape="false"/>	
+				    <h:outputLabel  value = "NOTA: Debe corregir los datos demográficos desde origen." /> 
+					<h:outputText value="&lt;br/&gt;" escape="false"/>	
+					
+				<center>
+					<p:commandButton value="Reexpide" 
+				                 icon="ui-icon-check" 
+				                 actionListener="#{mbFacturaSelloDigital.Reexpide}"
+		                         update=":frmFacturasConSelloDigital:pnConsulta,:frmFacturasConSelloDigital:dtFacturas,
+		                         		 :frmFacturasConSelloDigital:pgCriteriosCons,:frmFacturasConSelloDigital:dtConsulta,
+		                         		 :frmFacturasConSelloDigital:dtButtons,:frmFacturasConSelloDigital:btnExportar"    />
+				</center>
+			</p:dialog> 
+			
+        <p:dialog id="dlgAjaxStatus" 
+        		  closable="false" 
+        		  header="Espere"
+        		  modal="true" 
+        		  resizable="false" 
+        		  style="background-color: #eee; height : auto; width : auto;" 
+        		  widgetVar = "dlgAjaxStatus">
+        <center>
+         <p:graphicImage value = "../vista/recursos/img/gif/000.gif" />
+        </center>
+        </p:dialog>        
+        </h:form>
+    </h:body>
+</html>

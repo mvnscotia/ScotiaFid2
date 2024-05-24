@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<faces-config version="2.2" 
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    <application>
+        <locale-config>
+            <defaul-locale>es</defaul-locale>
+        </locale-config>
+        <message-bundle>scotiaFid.messages.clientMessages</message-bundle>
+    </application>
+    <factory>
+        <exception-handler-factory>
+            scotiaFid.handler.CustomExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>
+</faces-config>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8" />
+      <meta http-equiv="Conten-Type-Options" content = "nosniff" />
+      <meta http-equiv="X-XSS-Protection" content = "1" />
+      <meta http-equiv="Cache-control" content = "No-Store" />
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv = "expires"                            content         = "43200"/>
+      <link rel = "stylesheet" type = "text/css" href = "../vista/recursos/css/cssGral.css"  media = "screen"/>
+      <script type  = "text/javascript"  src = "../vista/recursos/js/validador.js"></script>
+      <title>Sistema_Fiduciario</title>
+      <style type = "text/css">
+         *{ font-size : small;}
+         .form { align-items : center; flex-direction : column; justify-content : center; margin  : auto; max-width : 600px; width : 100%; }
+         .first { width: 150px; text-align: right; }
+         .second { width: 250px; }
+         .third { width: 150px; }
+         .firstColumn { width: 300px; }
+         .secondColumn { width: 450px; }
+         .thirdColumn { width: 500px; }
+         .firstColumnTime { width: 50px; text-align: right;}
+         .secondColumnTime { width: 50px; text-align: center;}
+         .thirdColumnTime { width: 50px; text-align: left;}
+         .inputForm { width: 400px; text-transform: uppercase; }
+         .inputTextAreaForm { width: 400px; text-transform: uppercase; }
+         .selectOneMenuForm { width: 400px; }
+         .selectOneMenuTime { width: 50px; }
+         .firstButtom { width: 325px;  text-align: right; }
+         .secondButtom { width: 325px;  text-align: left; }
+         .firstColumnParticipante { width: 200px; }
+         .secondColumnParticipante { width: 500px; }
+         td.centeredColumnContent{text-align: center;}
+         td.rightColumnContent{text-align: right;}
+         td.leftColumnContent{text-align: left;}
+      </style>                                                        
+    </h:head>
+    <h:body>
+      <p:growl autoUpdate = "true" showDetail = "true" showSummary = "true" life = "15000"/>
+      <p:ajaxStatus onstart = "dlgAjaxStatus.show();" oncomplete  = "dlgAjaxStatus.hide();"/>
+      <h:form id="formPagoHonorariosPrelacion">
+        <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+        <p:panel header="Pago de Honorarios con Prelación">
+          <center>
+            <h:panelGrid border="0" columns="4" cellpadding="4" styleClass="ui-widget-content" columnClasses="first, second, third">
+              <h:outputLabel value = "Fideicomiso:" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+              <p:inputText id="txtFideicomiso" value="#{mbHonorarios.detCartBean.fideicomiso}" styleClass="inputForm"  maxlength="10" onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;"></p:inputText>
+              <p:commandButton id="btnSeleccion" icon="ui-icon-search" value="Selección" actionListener="#{mbHonorarios.getPagosHonorariosAdmon}" update=":formPagoHonorariosPrelacion:dtPagos, :formPagoHonorariosPrelacion:btnGenerarPago, :formPagoHonorariosPrelacion:selPayPerson" />
+              <p:commandButton id="btnGenerarPago" value="Generar Pago" oncomplete="dlgGenerarPago.show()" disabled="#{mbHonorarios.habilitaBotonGenerarPago!=1}" update=":formPagoHonorariosPrelacion:dlgGenerarPago" actionListener="#{mbHonorarios.cleanPagosHonorarios}" />
+            </h:panelGrid>
+          </center>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+          <p:dataTable id="dtPagos" selectionMode="single" scrollable="true" scrollHeight="350" value="#{mbHonorarios.pagos}" var="pago" rowKey="#{pago}" rows="10"  paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" emptyMessage="Sin registros" liveResize= "true" resizableColumns= "true">
+             <p:ajax event="rowSelect" listener="#{mbHonorarios.onRowSelectTotalPersona}" update=":formPagoHonorariosPrelacion:dtPagos" />
+             <p:column style="width:10px">
+               <p:rowToggler />
+             </p:column>  
+             <p:column headerText="Fecha Cálculo" styleClass="centeredColumnContent" width="100"><h:outputText value="#{pago.fechaCalculo}" title="#{pago.fechaCalculo}" /></p:column>
+             <p:column headerText="Tipo de Honorario" width="240"><h:outputText value="#{pago.honorario}" title="#{pago.honorario}" /></p:column>
+             <p:column headerText="Moneda" width="150"><h:outputText value="#{pago.moneda}" title="#{pago.moneda}" /></p:column>
+             <p:column headerText="Nombre de Persona" width="300"><h:outputText value="#{pago.personaNombre}" title="#{pago.personaNombre}"/></p:column>
+             <p:column headerText="Secuencial" width="80" styleClass="rightColumnContent"><h:outputText value="#{pago.secuencial}" title="#{pago.secuencial}" /></p:column>
+             <p:column headerText="Adeudo" width="100" styleClass="rightColumnContent"><h:outputText value="#{pago.adeudo}" title="#{pago.adeudo}" /></p:column>
+             <p:columnGroup type="footer" id="footerTotales">
+              <p:row>
+                <p:column></p:column>
+                <p:column colspan="3" width="100" style="text-align:left"  footerText="Total:"/>
+                <p:column style="text-align:left">
+                 <f:facet name="footer">
+                  <h:outputText value="#{mbHonorarios.totalAdeudoFormat}" title="#{mbHonorarios.totalAdeudoFormat}"></h:outputText>
+                 </f:facet>
+                </p:column>
+                <p:column colspan="3" width="100" style="text-align:left"  footerText="Total Persona:"/>
+                 <p:column style="text-align:left">
+                  <f:facet name="footer">
+                   <h:outputText  value="#{mbHonorarios.totalAdeudoDolarFormat}" title="#{mbHonorarios.totalAdeudoDolarFormat}"></h:outputText>
+                  </f:facet>
+                 </p:column>
+              </p:row>
+             </p:columnGroup>
+             <p:rowExpansion>
+               <h:panelGrid id="display" columns="2" cellpadding="4" style="width:400px;" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+                 <h:outputText value="Fideicomiso:" />
+                 <h:outputText id="txtFiso" value="#{pago.fideicomiso}" />
+                 <h:outputText value="Subfiso:" />
+                 <h:outputText id="txtSubfiso" value="#{pago.subFiso}" />
+                 <h:outputText value="Importe:" />
+                 <h:outputText id="txtImporte" value="#{pago.importe}" />
+                 <h:outputText value="I.V.A.:" />
+                 <h:outputText id="txtEstatus" value="#{pago.iva}" />
+                 <h:outputText value="Moratorios:" />
+                 <h:outputText id="txtMoratorios" value="#{pago.moratorios}" />
+                 <h:outputText value="Importe de Pago:" />
+                 <h:outputText id="txtAdeudo" value="#{pago.adeudo}" />
+                 <h:outputText value="No. Persona:" />
+                 <h:outputText id="txtNoPersona" value="#{pago.noPersona}" />
+                 <h:outputText value="Tipo de Persona:" />
+                 <h:outputText id="txtPersona" value="#{pago.persona}" />
+                 <h:outputText value="Concepto:" />
+                 <h:outputText id="txtConcepto" value="#{pago.concepto}" />
+                 <h:outputText value="No. Pagos:" />
+                 <h:outputText id="txtNoPagos" value="#{pago.noPagos}" />
+                 <h:outputText value="Imp. Pagos:" />
+                 <h:outputText id="txtImpPagos" value="#{pago.impPagos}" />
+                 <h:outputText value="Calificación:" />
+                 <h:outputText id="txtCalificacion" value="#{pago.calificacion}" />
+                 <h:outputText value="Fecha Del:" />
+                 <h:outputText id="txtFechaDel" value="#{pago.fechaDel}" />
+                 <h:outputText value="Fecha Al:" />
+                 <h:outputText id="txtFechaAl" value="#{pago.fechaAl}" />
+                 <h:outputText value="Días Atraso:" />
+                 <h:outputText id="txtDiasAtraso" value="#{pago.diasAtraso}" />
+               </h:panelGrid>
+            </p:rowExpansion>
+           </p:dataTable>
+        </p:panel>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+       
+        <p:dialog header="Generar Pago" id="dlgGenerarPago" widgetVar="dlgGenerarPago" draggable="false" resizable="false" modal="true" closable="false" width="750" height="200"> 
+          <h:panelGrid border="0" columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+            <h:outputLabel value = "Pagar a:" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+            <p:selectOneMenu id="selPayPerson" value="#{mbHonorarios.detCartBean.personaPaga}" required="false" styleClass="selectOneMenuForm">
+               <f:selectItems value="#{mbHonorarios.payments}" />
+            </p:selectOneMenu>
+            <h:outputLabel value = "Forma de Pago:" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+            <p:selectOneMenu id="selMetodoPago" value="#{mbHonorarios.metodoPago}" styleClass="selectOneMenuForm">
+               <f:selectItems value="#{mbHonorarios.metodosPago.entrySet()}" var="metodoPago" itemLabel="#{metodoPago.value}" itemValue="#{metodoPago.key}" /> 
+            </p:selectOneMenu> 
+            <h:outputLabel value = "Importe de Pago:" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+            <p:inputText id="txtImporte" value="#{mbHonorarios.importeTotal}" styleClass="inputNumber"  maxlength="16" onkeypress="if((event.which &lt; 48 || event.which &gt; 57)  &amp;&amp; (event.keyCode != 46)) return false;">
+               <p:ajax event="blur" listener="#{mbHonorarios.formatNumber}" update=":formPagoHonorariosPrelacion:txtImporte" />
+            </p:inputText>
+          </h:panelGrid>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+          <center>
+            <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+             <p:commandButton value="Aplicar Pago" actionListener="#{mbHonorarios.applyPayHonAdmonPrelacion}" icon="ui-icon-check" update=":formPagoHonorariosPrelacion:dtPagos,:formPagoHonorariosPrelacion:dlgGenerarPago,:formPagoHonorariosPrelacion:btnGenerarPago,:formPagoHonorariosPrelacion:selPayPerson" />
+             <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgGenerarPago.hide()" />
+            </h:panelGrid>
+          </center>  
+        </p:dialog>
+        <h:outputText value="&lt;br/&gt;" escape="false" />
+        
+        <p:dialog header="Porcentaje de Pago de los participantes" id="dlgParticipantePago" widgetVar="dlgParticipantePago"  draggable="false" resizable="false" modal="true" closable="false" width="800" height="400">
+          <h:panelGrid border="0" columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="first second">
+            <h:outputLabel value = "Fideicomiso:" style = "display : block; color : blue; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <h:outputLabel value="#{mbHonorarios.detCartBean.fideicomiso}" style = "display : block; color : black; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+            <h:outputText value="&lt;br/&gt;" escape="false" />
+            <h:outputLabel value="#{mbHonorarios.pacaHonBean.contratoNombre}" style = "display : block; color : black; font-family: sans-serif; font-size  : small;  font-weight: bolder; margin-left: 15px;"/>
+          </h:panelGrid>
+          <h:outputText value="&lt;br/&gt;" escape="false" />
+          <p:dataTable id="dtParticipantePago" editable="true" var="participante" value="#{mbHonorarios.participantes}"  style="margin-bottom:20px">
+             <p:ajax event="rowEdit" />
+             <p:ajax event="rowEditCancel" />
+             <p:column headerText="Tipo Participante" styleClass="leftColumnContent"><h:outputText value="#{participante.tipoParticipante}"/></p:column>
+             <p:column headerText="Nombre" styleClass="leftColumnContent"><h:outputText value="#{participante.participante}"/></p:column>
+             <p:column headerText="Porcentaje" styleClass="rightColumnContent">
+              <p:cellEditor>
+                <f:facet name="output"><h:outputText value="#{participante.porcentaje}%"/></f:facet>
+                <f:facet name="input"><p:inputText value="#{participante.porcentaje}" style="width:50%" maxlength="3" onkeypress="if(event.which &lt; 48 || event.which &gt; 57)  return false;"/></f:facet>
+              </p:cellEditor>
+             </p:column>
+             <p:column headerText="Acción" style="width:6rem">
+               <p:rowEditor/>
+             </p:column>   
+          </p:dataTable>
+          <f:facet name="footer">
+          <center>
+            <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+              <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbHonorarios.checkPercent}" oncomplete="dlgParticipantePago.hide()" />
+              <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgParticipantePago.hide()" />
+            </h:panelGrid>
+          </center>
+          </f:facet> 
+        </p:dialog>
+        
+        <p:confirmDialog header="Porcentajes de Facturacion" id="dlgAplicarPorcentajes" widgetVar="dlgAplicarPorcentajes" message="¿Esta seguro de los porcentajes de facturacion que se van a aplicar?" closable="false">
+          <p:commandButton title="Acepta"  value="Si" icon="ui-icon-check" actionListener="#{mbHonorarios.insertParahope}" oncomplete="dlgAplicarPorcentajes.hide()" update=":formPagoHonorariosPrelacion:dtPagos" />
+          <p:commandButton title="Cancela" value="No" icon="ui-icon-close" oncomplete="dlgAplicarPorcentajes.hide()"/>
+        </p:confirmDialog>
+        <h:outputText value="&lt;br/&gt;" escape="false" />  
+        
+        <p:dialog id="dlgAjaxStatus" closable="false" header="Espere" modal="true" resizable="false" style="background-color: #eee; height : auto; width : auto;" widgetVar = "dlgAjaxStatus">
+        <center>
+         <p:graphicImage value = "../vista/recursos/img/gif/000.gif" />
+        </center>
+        </p:dialog>
+      </h:form> 
+    </h:body>
+</html>

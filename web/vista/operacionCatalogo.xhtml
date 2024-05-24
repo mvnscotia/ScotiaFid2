@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html" 
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+      <meta http-equiv="Conten-Type" content = "text/html; charset=UTF-8" />
+      <meta http-equiv="Conten-Type-Options" content = "nosniff" />
+      <meta http-equiv="X-XSS-Protection" content = "1" />
+      <meta http-equiv="Cache-control" content = "No-Store" />
+      <meta http-equiv="Cache-control" content = "No-Cache"/>
+      <meta http-equiv = "expires"                            content         = "43200"/> 
+      <link rel = "stylesheet" type = "text/css" href = "../vista/recursos/css/cssGral.css"  media = "screen"/>
+      <script type  = "text/javascript"  src = "../vista/recursos/js/validador.js"></script>
+      <title>Sistema_Fiduciario</title>
+      <style type = "text/css">
+         *{ font-size : small;}
+         .form { align-items : center; flex-direction : column; justify-content : center; margin  : auto; max-width : 600px; width : 100%; }
+         .first { width: 150px; }
+         .second { width: 900px; }
+         .firstColumn { width: 500px; }
+         .secondColumn { width: 500px; }
+         .thirdColumn { width: 500px; }
+         .firstColumnTime { width: 50px; text-align: left;}
+         .secondColumnTime { width: 50px; text-align: left;}
+         .thirdColumnTime { width: 50px; text-align: left;}
+         .inputForm { width: 400px; text-transform: uppercase; }
+         .inputTextAreaForm { width: 400px; text-transform: uppercase; }
+         .selectOneMenuForm { width: 400px; }
+         .selectOneMenuTime { width: 50px; }
+         .firstButtom { width: 325px;  text-align: right; }
+         .secondButtom { width: 325px;  text-align: left; }
+         .firstButtomCalProd { width : 50%;  text-align: right; }
+         .secondButtomCalProd { width: 50%;  text-align: left; }
+         .textFieldDisabled { width: 300px; background-color: #F2D7D5 !important;}
+      </style>
+      <script type="text/javascript">  
+	     PrimeFaces.locales['es'] = {
+    	    closeText: 'Cerrar',
+    	    prevText: 'Anterior',
+    	    nextText: 'Siguiente',
+    	    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    	    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    	    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    	    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+    	    dayNamesMin: ['D','L','M','M','J','V','S'],
+    	    weekHeader: 'Semana',
+    	    firstDay: 1,
+    	    isRTL: false,
+    	    showMonthAfterYear: false,
+    	    yearSuffix: '',
+    	    timeOnlyTitle: 'Sólo hora',
+    	    timeText: 'Tiempo',
+    	    hourText: 'Hora',
+    	    minuteText: 'Minuto',
+    	    secondText: 'Segundo',
+    	    currentText: 'Fecha actual',
+    	    ampm: false,
+    	    month: 'Mes',
+    	    week: 'Semana',
+    	    day: 'Día',
+    	    allDayText : 'Todo el día'
+		 };
+      </script>  
+    </h:head>
+    <h:body>
+        <p:growl autoUpdate = "true" showDetail = "true" showSummary = "true" life = "15000"/>
+        <p:ajaxStatus onstart = "dlgAjaxStatus.show();" oncomplete  = "dlgAjaxStatus.hide();"/>
+         <h:form id="formOperacion">
+             <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+          <p:tabView id="panelOperacion" widgetVar="panelOperacion" dynamic="true" cache="false">
+              <p:ajax event="tabChange" listener="#{mbOperacion.init}" update=":formOperacion:panelOperacion:dtPlanes,:formOperacion:panelOperacion:dtRutinas,:formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:dtCalProd,:formOperacion:panelOperacion:selPlan" />
+           <p:tab title="Catálogo de Planes">
+           <p:panel header="Mantenimiento de Operación del Sistema">  
+           <p:dataTable id="dtPlanes" scrollable="true" scrollHeight="350" value="#{mbOperacion.planes}" var="plan" rows="10"  paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros">
+             <p:column style="width:10px">
+                <p:rowToggler />
+             </p:column>
+             <p:column headerText="Planes"><h:outputText value="#{plan.clave}"/></p:column>
+             <p:rowExpansion>
+               <h:panelGrid id="display" columns="2" cellpadding="4" style="width:800px;" styleClass="ui-widget-content" columnClasses="first, second">
+                 <h:outputText  value="Descripción:" />
+                 <h:outputText id="descripcion" value="#{plan.descripcion}" />
+                 <h:outputText value="Periodicidad:" />	
+                 <h:outputText id="periodo" value="#{plan.periodo}" />
+                 <h:outputText value="Fecha Inicio Operación:" />
+                 <h:outputText id="fechaAplicacion" value="#{plan.fechaAplicacion}" />
+                 <h:outputText value="Hora Inicio Operación:" />
+                 <h:outputText id="horaAplicacion" value="#{plan.horaAplicacion}" />
+                 <h:outputText value="Estatus:" />
+                 <h:outputText id="estatus" value="#{plan.estatus}" />
+                 <p:commandButton value="Eliminar"   icon="ui-icon-trash" actionListener="#{mbOperacion.loadPlan(plan)}" oncomplete="dlgEliminarPlan.show()" />
+                 <p:commandButton value="Actualizar" icon="ui-icon-pencil" update=":formOperacion:panelOperacion:dlgActualizarPlan" actionListener="#{mbOperacion.loadPlan(plan)}" oncomplete="dlgActualizarPlan.show()" />
+               </h:panelGrid>
+            </p:rowExpansion>
+            <f:facet name="paginatorBottomRight"><p:commandButton type="button" icon="pi pi-cloud-upload"/></f:facet>
+           </p:dataTable>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:commandButton icon="ui-icon-plus" value="Agregar" update=":formOperacion:panelOperacion:dlgAgregarPlan" actionListener="#{mbOperacion.cleanPlan}" oncomplete="dlgAgregarPlan.show()" /> 
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:confirmDialog header="Eliminar Plan" id="dlgEliminarPlan" widgetVar="dlgEliminarPlan" message="¿Estás seguro de eliminar el plan?" closable="false">
+             <p:commandButton title="Acepta eliminar el plan" value="Aceptar" icon="ui-icon-check" actionListener="#{mbOperacion.deletePlan}" oncomplete="dlgEliminarPlan.hide()" update=":formOperacion:panelOperacion:dtPlanes,:formOperacion:panelOperacion:selPlan,:formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:dtCalProd" />
+             <p:commandButton title="Cancela eliminar el plan" value="Cancelar" icon="ui-icon-close" oncomplete="dlgEliminarPlan.hide()"/>
+           </p:confirmDialog>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dialog header="Agregar Plan" id="dlgAgregarPlan" widgetVar="dlgAgregarPlan" draggable="false" resizable="false" modal="true" closable="false" width="650" height="400"> 
+             <h:panelGrid columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+               <h:outputLabel value = "Nombre Plan" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtPlanAgregar" value="#{mbOperacion.planBean.claveAgregar}" styleClass="inputForm"  maxlength="36" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputText>
+               <h:outputLabel value = "Descripción" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputTextarea rows="6" cols="33" id="txtDescripcionAgregar" value="#{mbOperacion.planBean.descripcionAgregar}" styleClass="inputTextAreaForm" maxlength="255" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputTextarea> 
+               <h:outputLabel value = "Periodicidad" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selPeriodicidad" value="#{mbOperacion.planBean.periodoAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="DIARIO" itemValue="DIARIO"/>
+                 <f:selectItem itemLabel="SEMANAL" itemValue="SEMANAL"/> 
+                 <f:selectItem itemLabel="MENSUAL" itemValue="MENSUAL"/>
+                 <f:selectItem itemLabel="ANUAL" itemValue="ANUAL"/>
+               </p:selectOneMenu>
+               <h:outputLabel value = "Fecha Operación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:calendar id="calFechaInicio" showOn="button" value="#{mbOperacion.planBean.fechaAgregar}" mode="popup" pattern="dd/MM/yyyy" readonlyInput="true" timeZone="America/Mexico_City"  locale="es" />
+               <h:outputLabel value = "Hora Operación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <h:panelGrid columns="3" cellpadding="4" columnClasses="firstColumnTime, secondColumnTime, thirdColumnTime">  
+                 <p:selectOneMenu id="selHoraOperacion" value="#{mbOperacion.planBean.horaAgregar}" styleClass="selectOneMenuForm">
+                   <f:selectItem itemLabel="00" itemValue="00"/>
+                   <f:selectItem itemLabel="01" itemValue="01"/> 
+                   <f:selectItem itemLabel="02" itemValue="02"/>
+                   <f:selectItem itemLabel="03" itemValue="03"/>
+                   <f:selectItem itemLabel="04" itemValue="04"/>
+                   <f:selectItem itemLabel="05" itemValue="05"/>
+                   <f:selectItem itemLabel="06" itemValue="06"/> 
+                   <f:selectItem itemLabel="07" itemValue="07"/>
+                   <f:selectItem itemLabel="08" itemValue="08"/>
+                   <f:selectItem itemLabel="09" itemValue="09"/>
+                   <f:selectItem itemLabel="10" itemValue="10"/>
+                   <f:selectItem itemLabel="11" itemValue="11"/> 
+                   <f:selectItem itemLabel="12" itemValue="12"/>
+                   <f:selectItem itemLabel="13" itemValue="13"/>
+                   <f:selectItem itemLabel="14" itemValue="14"/>
+                   <f:selectItem itemLabel="15" itemValue="15"/>
+                   <f:selectItem itemLabel="16" itemValue="16"/> 
+                   <f:selectItem itemLabel="17" itemValue="17"/>
+                   <f:selectItem itemLabel="18" itemValue="18"/>
+                   <f:selectItem itemLabel="19" itemValue="19"/>
+                   <f:selectItem itemLabel="20" itemValue="20"/>
+                   <f:selectItem itemLabel="21" itemValue="21"/> 
+                   <f:selectItem itemLabel="22" itemValue="22"/>
+                   <f:selectItem itemLabel="23" itemValue="23"/>
+                 </p:selectOneMenu>
+                 <h:outputLabel value = ":" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+                 <p:selectOneMenu id="selMinutoOperacion" value="#{mbOperacion.planBean.minutoAgregar}" styleClass="selectOneMenuForm">
+                   <f:selectItem itemLabel="00" itemValue="00"/>
+                   <f:selectItem itemLabel="01" itemValue="01"/> 
+                   <f:selectItem itemLabel="02" itemValue="02"/>
+                   <f:selectItem itemLabel="03" itemValue="03"/>
+                   <f:selectItem itemLabel="04" itemValue="04"/>
+                   <f:selectItem itemLabel="05" itemValue="05"/>
+                   <f:selectItem itemLabel="06" itemValue="06"/> 
+                   <f:selectItem itemLabel="07" itemValue="07"/>
+                   <f:selectItem itemLabel="08" itemValue="08"/>
+                   <f:selectItem itemLabel="09" itemValue="09"/>
+                   <f:selectItem itemLabel="10" itemValue="10"/>
+                   <f:selectItem itemLabel="11" itemValue="11"/> 
+                   <f:selectItem itemLabel="12" itemValue="12"/>
+                   <f:selectItem itemLabel="13" itemValue="13"/>
+                   <f:selectItem itemLabel="14" itemValue="14"/>
+                   <f:selectItem itemLabel="15" itemValue="15"/>
+                   <f:selectItem itemLabel="16" itemValue="16"/> 
+                   <f:selectItem itemLabel="17" itemValue="17"/>
+                   <f:selectItem itemLabel="18" itemValue="18"/>
+                   <f:selectItem itemLabel="19" itemValue="19"/>
+                   <f:selectItem itemLabel="20" itemValue="20"/>
+                   <f:selectItem itemLabel="21" itemValue="21"/> 
+                   <f:selectItem itemLabel="22" itemValue="22"/>
+                   <f:selectItem itemLabel="23" itemValue="23"/>
+                   <f:selectItem itemLabel="24" itemValue="24"/>
+                   <f:selectItem itemLabel="25" itemValue="25"/>
+                   <f:selectItem itemLabel="26" itemValue="26"/> 
+                   <f:selectItem itemLabel="27" itemValue="27"/>
+                   <f:selectItem itemLabel="28" itemValue="28"/>
+                   <f:selectItem itemLabel="29" itemValue="29"/>
+                   <f:selectItem itemLabel="30" itemValue="30"/>
+                   <f:selectItem itemLabel="31" itemValue="31"/> 
+                   <f:selectItem itemLabel="32" itemValue="32"/>
+                   <f:selectItem itemLabel="33" itemValue="33"/>
+                   <f:selectItem itemLabel="34" itemValue="34"/>
+                   <f:selectItem itemLabel="35" itemValue="35"/>
+                   <f:selectItem itemLabel="36" itemValue="36"/> 
+                   <f:selectItem itemLabel="37" itemValue="37"/>
+                   <f:selectItem itemLabel="38" itemValue="38"/>
+                   <f:selectItem itemLabel="39" itemValue="39"/>
+                   <f:selectItem itemLabel="40" itemValue="40"/>
+                   <f:selectItem itemLabel="41" itemValue="41"/> 
+                   <f:selectItem itemLabel="42" itemValue="42"/>
+                   <f:selectItem itemLabel="43" itemValue="43"/>
+                   <f:selectItem itemLabel="44" itemValue="44"/>
+                   <f:selectItem itemLabel="45" itemValue="45"/>
+                   <f:selectItem itemLabel="46" itemValue="46"/> 
+                   <f:selectItem itemLabel="47" itemValue="47"/>
+                   <f:selectItem itemLabel="48" itemValue="48"/>
+                   <f:selectItem itemLabel="49" itemValue="49"/>
+                   <f:selectItem itemLabel="50" itemValue="50"/>
+                   <f:selectItem itemLabel="51" itemValue="51"/> 
+                   <f:selectItem itemLabel="52" itemValue="52"/>
+                   <f:selectItem itemLabel="53" itemValue="53"/>
+                   <f:selectItem itemLabel="54" itemValue="54"/>
+                   <f:selectItem itemLabel="55" itemValue="55"/>
+                   <f:selectItem itemLabel="56" itemValue="56"/> 
+                   <f:selectItem itemLabel="57" itemValue="57"/>
+                   <f:selectItem itemLabel="58" itemValue="58"/>
+                   <f:selectItem itemLabel="59" itemValue="59"/>
+                 </p:selectOneMenu> 
+               </h:panelGrid>
+               <h:outputLabel value = "Estatus" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selEstatus" value="#{mbOperacion.planBean.estatusAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+                 <f:selectItem itemLabel="CANCELADO" itemValue="CANCELADO"/>
+                 <f:selectItem itemLabel="SUSPENDIDO" itemValue="SUSPENDIDO"/>
+                 <f:selectItem itemLabel="CONTROLM" itemValue="CONTROLM"/>
+               </p:selectOneMenu>  
+             </h:panelGrid>
+             <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+               <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbOperacion.insertPlan}" update=":formOperacion:panelOperacion:dtPlanes,:formOperacion:panelOperacion:dtRutinasCalProd" />
+               <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgAgregarPlan.hide()" />
+             </h:panelGrid>  
+           </p:dialog>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dialog header="Actualizar Plan" id="dlgActualizarPlan" widgetVar="dlgActualizarPlan" draggable="false" resizable="false" modal="true" closable="false" width="650" height="400">
+             <h:panelGrid columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+               <h:outputLabel value = "Nombre Plan" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtPlanActualizar" value="#{mbOperacion.planBean.clave}" readonly="true" styleClass="textFieldDisabled" maxlength="36"></p:inputText>
+               <h:outputLabel value = "Descripción" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputTextarea rows="6" cols="33" id="txtDescripcionActualizar" value="#{mbOperacion.planBean.descripcion}" styleClass="inputTextAreaForm" maxlength="255" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputTextarea>
+               <h:outputLabel value = "Periodicidad" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selPeriodicidadActualizar" value="#{mbOperacion.planBean.periodo}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="DIARIO" itemValue="DIARIO"/>
+                 <f:selectItem itemLabel="SEMANAL" itemValue="SEMANAL"/>
+                 <f:selectItem itemLabel="MENSUAL" itemValue="MENSUAL"/>
+                 <f:selectItem itemLabel="ANUAL" itemValue="ANUAL"/>
+               </p:selectOneMenu>
+               <h:outputLabel value="Fecha Operación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:calendar id="calFechaInicioActualizar" showOn="button" value="#{mbOperacion.planBean.fecha}" mode="popup" pattern="dd/MM/yyyy" readonlyInput="true" timeZone="America/Mexico_City"  locale="es" />
+               <h:outputLabel value = "Hora Operación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <h:panelGrid columns="3" cellpadding="4" columnClasses="firstColumnTime, secondColumnTime, thirdColumnTime">  
+                 <p:selectOneMenu id="selHoraOperacionActualizar" value="#{mbOperacion.planBean.hora}" styleClass="selectOneMenuForm">
+                   <f:selectItem itemLabel="00" itemValue="00"/>
+                   <f:selectItem itemLabel="01" itemValue="01"/> 
+                   <f:selectItem itemLabel="02" itemValue="02"/>
+                   <f:selectItem itemLabel="03" itemValue="03"/>
+                   <f:selectItem itemLabel="04" itemValue="04"/>
+                   <f:selectItem itemLabel="05" itemValue="05"/>
+                   <f:selectItem itemLabel="06" itemValue="06"/> 
+                   <f:selectItem itemLabel="07" itemValue="07"/>
+                   <f:selectItem itemLabel="08" itemValue="08"/>
+                   <f:selectItem itemLabel="09" itemValue="09"/>
+                   <f:selectItem itemLabel="10" itemValue="10"/>
+                   <f:selectItem itemLabel="11" itemValue="11"/> 
+                   <f:selectItem itemLabel="12" itemValue="12"/>
+                   <f:selectItem itemLabel="13" itemValue="13"/>
+                   <f:selectItem itemLabel="14" itemValue="14"/>
+                   <f:selectItem itemLabel="15" itemValue="15"/>
+                   <f:selectItem itemLabel="16" itemValue="16"/> 
+                   <f:selectItem itemLabel="17" itemValue="17"/>
+                   <f:selectItem itemLabel="18" itemValue="18"/>
+                   <f:selectItem itemLabel="19" itemValue="19"/>
+                   <f:selectItem itemLabel="20" itemValue="20"/>
+                   <f:selectItem itemLabel="21" itemValue="21"/> 
+                   <f:selectItem itemLabel="22" itemValue="22"/>
+                   <f:selectItem itemLabel="23" itemValue="23"/>
+                 </p:selectOneMenu>
+                 <h:outputLabel value = ":" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+                 <p:selectOneMenu id="selMinutoOperacionActualizar" value="#{mbOperacion.planBean.minuto}" styleClass="selectOneMenuForm">
+                   <f:selectItem itemLabel="00" itemValue="00"/>
+                   <f:selectItem itemLabel="01" itemValue="01"/> 
+                   <f:selectItem itemLabel="02" itemValue="02"/>
+                   <f:selectItem itemLabel="03" itemValue="03"/>
+                   <f:selectItem itemLabel="04" itemValue="04"/>
+                   <f:selectItem itemLabel="05" itemValue="05"/>
+                   <f:selectItem itemLabel="06" itemValue="06"/> 
+                   <f:selectItem itemLabel="07" itemValue="07"/>
+                   <f:selectItem itemLabel="08" itemValue="08"/>
+                   <f:selectItem itemLabel="09" itemValue="09"/>
+                   <f:selectItem itemLabel="10" itemValue="10"/>
+                   <f:selectItem itemLabel="11" itemValue="11"/> 
+                   <f:selectItem itemLabel="12" itemValue="12"/>
+                   <f:selectItem itemLabel="13" itemValue="13"/>
+                   <f:selectItem itemLabel="14" itemValue="14"/>
+                   <f:selectItem itemLabel="15" itemValue="15"/>
+                   <f:selectItem itemLabel="16" itemValue="16"/> 
+                   <f:selectItem itemLabel="17" itemValue="17"/>
+                   <f:selectItem itemLabel="18" itemValue="18"/>
+                   <f:selectItem itemLabel="19" itemValue="19"/>
+                   <f:selectItem itemLabel="20" itemValue="20"/>
+                   <f:selectItem itemLabel="21" itemValue="21"/> 
+                   <f:selectItem itemLabel="22" itemValue="22"/>
+                   <f:selectItem itemLabel="23" itemValue="23"/>
+                   <f:selectItem itemLabel="24" itemValue="24"/>
+                   <f:selectItem itemLabel="25" itemValue="25"/>
+                   <f:selectItem itemLabel="26" itemValue="26"/> 
+                   <f:selectItem itemLabel="27" itemValue="27"/>
+                   <f:selectItem itemLabel="28" itemValue="28"/>
+                   <f:selectItem itemLabel="29" itemValue="29"/>
+                   <f:selectItem itemLabel="30" itemValue="30"/>
+                   <f:selectItem itemLabel="31" itemValue="31"/> 
+                   <f:selectItem itemLabel="32" itemValue="32"/>
+                   <f:selectItem itemLabel="33" itemValue="33"/>
+                   <f:selectItem itemLabel="34" itemValue="34"/>
+                   <f:selectItem itemLabel="35" itemValue="35"/>
+                   <f:selectItem itemLabel="36" itemValue="36"/> 
+                   <f:selectItem itemLabel="37" itemValue="37"/>
+                   <f:selectItem itemLabel="38" itemValue="38"/>
+                   <f:selectItem itemLabel="39" itemValue="39"/>
+                   <f:selectItem itemLabel="40" itemValue="40"/>
+                   <f:selectItem itemLabel="41" itemValue="41"/> 
+                   <f:selectItem itemLabel="42" itemValue="42"/>
+                   <f:selectItem itemLabel="43" itemValue="43"/>
+                   <f:selectItem itemLabel="44" itemValue="44"/>
+                   <f:selectItem itemLabel="45" itemValue="45"/>
+                   <f:selectItem itemLabel="46" itemValue="46"/> 
+                   <f:selectItem itemLabel="47" itemValue="47"/>
+                   <f:selectItem itemLabel="48" itemValue="48"/>
+                   <f:selectItem itemLabel="49" itemValue="49"/>
+                   <f:selectItem itemLabel="50" itemValue="50"/>
+                   <f:selectItem itemLabel="51" itemValue="51"/> 
+                   <f:selectItem itemLabel="52" itemValue="52"/>
+                   <f:selectItem itemLabel="53" itemValue="53"/>
+                   <f:selectItem itemLabel="54" itemValue="54"/>
+                   <f:selectItem itemLabel="55" itemValue="55"/>
+                   <f:selectItem itemLabel="56" itemValue="56"/> 
+                   <f:selectItem itemLabel="57" itemValue="57"/>
+                   <f:selectItem itemLabel="58" itemValue="58"/>
+                   <f:selectItem itemLabel="59" itemValue="59"/>
+                 </p:selectOneMenu> 
+               </h:panelGrid>
+               <h:outputLabel value = "Estatus" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selEstatusActualizar" value="#{mbOperacion.planBean.estatus}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+                 <f:selectItem itemLabel="CANCELADO" itemValue="CANCELADO"/>
+                 <f:selectItem itemLabel="SUSPENDIDO" itemValue="SUSPENDIDO"/>
+                 <f:selectItem itemLabel="CONTROLM" itemValue="CONTROLM"/>
+               </p:selectOneMenu>
+             </h:panelGrid>
+             <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+               <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbOperacion.updatePlan}" update=":formOperacion:panelOperacion:dtPlanes,:formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:selPlan,:formOperacion:panelOperacion:dtCalProd" />
+               <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgActualizarPlan.hide()" />
+             </h:panelGrid>  
+           </p:dialog>
+          </p:panel> 
+         </p:tab>
+         <p:tab title="Catálogo de Rutinas"> 
+             <p:panel header="Mantenimiento de Operación del Sistema">
+             <p:dataTable id="dtRutinas" scrollable="true" scrollHeight="350" value="#{mbOperacion.rutinas}" var="rutina" rows="10"  paginator="true" paginatorPosition="bottom" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros">
+             <p:column style="width:10px">
+                <p:rowToggler />
+             </p:column>
+             <p:column headerText="Rutinas"><h:outputText value="#{rutina.rutina}"/></p:column>
+             <p:rowExpansion>
+               <h:panelGrid id="display" columns="2" cellpadding="4" style="width:800px;" styleClass="ui-widget-content" columnClasses="first, second">
+                 <h:outputText  value="Nombre:" />
+                 <h:outputText id="nombre" value="#{rutina.nombre}" />
+                 <h:outputText value="Descripción:" />
+                 <h:outputText id="descripcion" value="#{rutina.descripcion}" />
+                 <h:outputText value="Área Responsable:" />
+                 <h:outputText id="areaResponsable" value="#{rutina.areaResponsable}" />
+                 <h:outputText value="Tipo de Proceso:" />
+                 <h:outputText id="tipoProceso" value="#{rutina.proceso}" />
+                 <h:outputText value="Periodicidad:" />
+                 <h:outputText id="periodicidad" value="#{rutina.periodo}" />
+                 <h:outputText value="Estatus:" />
+                 <h:outputText id="estatus" value="#{rutina.estatus}" />
+                 <p:commandButton value="Eliminar"   icon="ui-icon-trash" actionListener="#{mbOperacion.loadRutina(rutina)}" oncomplete="dlgEliminarRutina.show()" />
+                 <p:commandButton value="Actualizar" icon="ui-icon-pencil" update=":formOperacion:panelOperacion:dlgActualizarRutina" actionListener="#{mbOperacion.loadRutina(rutina)}" oncomplete="dlgActualizarRutina.show()" />
+               </h:panelGrid>
+            </p:rowExpansion>           
+           </p:dataTable>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:commandButton icon="ui-icon-plus" value="Agregar" update=":formOperacion:panelOperacion:dlgAgregarRutina" actionListener="#{mbOperacion.cleanRutina}" oncomplete="dlgAgregarRutina.show()" />
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:confirmDialog header="Eliminar Rutina" id="dlgEliminarRutina" widgetVar="dlgEliminarRutina" message="¿Estas seguro de eliminar la rutina?" closable="false">
+             <p:commandButton title="Acepta eliminar la rutina" value="Aceptar" icon="ui-icon-check" actionListener="#{mbOperacion.deleteRutina}" oncomplete="dlgEliminarRutina.hide()" update=":formOperacion:panelOperacion:dtRutinas,:formOperacion:panelOperacion:selPlan,:formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:dtCalProd" />
+             <p:commandButton title="Cancela eliminar la rutina" value="Cancelar" icon="ui-icon-close" oncomplete="dlgEliminarRutina.hide()"/>
+           </p:confirmDialog>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dialog header="Agregar Rutina" id="dlgAgregarRutina" widgetVar="dlgAgregarRutina" draggable="false" resizable="false" modal="true" closable="false" width="650" height="400">
+             <h:panelGrid columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+               <h:outputLabel value = "Identificación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtRutinAgregar" value="#{mbOperacion.rutinaBean.rutinaAgregar}" styleClass="inputForm"  maxlength="36" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputText>
+               <h:outputLabel value = "Nombre" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtNombreRutinaAgregar" value="#{mbOperacion.rutinaBean.nombreAgregar}" styleClass="inputForm"  maxlength="36" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputText>
+               <h:outputLabel value = "Descripción" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputTextarea rows="6" cols="33" id="txtDescripcionRutinaAgregar" value="#{mbOperacion.rutinaBean.descripcionAgregar}" styleClass="inputTextAreaForm" maxlength="255" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputTextarea> 
+               <h:outputLabel value = "Área Responsable" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selAreaResponsableRutinaAgregar" value="#{mbOperacion.rutinaBean.areaResponsableAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItems value="#{mbOperacion.areas}" />
+               </p:selectOneMenu>
+               <h:outputLabel value = "Tipo de Proceso" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selTipoProcesoRutinaAgregar" value="#{mbOperacion.rutinaBean.procesoAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="BATCH" itemValue="BATCH"/>
+                 <f:selectItem itemLabel="LINEA" itemValue="LINEA"/>
+               </p:selectOneMenu>
+               <h:outputLabel value = "Periodicidad" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selPeriodicidadRutinaAgregar" value="#{mbOperacion.rutinaBean.periodoAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="DIARIO" itemValue="DIARIO"/>
+                 <f:selectItem itemLabel="SEMANAL" itemValue="SEMANAL"/>
+                 <f:selectItem itemLabel="MENSUAL" itemValue="MENSUAL"/>
+                 <f:selectItem itemLabel="ANUAL" itemValue="ANUAL"/>
+               </p:selectOneMenu>
+               <h:outputLabel value = "Estatus" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selEstatusRutinaAgregar" value="#{mbOperacion.rutinaBean.estatusAgregar}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+                 <f:selectItem itemLabel="CANCELADO" itemValue="CANCELADO"/>
+                 <f:selectItem itemLabel="SUSPENDIDO" itemValue="SUSPENDIDO"/>
+               </p:selectOneMenu>  
+             </h:panelGrid>
+             <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+               <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbOperacion.insertRutina}" update=":formOperacion:panelOperacion:dtRutinas" />
+               <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgAgregarRutina.hide()" />
+             </h:panelGrid>  
+           </p:dialog>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dialog header="Actualizar Rutina" id="dlgActualizarRutina" widgetVar="dlgActualizarRutina" draggable="false" resizable="false" modal="true" closable="false" width="650" height="400">
+             <h:panelGrid columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+               <h:outputLabel value = "Identificación" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtRutinaActualizar" value="#{mbOperacion.rutinaBean.rutina}" readonly="true" styleClass="textFieldDisabled"  maxlength="36" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputText>
+               <h:outputLabel value = "Nombre" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtNombreRutinaActualizar" value="#{mbOperacion.rutinaBean.nombre}" styleClass="inputForm"  maxlength="36" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputText>
+               <h:outputLabel value = "Descripción" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputTextarea rows="6" cols="33" id="txtDescripcionRutinaActualizar" value="#{mbOperacion.rutinaBean.descripcion}" styleClass="inputTextAreaForm" maxlength="255" onkeypress="if((event.which &lt; 48 || event.which &gt; 57) &amp;&amp; (event.which &lt; 65 || event.which &gt; 90) &amp;&amp; (event.which &lt; 97 || event.which &gt; 122) &amp;&amp; (event.keyCode != 32)) return false;"></p:inputTextarea> 
+               <h:outputLabel value = "Área Responsable" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selAreaResponsableRutinaActualizar" value="#{mbOperacion.rutinaBean.areaResponsable}" styleClass="selectOneMenuForm">
+                 <f:selectItems value="#{mbOperacion.areas}" />
+               </p:selectOneMenu>
+               <h:outputLabel value = "Tipo de Proceso" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selTipoProcesoRutinaActualizar" value="#{mbOperacion.rutinaBean.proceso}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="BATCH" itemValue="BATCH"/>
+                 <f:selectItem itemLabel="LINEA" itemValue="LINEA"/>
+               </p:selectOneMenu>
+               <h:outputLabel value = "Periodicidad" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selPeriodicidadRutinaActualizar" value="#{mbOperacion.rutinaBean.periodo}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="DIARIO" itemValue="DIARIO"/>
+                 <f:selectItem itemLabel="SEMANAL" itemValue="SEMANAL"/>
+                 <f:selectItem itemLabel="MENSUAL" itemValue="MENSUAL"/>
+                 <f:selectItem itemLabel="ANUAL" itemValue="ANUAL"/>
+               </p:selectOneMenu>
+               <h:outputLabel value = "Estatus" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selEstatusRutinaActualizar" value="#{mbOperacion.rutinaBean.estatus}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+                 <f:selectItem itemLabel="CANCELADO" itemValue="CANCELADO"/>
+                 <f:selectItem itemLabel="SUSPENDIDO" itemValue="SUSPENDIDO"/>
+               </p:selectOneMenu>  
+             </h:panelGrid>
+             <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+               <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbOperacion.updateRutina}" update=":formOperacion:panelOperacion:dtRutinas" />
+               <p:commandButton value="Cancelar" icon="ui-icon-cancel" oncomplete="dlgActualizarRutina.hide()" />
+             </h:panelGrid>
+           </p:dialog>  
+          </p:panel>
+         </p:tab>
+         <p:tab title="Asignación de Rutinas a Plan de Producción">
+           <p:panel header="Mantenimiento de Operación del Sistema">
+           <center>  
+             <h:panelGrid border="0" columns="2" cellpadding="4" styleClass="ui-widget-content">
+              <h:outputLabel value = "Plan" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+              <p:selectOneMenu id="selPlan" value="#{mbOperacion.calProdBean.plan}" styleClass="selectOneMenuForm">
+                <f:selectItems value="#{mbOperacion.planesCalProd}" />
+                <p:ajax event="change" listener="#{mbOperacion.selectPlan}" update=":formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:dtCalProd,:formOperacion:panelOperacion:btnAsignar,:formOperacion:panelOperacion:btnDesAsignar" />
+               </p:selectOneMenu>
+             </h:panelGrid>
+           </center>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dataTable                                                     id="dtRutinasCalProd" 
+                                                                            widgetVar="dtRutinasCalProd" 
+                                                                            scrollable="true" 
+                                                                            scrollHeight="160" 
+                                                                            value="#{mbOperacion.rutinasCalProd}" 
+                                                                            var="rutina" 
+                                                                            rowKey="#{rutina}" 
+                                                                            rows="5"  
+                                                                            paginator="true" 
+                                                                            paginatorPosition="bottom" 
+                                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                            selectionMode="single">
+             <p:ajax event="rowSelect" listener="#{mbOperacion.onRowSelect}" update=":formOperacion:panelOperacion:btnAsignar,:formOperacion:panelOperacion:btnDesAsignar" />
+             <p:column style="width:10px">
+                <p:rowToggler />
+             </p:column>
+             <p:column headerText="Rutinas"><h:outputText value="#{rutina}" /></p:column>
+           </p:dataTable>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <center>
+             <h:panelGrid border="0" columns="2" cellpadding="4" columnClasses="firstButtomCalProd, secondButtomCalProd">
+               <p:commandButton id="btnAsignar" icon="ui-icon-plus" value="Asignar" actionListener="#{mbOperacion.add}" disabled="#{mbOperacion.habilitaBotonAsignar!=1}" update=":formOperacion:panelOperacion:dtCalProd,:formOperacion:panelOperacion:btnAsignar,:formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:btnDesAsignar" />
+               <p:commandButton id="btnDesAsignar" icon="ui-icon-minus" value="Desasignar" actionListener="#{mbOperacion.minus}" disabled="#{mbOperacion.habilitaBotonDesasignar!=1}" update=":formOperacion:panelOperacion:dtRutinasCalProd,:formOperacion:panelOperacion:btnDesAsignar,:formOperacion:panelOperacion:dtCalProd,:formOperacion:panelOperacion:btnAsignar" />
+             </h:panelGrid>
+           </center>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dataTable                                                     id="dtCalProd" 
+                                                                            widgetVar="dtCalProd" 
+                                                                            scrollable="true" 
+                                                                            scrollHeight="160" 
+                                                                            value="#{mbOperacion.rutinasInCalprod}" 
+                                                                            var="rutinasInCalprod" 
+                                                                            rowKey="#{rutinasInCalprod.rutina}" 
+                                                                            rows="5"  
+                                                                            paginator="true" 
+                                                                            paginatorPosition="bottom" 
+                                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" 
+                                                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros" 
+                                                                            emptyMessage="Sin registros"
+                                                                            selectionMode="single">
+             <p:ajax event="rowSelect" listener="#{mbOperacion.onRowSelectCalProd}" update=":formOperacion:panelOperacion:btnDesAsignar,:formOperacion:panelOperacion:btnAsignar" />
+             <p:column style="width:10px">
+                <p:rowToggler />
+             </p:column>
+             <p:column headerText="Rutinas Asociadas al Plan de Producción" style="width:70%"><h:outputText value="#{rutinasInCalprod.rutina}"/></p:column>
+             <p:column headerText="Secuencia" style="width:7%; text-align: center;"><h:outputText value="#{rutinasInCalprod.secuencia}"/></p:column>
+             <p:column headerText="Estatus" style="width:8%; text-align: center;"><h:outputText value="#{rutinasInCalprod.estatus}"/></p:column>
+             <p:column style="width:10%; text-align: center;" headerText="Actualizar"><p:commandButton style="height: 20px;" icon="ui-icon-pencil" actionListener="#{mbOperacion.loadCalProd(rutinasInCalprod)}" update=":formOperacion:panelOperacion:dlgActualizarCalProd" /></p:column>
+             
+           </p:dataTable>
+           <h:outputText value="&lt;br/&gt;" escape="false" />
+           <p:dialog header="Actualización de Rutinas a Plan de Producción" id="dlgActualizarCalProd" widgetVar="dlgActualizarCalProd" draggable="false" resizable="false" modal="true" closable="false" width="650" height="120">
+             <h:panelGrid columns="2" cellpadding="4" styleClass="ui-widget-content" columnClasses="firstColumn, secondColumn">
+               <h:outputLabel value = "Secuencia" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:inputText id="txtSecuenciaCalProdActualizar" value="#{mbOperacion.secuencia}" styleClass="inputFormNumber"  maxlength="5" onkeypress="return onValidarNumeros(event)" onkeyup="onReemplazarCeroAlPrincipio(this);"></p:inputText>
+               <h:outputLabel value = "Estatus" style = "display : block; color : black; font-family: sans-serif; font-size  : medium;  font-weight: bolder; margin-left: 15px;"/>
+               <p:selectOneMenu id="selEstatusCalProdActualizar" value="#{mbOperacion.calProdBean.estatus}" styleClass="selectOneMenuForm">
+                 <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+                 <f:selectItem itemLabel="CANCELADO" itemValue="CANCELADO"/>
+               </p:selectOneMenu>  
+             </h:panelGrid>
+             <h:panelGrid columns="2" cellpadding="4" columnClasses="firstButtom, secondButtom">
+               <p:commandButton value="Guardar"  icon="ui-icon-check" actionListener="#{mbOperacion.updateCalProd}" update=":formOperacion:panelOperacion:dtCalProd" />
+           <p:commandButton value="Cancelar" icon="ui-icon-cancel" actionListener="#{mbOperacion.closeCalProd}" update=":formOperacion:panelOperacion:dtCalProd,:formOperacion:panelOperacion:dlgActualizarCalProd" />
+             </h:panelGrid>
+           </p:dialog>  
+          </p:panel>
+         </p:tab>   
+        </p:tabView>
+        <p:dialog id="dlgAjaxStatus" closable="false" header="Espere" modal="true" resizable="false" style="background-color: #eee; height : auto; width : auto;" widgetVar = "dlgAjaxStatus">
+        <center>
+         <p:graphicImage value = "../vista/recursos/img/gif/000.gif" />
+        </center>
+        </p:dialog>
+      </h:form> 
+    </h:body>
+</html>

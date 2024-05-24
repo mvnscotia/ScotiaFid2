@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="30">    
+    <Properties>
+        <Property name="uuid">%X{uuid}</Property> 
+        <Property name="date">%d</Property>
+        <Property name="ip">%X{addressIP}</Property> 
+        <Property name="account">%X{accountName}</Property>
+        <Property name="port">%X{port}</Property>
+        <Property name="host">%X{hostName}</Property>
+        <Property name="ipServer">%X{ipAddressServer}</Property>
+        <Property name="sid">%X{sid}</Property>
+        
+        <Property name="patternInfo" >  UID: ${uuid} | ELCS: 0B | ETSP: ${date} | ETYP: 20 | EPRI: 10 | ECAT: 40 | EMSG: %msg | ACTN: ${account} | SIPA: ${ip} | SPRT: ${port} | TIPA: ${ip} | DHST: ${host}  | DIPA: ${ipServer} | DPRT: ${port} | PRCN: %c{10} | SECA: 00 | ACCA: 00 | AUDA: 20 | SID: ${sid} | %n </Property>
+        <Property name="patternError">  UID: ${uuid} | ELCS: 0C | ETSP: ${date} | ETYP: 40 | EPRI: 20 | ECAT: 20 | EMSG: %msg | ACTN: ${account} | SIPA: ${ip} | SPRT: ${port} | TIPA: ${ip} | DHST: ${host}  | DIPA: ${ipServer} | DPRT: ${port} | PRCN: %c{10} | SECA: 10 | ACCA: 00 | AUDA: 00 | SID: ${sid} | %n </Property>
+        <Property name="patternLogin" > UID: ${uuid} | ELCS: 0D | ETSP: ${date} | ETYP: 20 | EPRI: 10 | ECAT: 00 | EMSG: %msg | ACTN: ${account} | SIPA: ${ip} | SPRT: ${port} | TIPA: ${ip} | DHST: ${host}  | DIPA: ${ipServer} | DPRT: ${port} | PRCN: %c{10} | SECA: 00 | ACCA: 00 | AUDA: 00 | SID: ${sid} | %n </Property>
+        <Property name="patternSW" >    UID: ${uuid} | ELCS: 0E | ETSP: ${date} | ETYP: 20 | EPRI: 10 | ECAT: 00 | EMSG: %msg | ACTN: ${account} | SIPA: ${ip} | SPRT: ${port} | TIPA: ${ip} | DHST: ${host}  | DIPA: ${ipServer} | DPRT: ${port} | PRCN: %c{10} | SECA: 00 | ACCA: 00 | AUDA: 20 | SID: ${sid} | %n </Property>
+        <Property name="pathHome">/jbosslogs/sfid/fiduciario</Property>
+        <Property name="isThreadContextMapInheritable">true</Property>
+    </Properties>
+    
+    <Appenders>
+     
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${patternInfo}"/>
+        </Console>
+       
+        <RollingFile name="infoLog"  
+                     fileName="${pathHome}/LogsTraza/FID_LOG_TRAZA.log"
+                     filePattern="${pathHome}/LogsTraza/FID_LOG_TRAZA_%d{yyyy-MM-dd}-%i.log.gz"
+                     filePermissions="rwxr-xr-x">
+            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout  pattern="${patternInfo}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="40 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile>
+         
+        <RollingFile name="errorLog" 
+                     fileName="${pathHome}/LogsTrazaErr/FID_LOG_ERR.log"
+                     filePattern="${pathHome}/LogsTrazaErr/FID_LOG_ERR_%d{yyyy-MM-dd}-%i.log.gz"
+                     filePermissions="rwxr-xr-x">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${patternError}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="40 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile> 
+        
+        <RollingFile name="LogsLogin" 
+                     fileName="${pathHome}/Logs_Login/Fid_Login.log"
+                     filePattern="${pathHome}/Logs_Login/Fid_Login_%d{yyyy-MM-dd}-%i.log.gz" 
+                     filePermissions="rwxr-xr-x">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${patternLogin}"/>
+             <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="40 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile>   
+            
+         <RollingFile name="LogsSW"
+                     fileName="${pathHome}/Logs_Service_Web/Fid_Traspaso_Chequera.log"
+                     filePattern="${pathHome}/Logs_Service_Web/Fid_Traspaso_Chequera_%d{yyyy-MM-dd}-%i.log.gz" 
+                     filePermissions="rwxr-xr-x">
+             <LevelRangeFilter minLevel="ERROR" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${patternSW}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="40 MB"/>
+            </Policies> 
+            <DefaultRolloverStrategy max="90" />
+        </RollingFile> 
+    </Appenders>
+    
+    <Loggers>  
+        <Logger name="scotiaFid.dao" additivity="false">
+            <AppenderRef ref="errorLog" />
+            <AppenderRef ref="infoLog" />
+            <AppenderRef ref="Console"  />
+        </Logger>
+        
+        <Logger name="scotiaFid.util.CSingleSignOn" additivity="false">
+            <AppenderRef ref="LogsLogin" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+         
+        <Logger name="scotiaFid.controller" additivity="false">
+            <AppenderRef ref="errorLog" />
+            <AppenderRef ref="infoLog" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Logger name="scotiaFid.handler" additivity="false">
+            <AppenderRef ref="errorLog" />
+            <AppenderRef ref="infoLog" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Logger name="scotiaFid.controller.MBLogin" additivity="false">
+            <AppenderRef ref="LogsLogin" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Logger name="scotiaFid.controller.MBMenu" additivity="false">
+            <AppenderRef ref="LogsLogin" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Logger name="scotiaFid.controller.MBIdleMonitor" additivity="false">
+            <AppenderRef ref="LogsLogin" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Logger name="scotiaFid.dao.CTraspaso">
+            <AppenderRef ref="LogsSW" />
+            <AppenderRef ref="Console"/>
+        </Logger> 
+        
+        <Logger name="scotiaFid.service">
+            <AppenderRef ref="LogsSW" />
+            <AppenderRef ref="Console"/>
+        </Logger>
+        	                          
+        <Root level="info">
+            <AppenderRef ref="Console" level="info" />
+            <AppenderRef ref="Console" level="error" />
+        </Root>
+    </Loggers>
+</Configuration>

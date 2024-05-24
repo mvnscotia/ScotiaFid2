@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns   = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html"  
+      xmlns:p = "http://primefaces.org/ui"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Conten-Type"                          content         = "text/html; charset=UTF-8"/>
+        <meta http-equiv="Conten-Type-Options"                  content         = "nosniff"/>
+        <meta http-equiv = "expires"                            content         = "43200"/> 
+        <meta http-equiv="X-XSS-Protection"                     content         = "1"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Store"/>
+        <meta http-equiv="Cache-control"                        content         = "No-Cache"/>
+        <link rel       ="stylesheet"                           type            = "text/css"
+                                                                href            = "../vista/recursos/css/cssGral.css"
+                                                                media           = "screen"/>
+    </h:head>
+    <h:body>
+        <h:form                                                 id              = "frmControles">
+            <p:idleMonitor                                      binding         = "#{mbIdleMonitor.idleMntr}"
+                                                                rendered        = "true">
+                <p:ajax                                         event           = "idle"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onIdle}"/>
+                <p:ajax                                         event           = "active"
+                                                                listener        = "#{mbIdleMonitor.idleMonitor_onActive}"/>
+            </p:idleMonitor>
+
+            <p:growl                                            autoUpdate      = "true"
+                                                                showDetail      = "true"
+                                                                showSummary     = "true"
+                                                                life            = "15000"/>
+            <p:ajaxStatus                                       onstart         = "dlgAjaxStatus.show();"
+                                                                oncomplete      = "dlgAjaxStatus.hide();"/>
+            <p:panel                                            header          = "Controles">
+                <br/>
+                <center>
+                    <p:commandButton                            
+                                                                value           = ""
+                                                                style           = "visibility: hidden;"
+                                                                />
+                    <p:commandButton                            icon            = "ui-icon-document"
+                                                                value           = "Nuevo Registro"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbAdmin.onControles_RegistroNuevo}"
+                                                                update          = ":frmControles:dlgCtrlMtto"/>
+                    <p:commandButton                            icon            = "ui-icon-play"
+                                                                value           = "Ejecutar Control"
+                                                                style           = "margin-right: 25px;"
+                                                                actionListener  = "#{mbAdmin.onControles_CtrlEjecutaDespliegaVentana}"
+                                                                update          = ":frmControles:dlgCtrlEjecuta"/>
+                    <p:commandButton                            icon            = "ui-icon-pencil"
+                                                                value           = "Mantenimiento"
+                                                                actionListener  = "#{mbAdmin.onControles_RegistroSelecciona}"
+                                                                update          = ":frmControles:dlgCtrlMtto"/>
+                </center>
+                <br/>
+                <p:dataTable                                    id              = "dtControl"
+                                                                widgetVar       = "dtControlwidgetVar"
+                                                                emptyMessage    = "Sin Registros"
+                                                                value           = "#{mbAdmin.consultaCtrls}"
+                                                                filteredValue   = "#{mbAdmin.consultaCtrlsFiltro}"
+                                                                filterDelay     = "600"
+                                                                var             = "ctrl"
+                                                                selection       = "#{mbAdmin.seleccionaCtrl}"
+                                                                selectionMode   = "single"
+                                                                rowKey          = "#{ctrl.controlSec}"
+                                                                scrollable      = "true"
+                                                                scrollHeight    = "550">
+                    <p:column                                   headerText      = "Tipo"
+                                                                style           = "height: 25px; width: 5%;">
+                        <h:outputLabel                          value           = "#{ctrl.controlTipo}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Sec."
+                                                                style           = "width: 4%;">
+                        <center>
+                            <h:outputLabel                      value           = "#{ctrl.controlSec}"/>
+                        </center>
+                    </p:column>
+                    <p:column                                   headerText      = "Control"
+                                                                filterBy        = "#{ctrl.controlNombre}"
+                                                                filterMatchMode = "contains"
+                                                                filterStyle     = "width: 250px;"
+                                                                style           = "width: 72%;">
+                        <h:outputLabel                          value           = "#{ctrl.controlNombre}"/>
+                    </p:column>
+                    <p:column                                   headerText      = "Fecha Reg."
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{ctrl.controlFechaReg}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Fecha Mod."
+                                                                style           = "width: 7%;">
+                        <h:outputLabel                          value           = "#{ctrl.controlFechaMod}">
+                            <f:convertDateTime                  pattern         = "dd/MM/yyyy"/>
+                        </h:outputLabel>
+                    </p:column>
+                    <p:column                                   headerText      = "Status"
+                                                                style           = "width: 5%;">
+                        <h:outputLabel                          value           = "#{ctrl.controlStatus}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+            </p:panel>
+
+            <p:dialog                                           id              = "dlgCtrlEjecuta" 
+                                                                header          = "Sistema Fiduciario.- Ejecución de Control" 
+                                                                modal           = "true"
+                                                                closable        = "false"
+                                                                hideEffect      = "explode"
+                                                                position        = "20, 20" 
+                                                                resizable       = "false" 
+                                                                widgetVar       = "dlgCtrlEjecuta">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{mbAdmin.seleccionaCtrl.controlNombre}"
+                                                                style           = "font-size       : medium;
+                                                                font-weight     : bolder;"/>
+                </center>
+                <br/>
+                <br/>
+
+                <p:panel                                  id               ="panelGridOption3"
+                                                           style            = "height: 320px; width: 1000px; ">
+                    <p:row>
+                        <p:column>
+
+                            <p:dataTable id="tbl" var="result"
+                                         value="#{mbAdmin.tableData}"
+                                         rendered="#{not empty mbAdmin.tableData}"
+                                         rowIndexVar =  "rowIndex"
+                                         scrollable="true"
+                                         scrollHeight="280"
+                                         scrollWidth="1000"                                    
+                                         >
+
+
+                                <p:columns value="#{mbAdmin.tableHeaderNames}"
+                                           var="mycolHeader" columnIndexVar="colIndex">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{mycolHeader.value}" />
+                                                      
+                                        
+                                    </f:facet>
+                                    <h:outputText value="#{result[mycolHeader.key].value}" />
+                                    <br />
+                                </p:columns>
+
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+
+                </p:panel>
+
+                <p:panelGrid                                    id              = "camposEje"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{beanGenericoTitulo.genericoTitulo00}"/>
+                        </p:column>
+
+                        <p:column > 
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo00}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible00}; margin-left: auto; margin-right: auto; width: 100"
+                                                                rendered        = "#{mbAdmin.coboInput00}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen00}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo00}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible00}"
+                                                                rendered        = "#{!mbAdmin.coboInput00}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo05}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo05}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible05};"
+                                                                rendered        = "#{mbAdmin.coboInput05}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen05}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo05}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible05}"
+                                                                rendered        = "#{!mbAdmin.coboInput05}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo10}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo10}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible10};"
+                                                                rendered        = "#{mbAdmin.coboInput10}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen10}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo10}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible10}"
+                                                                rendered        = "#{!mbAdmin.coboInput10}"/>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo01}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo01}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible01};"
+                                                                rendered        = "#{mbAdmin.coboInput01}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen01}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo01}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible01}"
+                                                                rendered        = "#{!mbAdmin.coboInput01}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo06}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo06}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible06};"
+                                                                rendered        = "#{mbAdmin.coboInput06}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen06}"
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo06}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible06}"
+                                                                rendered        = "#{!mbAdmin.coboInput06}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo11}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo11}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible11};"
+                                                                rendered        = "#{mbAdmin.coboInput11}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen11}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo11}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible11}"
+                                                                rendered        = "#{!mbAdmin.coboInput11}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo02}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo02}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible02};"
+                                                                rendered        = "#{mbAdmin.coboInput02}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen02}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo02}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible02}"
+                                                                rendered        = "#{!mbAdmin.coboInput02}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo07}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo07}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible07};"
+                                                                rendered        = "#{mbAdmin.coboInput07}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen07}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo07}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible07}"
+                                                                rendered        = "#{!mbAdmin.coboInput07}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo12}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo12}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible12};"
+                                                                rendered        = "#{mbAdmin.coboInput12}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen12}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo12}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible12}"
+                                                                rendered        = "#{!mbAdmin.coboInput12}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo03}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo03}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible03};"
+                                                                rendered        = "#{mbAdmin.coboInput03}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen03}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo03}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible03}"
+                                                                rendered        = "#{!mbAdmin.coboInput03}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo08}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo08}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible08};"
+                                                                rendered        = "#{mbAdmin.coboInput08}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen08}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo08}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible08}"
+                                                                rendered        = "#{!mbAdmin.coboInput08}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo13}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo13}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible13};"
+                                                                rendered        = "#{mbAdmin.coboInput13}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen13}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo13}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible13}"
+                                                                rendered        = "#{mbAdmin.coboInput13}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo04}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo04}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible04};"
+                                                                rendered        = "#{mbAdmin.coboInput04}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen04}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo04}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible04}"
+                                                                rendered        = "#{!mbAdmin.coboInput04}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo09}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo09}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible09};"
+                                                                rendered        = "#{mbAdmin.coboInput09}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen09}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo09}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible09}"
+                                                                rendered        = "#{!mbAdmin.coboInput09}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel                      value           = "#{beanGenericoTitulo.genericoTitulo14}"/>
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu                    value           = "#{beanGenericoConsulta.genericoCampo14}"
+                                                                style           = "visibility: #{beanGenericoVisible.genericoVisible14};"
+                                                                rendered        = "#{mbAdmin.coboInput14}">
+                                <f:selectItem                   itemLabel       = "..."
+                                                                itemValue       = ""/>
+                                <f:selectItems                  value           = "#{mbAdmin.listaGen14}"
+                                                                var             ="clave"  
+                                                                itemValue       ="#{clave.clave}"
+                                                                itemLabel       ="#{clave.descripcion}"/>
+                            </h:selectOneMenu>
+                            <h:inputText                        value           = "#{beanGenericoConsulta.genericoCampo14}"
+                                                                style           = "text-align: right; visibility: #{beanGenericoVisible.genericoVisible14}"
+                                                                rendered        = "#{!mbAdmin.coboInput14}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:row>
+                        <p:commandButton                            icon            = "ui-icon-play"
+                                                                    value           = "Ejecutar"
+                                                                    style           = "margin-top: 10px; margin-right: 15px;"
+                                                                    disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado15}"
+                                                                    actionListener  = "#{mbAdmin.onControles_CtrlEjecuta}"
+                                                                    update          = "panelGridOption3,lblError"/>
+                        <p:commandButton                            icon            = "ui-icon-circle-arrow-s"
+                                                                    value           = "Exportar"
+                                                                    style           = "margin-top: 10px; margin-right: 15px;"
+                                                                    disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado15}"
+                                                                    actionListener  = "#{mbAdmin.onControles_Descarga()}"
+                                                                    update          = "lblError"/>
+                        <p:commandButton                            id              = "cmdInstrucFideAltaModificar"
+                                                                    icon            = "ui-icon-close"
+                                                                    value           = "Salir"
+                                                                    style           = "margin-top: 10px; margin-right: 15px;"
+                                                                    actionListener  = "#{mbAdmin.onControles_Cancelar()}"
+                                                                    update          = ":frmControles:dlgCtrlEjecuta"/> 
+                        <p:commandButton                            icon            = "ui-icon-refresh"
+                                                                    title           = "Limpia Campos"
+                                                                    actionListener  = "#{mbAdmin.onControles_LimpiaVentana()}"
+                                                                    value           = "Limpiar"
+                                                                    style           = "margin-top: 10px; margin-right: 15px;"
+                                                                    update          = "panelGridOption3,lblError,camposEje"/>
+                    </p:row>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              id              = "lblError"
+                                                                value           = "#{beanGenericoTitulo.genericoTitulo15}"
+                                                                style           = "color      : crimson;
+                                                                font-size  : small;
+                                                                font-weight: bolder;
+                                                                visibility : #{beanGenericoVisible.genericoVisible15}"/>
+                    <br/>
+                </center>
+                <br/>
+            </p:dialog>
+
+            <p:dialog                                           id              = "dlgCtrlMtto" 
+                                                                closable        = "true" 
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Mantenimiento de Control" 
+                                                                modal           = "true" 
+                                                                hideEffect      = "explode"
+                                                                position        = "100, 60"
+                                                                resizable       = "false"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                widgetVar       = "dlgCtrlMtto">
+                <br/>
+                <p:panelGrid                                    id              = "panelMttoCtrl"
+                                                                style           = "margin-left: auto; margin-right: auto;"
+                                                                styleClass      = "bordePanel">
+                    <p:row>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                font-weight     : bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Tipo"/>
+                            </center>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                font-weight     : bold;">
+                            <center>
+                                <h:outputLabel                  value           = "Secuencia"/>
+                            </center>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                font-weight     : bolder;">
+                            <center>
+                                <h:outputLabel                  value           = "Fecha Reg."/>
+                            </center>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                font-weight     : bolder;">
+                            <center>
+                                <h:outputLabel                  value           = "Fecha Mod."/>
+                            </center>
+                        </p:column>
+                        <p:column                               style           = "background-color: #F2F5F9;
+                                                                font-weight     : bolder;">
+                            <center>
+                                <h:outputLabel                  value           = "Status"/>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <center>
+                                <h:inputText                    value           = "CONTROL"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 75px;"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:inputText                    value           = "#{beanAdminControles.controlSec}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 75px;"/>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:inputText                    value           = "#{beanAdminControles.controlFechaReg}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 100px;">
+                                    <f:convertDateTime              pattern         = "dd/MM/yyyy"/>
+                                </h:inputText>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:inputText                    value           = "#{beanAdminControles.controlFechaMod}"
+                                                                readonly        = "true"
+                                                                style           = "background-color: #ffffcc; text-align: center; width: 100px;">
+                                    <f:convertDateTime              pattern         = "dd/MM/yyyy"/>
+                                </h:inputText>
+                            </center>
+                        </p:column>
+                        <p:column>
+                            <center>
+                                <h:selectOneMenu                value           = "#{beanAdminControles.controlStatus}"
+                                                                style           = "width: 130px;"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}">
+                                    <f:selectItem                   itemLabel       = "..."
+                                                                    itemValue       = ""/>
+                                    <f:selectItem                   itemLabel       = "ACTIVO"
+                                                                    itemValue       = "ACTIVO"/>
+                                    <f:selectItem                   itemLabel       = "SUSPENDIDO"
+                                                                    itemValue       = "SUSPENDIDO"/>
+                                    <f:selectItem                   itemLabel       = "CANCELADO"
+                                                                    itemValue       = "CANCELADO"/>
+                                </h:selectOneMenu>
+                            </center>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5"
+                                                                style           = "background-color: #F2F5F9;
+                                                                font-weight     : bold;">
+                            <h:outputLabel                      value           = "Nombre"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5">
+                            <h:inputText                        value           = "#{beanAdminControles.controlNombre}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                maxlength       = "120"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5"
+                                                                style           = "background-color: #F2F5F9;
+                                                                font-weight     : bolder;">
+                            <h:outputLabel                      value           = "Control"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column                               colspan         = "5">
+                            <p:inputTextarea                    value           = "#{beanAdminControles.controlTexto}"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado00}"
+                                                                rows            = "16"
+                                                                cols            = "200"
+                                                                maxlength       = "3920"
+                                                                style           = "width: 100%"/>
+
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton                            id              = "cmdCtrlModif"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                icon            = "ui-icon-pencil"
+                                                                value           = "Modificar"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbAdmin.onControles_RegistroModifica}"
+                                                                update          = ":frmControles:cmdCtrlModif,
+                                                                :frmControles:cmdCtrlAplica,
+                                                                :frmControles:cmdCtrlEliminar,
+                                                                :frmControles:panelMttoCtrl"/>
+                    <p:commandButton                            id              = "cmdCtrlAplica"
+                                                                disabled        = "#{beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                icon            = "ui-icon-gear"
+                                                                value           = "Aplicar"
+                                                                style           = "margin-right: 15px;"
+                                                                
+                                                                actionListener  = "#{mbAdmin.onControles_RegistroAplica}"
+                                                                update          = ":frmControles:dtControl"/>
+                    <p:commandButton                            id              = "cmdCtrlEliminar"
+                                                                disabled        = "#{!beanGenericoDesHabilitado.genericoDesHabilitado01}"
+                                                                icon            = "ui-icon-trash"
+                                                                value           = "Eliminar"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbAdmin.onControles_RegistroElimina}"
+                                                                update          = ":frmControles:dlgPopUpGral, 
+                                                                                   :frmControles:dtControl"/>
+                </center>
+                <br/>
+                <br/>
+            </p:dialog>
+
+            <p:dialog                                           id              = "dlgPopUpGral"
+                                                                closable        = "true"
+                                                                closeOnEscape   = "true"
+                                                                header          = "Sistema Fiduciario.- Confirmación de aplicación de operación"
+                                                                hideEffect      = "explode"
+                                                                modal           = "true"
+                                                                position        = "450, 40"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #ffffff;
+                                                                height          : auto;
+                                                                width           : auto;"
+                                                                widgetVar       = "dlgPopUpGral">
+                <br/>
+                <center>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaUsuario}"
+                                                                style           = "color      : orange;
+                                                                font-size  : large;
+                                                                font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje1}"
+                                                                style           = "color      : #000000;
+                                                                font-size  : medium;
+                                                                font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+                    <h:outputLabel                              value           = "#{beanMensajeConfirmacion.mensajeConfirmaMensaje2}"
+                                                                style           = "color      : #000000;
+                                                                font-size  : medium;
+                                                                font-weight: bolder;"/>
+                    <br/>
+                    <br/>
+
+                    <p:column>
+                        <p:commandButton                        value           = "Aceptar"
+                                                                icon            = "ui-icon-check"
+                                                                style           = "margin-right: 15px;"
+                                                                actionListener  = "#{mbAdmin.onGenerales_AplicaConfirmacion}"
+                                                                update          = ":frmControles:dtControl"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton                        value           = "Cancelar"
+                                                                style           = "margin-right: 15px;"
+                                                                icon            = "ui-icon-cancel"
+                                                                actionListener  = "#{mbAdmin.onGenerales_AplicaCancelacion}"
+                                                                update          = ":frmControles:dtControl"/>
+                    </p:column>
+
+                </center>
+                <br/>
+            </p:dialog>
+
+            <p:dialog                                           id              = "dlgAjaxStatus"
+                                                                closable        = "false"
+                                                                header          = "Espere"
+                                                                modal           = "true"
+                                                                resizable       = "false"
+                                                                style           = "background-color: #eee;
+                                                                height          : auto;
+                                                                width           : auto;"
+                                                                widgetVar       = "dlgAjaxStatus">
+                <center>
+                    <p:graphicImage                             value           = "../vista/recursos/img/gif/000.gif" />
+                </center>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

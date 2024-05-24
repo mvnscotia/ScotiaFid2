@@ -1,0 +1,9 @@
+@startuml
+    scotiaFid.bean.AdminContratoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.CriterioBusquedaBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.CriterioBusquedaContaBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.CriterioBusquedaContaAsienBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.CriterioBusquedaContaSaldoBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.FechaBean ..> scotiaFid.controller.MBContabilidad 
+    scotiaFid.bean.MensajeConfirmaBean ..> scotiaFid.controller.MBContabilidad 
+@enduml
